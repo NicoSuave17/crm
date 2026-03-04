@@ -7,8 +7,8 @@ last_updated: "2026-03-05"
 progress:
   total_phases: 12
   completed_phases: 8
-  total_plans: 19
-  completed_plans: 19
+  total_plans: 20
+  completed_plans: 20
 ---
 
 # State: Whop CRM
@@ -39,12 +39,12 @@ Plans: 2/8 (08a-pipeline-stage-crud-backend, 08b-pipeline-management-ui complete
 | 6 | Contact Detail Tabs | ✓ Complete | 8/8 | 100% |
 | 7 | Company CRUD + Contact-Company Linking | ✓ Complete | 3/3 | 100% |
 | 8 | Pipeline Management | ◐ In Progress | 2/8 | 25% |
-| 9 | Bulk Operations | ◐ In Progress | 1/5 | 20% |
+| 9 | Bulk Operations | ◐ In Progress | 2/5 | 40% |
 | 10 | Activity CRUD + Saved Views + Custom Fields | ○ Not Started | 0/12 | 0% |
 | 11 | Audit Log + Notifications + Dashboard | ○ Not Started | 0/8 | 0% |
 | 12 | Import Wizard + Email Templates + Advanced Search | ○ Not Started | 0/11 | 0% |
 
-**Total:** 19/94 plans complete
+**Total:** 20/94 plans complete
 
 ---
 
@@ -87,4 +87,6 @@ Plans: 2/8 (08a-pipeline-stage-crud-backend, 08b-pipeline-management-ui complete
 ---
 - **09b-csv-import-wizard:** Multi-step CSV import wizard for contacts. Client-side parsing with papaparse, alias-based auto-mapping, preview with Zod validation, batched import (50/batch) with progress bar, summary with created/skipped/errors. ImportWizardDialog at `src/components/import/import-wizard-dialog.tsx`. CSV utilities at `src/lib/utils/csv.ts` and `src/lib/utils/csv-mapping.ts`. Bulk API enhanced with server-side validation and detailed error reporting. Import button added to contacts page.
 
-*Last updated: 2026-03-05 after 09b-csv-import-wizard completion*
+- **09a-bulk-selection-actions:** Row selection checkboxes + bulk action bar on Contacts and Deals list pages. `useRowSelection` hook manages selection state. `useBulkActions` hooks (7 mutations) for reassign, status change, add tag, delete (contacts) and stage change, add tag, delete (deals). BulkActionBar floating component with ContactsBulkActions (reassign via UserPicker, status via Select, tag via tag list, delete via AlertDialog) and DealsBulkActions (move to stage via pipeline/stage picker, tag, delete). Bulk API expanded with 5 new actions + 500-item safety limit. Selection clears on filter/page change.
+
+*Last updated: 2026-03-05 after 09a-bulk-selection-actions completion*
