@@ -102,6 +102,175 @@ export default function SettingsPage() {
   );
 }
 
+// ─── Team Tab ────────────────────────────────────────────────────
+
+const ROLE_LABELS: Record<string, string> = {
+  admin: "Admin",
+  manager: "Manager",
+  account_manager: "Account Manager",
+  ae: "AE",
+  enterprise_sales: "Enterprise Sales",
+};
+
+function TeamSettings() {
+  const { data: users, isLoading } = useUsers();
+  const updateUser = useUpdateUser();
+  const { data: currentUser, isLoading: isCurrentUserLoading } = useCurrentUser();
+
+  const isAdmin = currentUser?.role === "admin";
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Team Members</CardTitle>
+        <CardDescription>
+          Manage your CRM team. New users are automatically created when they
+          sign in with Clerk for the first time.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {isLoading || isCurrentUserLoading ? (
+          <div className="space-y-2">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-14 w-full" />
+            ))}
+          </div>
+        ) : !users || users.length === 0 ? (
+          <p className="text-sm text-muted-foreground py-8 text-center">
+            No team members found.
+          </p>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Member</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="w-24">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users.map(
+                (user: {
+                  id: string;
+                  firstName: string;
+                  lastName: string;
+                  email: string;
+                  avatarUrl: string | null;
+                  role: string;
+                  isActive: boolean;
+                }) => (
+                  <TableRow key={user.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar size="default">
+                          <AvatarImage
+                            src={user.avatarUrl ?? undefined}
+                            alt={`${user.firstName} ${user.lastName}`}
+                          />
+                          <AvatarFallback>
+                            {user.firstName?.[0] ?? ""}
+                            {user.lastName?.[0] ?? ""}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium text-sm">
+                            {user.firstName} {user.lastName}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {user.email}
+                          </p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {isAdmin ? (
+                        <Select
+                          value={user.role}
+                          onValueChange={(newRole) => {
+                            updateUser.mutate(
+                              { id: user.id, data: { role: newRole } },
+                              {
+                                onSuccess: () => toast.success("Role updated"),
+                                onError: () =>
+                                  toast.error("Failed to update role"),
+                              }
+                            );
+                          }}
+                        >
+                          <SelectTrigger className="w-[160px]" size="sm">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="admin">Admin</SelectItem>
+                            <SelectItem value="manager">Manager</SelectItem>
+                            <SelectItem value="account_manager">
+                              Account Manager
+                            </SelectItem>
+                            <SelectItem value="ae">AE</SelectItem>
+                            <SelectItem value="enterprise_sales">
+                              Enterprise Sales
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <Badge variant="outline">
+                          {ROLE_LABELS[user.role] ?? user.role}
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={user.isActive ? "default" : "secondary"}
+                        className={
+                          user.isActive
+                            ? "bg-green-600 hover:bg-green-600"
+                            : ""
+                        }
+                      >
+                        {user.isActive ? "Active" : "Inactive"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {isAdmin && currentUser?.id !== user.id && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={updateUser.isPending}
+                          onClick={() => {
+                            updateUser.mutate(
+                              {
+                                id: user.id,
+                                data: { isActive: !user.isActive },
+                              },
+                              {
+                                onSuccess: () =>
+                                  toast.success(
+                                    user.isActive
+                                      ? "User deactivated"
+                                      : "User activated"
+                                  ),
+                                onError: () =>
+                                  toast.error("Failed to update user status"),
+                              }
+                            );
+                          }}
+                        >
+                          {user.isActive ? "Deactivate" : "Activate"}
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                )
+              )}
+            </TableBody>
+          </Table>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 // ─── Tags Tab ────────────────────────────────────────────────────
 
 function TagsSettings() {
