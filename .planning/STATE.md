@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-03-04T20:27:36.676Z"
+last_updated: "2026-03-04T21:00:00.000Z"
 progress:
   total_phases: 12
   completed_phases: 2
-  total_plans: 7
-  completed_plans: 7
+  total_plans: 8
+  completed_plans: 8
 ---
 
 # State: Whop CRM
@@ -21,9 +21,9 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 ---
 
 ## Current Phase
-**Phase 2: Entity Pickers**
-Status: In Progress
-Plans: 4/5 (02-user-picker-verify, 02-deal-picker, 02-contact-picker, 02-company-picker complete)
+**Phase 3: Edit Contact**
+Status: Complete
+Plans: 1/1 (03-edit-contact complete)
 
 ---
 
@@ -33,7 +33,7 @@ Plans: 4/5 (02-user-picker-verify, 02-deal-picker, 02-contact-picker, 02-company
 |-------|------|--------|-------|----------|
 | 1 | User Management | ✓ Complete | 5/5 | 100% |
 | 2 | Entity Pickers | ◐ In Progress | 4/5 | 80% |
-| 3 | Edit Contact | ○ Not Started | 0/5 | 0% |
+| 3 | Edit Contact | ✓ Complete | 1/1 | 100% |
 | 4 | Edit Deal + Deal Detail Enhancement | ○ Not Started | 0/12 | 0% |
 | 5 | Task Form | ○ Not Started | 0/5 | 0% |
 | 6 | Contact Detail Tabs | ○ Not Started | 0/8 | 0% |
@@ -44,7 +44,7 @@ Plans: 4/5 (02-user-picker-verify, 02-deal-picker, 02-contact-picker, 02-company
 | 11 | Audit Log + Notifications + Dashboard | ○ Not Started | 0/8 | 0% |
 | 12 | Import Wizard + Email Templates + Advanced Search | ○ Not Started | 0/11 | 0% |
 
-**Total:** 7/94 plans complete
+**Total:** 8/94 plans complete
 
 ---
 
@@ -59,4 +59,7 @@ Plans: 4/5 (02-user-picker-verify, 02-deal-picker, 02-contact-picker, 02-company
 - **02-contact-picker:** ContactPicker combobox at `src/components/pickers/contact-picker.tsx`. Popover + Command pattern matching UserPicker. Searches contacts by name/email, shows avatar with initials fallback and type badge, clear selection support.
 - **02-company-picker:** CompanyPicker combobox at `src/components/pickers/company-picker.tsx`. Full backend plumbing (data access + API route + hook). Popover + Command pattern, searches by name/domain, Building2 icon, domain shown as muted secondary text.
 
-*Last updated: 2026-03-04 after 02-company-picker completion*
+---
+- **03-edit-contact:** EditContactDialog component at `src/components/contacts/edit-contact-dialog.tsx`. Pre-fills all 11 contact fields, uses existing PATCH API + useUpdateContact hook. Wired into detail page (Edit button) and list page (row dropdown Edit item). updateContactSchema extended with healthScore and whopUsername.
+
+*Last updated: 2026-03-04 after 03-edit-contact completion*
