@@ -52,14 +52,14 @@ Requirements for this milestone. Each maps to roadmap phases.
 
 ### Pipeline Management
 
-- [ ] **PIPE-01**: User can create a new pipeline with name, description, and type
-- [ ] **PIPE-02**: User can edit a pipeline's name, description, and type
-- [ ] **PIPE-03**: User can delete a pipeline (only if no deals exist in it)
-- [ ] **PIPE-04**: User can create a new stage within a pipeline with name, color, probability, isWon, isLost, position
-- [ ] **PIPE-05**: User can edit a stage's properties (name, color, probability, isWon, isLost)
-- [ ] **PIPE-06**: User can delete a stage (only if no deals exist in that stage)
-- [ ] **PIPE-07**: User can drag-to-reorder stages within a pipeline
-- [ ] **PIPE-08**: Pipeline management UI replaces read-only pipeline tab in Settings
+- [x] **PIPE-01**: User can create a new pipeline with name, description, and type
+- [x] **PIPE-02**: User can edit a pipeline's name, description, and type
+- [x] **PIPE-03**: User can delete a pipeline (only if no deals exist in it)
+- [x] **PIPE-04**: User can create a new stage within a pipeline with name, color, probability, isWon, isLost, position
+- [x] **PIPE-05**: User can edit a stage's properties (name, color, probability, isWon, isLost)
+- [x] **PIPE-06**: User can delete a stage (only if no deals exist in that stage)
+- [x] **PIPE-07**: User can drag-to-reorder stages within a pipeline
+- [x] **PIPE-08**: Pipeline management UI replaces read-only pipeline tab in Settings
 
 ### Company CRUD
 
