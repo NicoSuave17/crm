@@ -47,6 +47,7 @@ import { useUsers, useUpdateUser, useCurrentUser } from "@/lib/hooks/use-users";
 import { Plus, Trash2, Tag, Columns, GitBranch, Users } from "lucide-react";
 import { PipelineCard } from "@/components/settings/pipeline-card";
 import { PipelineDialog } from "@/components/settings/pipeline-dialog";
+import { OptionsEditor } from "@/components/custom-fields/options-editor";
 import { toast } from "sonner";
 
 const TAG_COLORS = [
@@ -403,10 +404,19 @@ function CustomFieldsSettings() {
   const [createOpen, setCreateOpen] = useState(false);
   const [newLabel, setNewLabel] = useState("");
   const [newFieldType, setNewFieldType] = useState("text");
+  const [newOptions, setNewOptions] = useState<
+    { value: string; label: string; color?: string }[]
+  >([]);
 
   function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!newLabel.trim()) return;
+    const isSelectType =
+      newFieldType === "select" || newFieldType === "multi_select";
+    if (isSelectType && newOptions.length === 0) {
+      toast.error("Add at least one option for select fields");
+      return;
+    }
     const name = newLabel.trim().toLowerCase().replace(/\s+/g, "_");
     createField.mutate(
       {
@@ -414,6 +424,7 @@ function CustomFieldsSettings() {
         name,
         label: newLabel.trim(),
         fieldType: newFieldType,
+        ...(isSelectType && { options: newOptions }),
       },
       {
         onSuccess: () => {
@@ -421,6 +432,7 @@ function CustomFieldsSettings() {
           setCreateOpen(false);
           setNewLabel("");
           setNewFieldType("text");
+          setNewOptions([]);
         },
         onError: () => toast.error("Failed to create field"),
       }
@@ -513,7 +525,17 @@ function CustomFieldsSettings() {
         )}
       </CardContent>
 
-      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+      <Dialog
+        open={createOpen}
+        onOpenChange={(open) => {
+          setCreateOpen(open);
+          if (!open) {
+            setNewLabel("");
+            setNewFieldType("text");
+            setNewOptions([]);
+          }
+        }}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Create Custom Field</DialogTitle>
@@ -556,9 +578,13 @@ function CustomFieldsSettings() {
                   <SelectItem value="email">Email</SelectItem>
                   <SelectItem value="currency">Currency</SelectItem>
                   <SelectItem value="select">Select</SelectItem>
+                  <SelectItem value="multi_select">Multi-Select</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+            {(newFieldType === "select" || newFieldType === "multi_select") && (
+              <OptionsEditor options={newOptions} onChange={setNewOptions} />
+            )}
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setCreateOpen(false)}>
                 Cancel
