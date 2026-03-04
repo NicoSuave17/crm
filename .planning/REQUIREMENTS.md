@@ -126,20 +126,20 @@ Requirements for this milestone. Each maps to roadmap phases.
 
 ### Audit Log
 
-- [ ] **AUDT-01**: Audit log page exists in settings showing: timestamp, user, action, entity type, entity name, details
-- [ ] **AUDT-02**: Audit log has filters: date range, user, entity type
+- [x] **AUDT-01**: Audit log page exists in settings showing: timestamp, user, action, entity type, entity name, details
+- [x] **AUDT-02**: Audit log has filters: date range, user, entity type
 
 ### Notifications
 
-- [ ] **NOTF-01**: Bell icon in top nav shows unread alert count
-- [ ] **NOTF-02**: Clicking bell opens dropdown with recent alerts
-- [ ] **NOTF-03**: Dropdown links to full alerts page
+- [x] **NOTF-01**: Bell icon in top nav shows unread alert count
+- [x] **NOTF-02**: Clicking bell opens dropdown with recent alerts
+- [x] **NOTF-03**: Dropdown links to full alerts page
 
 ### Dashboard
 
-- [ ] **DASH-01**: User can rearrange/hide KPI cards on dashboard
-- [ ] **DASH-02**: Date range selector filters dashboard metrics
-- [ ] **DASH-03**: Pipeline selector filters dashboard to specific pipeline
+- [x] **DASH-01**: User can rearrange/hide KPI cards on dashboard
+- [x] **DASH-02**: Date range selector filters dashboard metrics
+- [x] **DASH-03**: Pipeline selector filters dashboard to specific pipeline
 
 ### Import Wizard
 
