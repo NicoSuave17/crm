@@ -2,10 +2,12 @@
 
 import { use, useState } from "react";
 import { useContact } from "@/lib/hooks/use-contacts";
+import { useContactCompanies, useUnlinkCompany } from "@/lib/hooks/use-contact-companies";
 import { ActivityTimeline } from "@/components/activities/activity-timeline";
 import { ContactDealsTab } from "@/components/contacts/contact-deals-tab";
 import { ContactTasksTab } from "@/components/contacts/contact-tasks-tab";
 import { EditContactDialog } from "@/components/contacts/edit-contact-dialog";
+import { LinkCompanyDialog } from "@/components/contacts/link-company-dialog";
 import { HealthScoreBadge } from "@/components/contacts/health-score-badge";
 import { TagSelector } from "@/components/contacts/tag-selector";
 import { CustomFieldsDisplay } from "@/components/contacts/custom-fields-display";
@@ -25,6 +27,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   ArrowLeft,
+  Building2,
   Mail,
   Phone,
   Globe,
@@ -34,6 +37,7 @@ import {
   TrendingUp,
   ExternalLink,
   Pencil,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -44,7 +48,10 @@ export default function ContactDetailPage({
 }) {
   const { id } = use(params);
   const { data: contact, isLoading } = useContact(id);
+  const { data: linkedCompanies } = useContactCompanies(id);
+  const unlinkCompany = useUnlinkCompany();
   const [editOpen, setEditOpen] = useState(false);
+  const [linkCompanyOpen, setLinkCompanyOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -204,6 +211,75 @@ export default function ContactDetailPage({
                 currentTags={contact.tags ?? []}
               />
 
+              {/* Companies */}
+              <Separator className="my-4" />
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs text-muted-foreground font-medium">
+                    Companies
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-6 text-xs"
+                    onClick={() => setLinkCompanyOpen(true)}
+                  >
+                    Link
+                  </Button>
+                </div>
+                {linkedCompanies && linkedCompanies.length > 0 ? (
+                  <div className="space-y-2">
+                    {linkedCompanies.map((lc) => (
+                      <div
+                        key={lc.companyId}
+                        className="flex items-center justify-between group"
+                      >
+                        <Link
+                          href={`/companies/${lc.companyId}`}
+                          className="flex items-center gap-2 text-sm hover:underline min-w-0 flex-1"
+                        >
+                          <Building2 className="h-4 w-4 text-muted-foreground shrink-0" />
+                          <span className="truncate font-medium">{lc.name}</span>
+                          {lc.role && (
+                            <span className="text-xs text-muted-foreground truncate">
+                              ({lc.role})
+                            </span>
+                          )}
+                        </Link>
+                        {lc.domain && (
+                          <span className="text-xs text-muted-foreground mr-1 hidden sm:inline truncate max-w-[80px]">
+                            {lc.domain}
+                          </span>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 shrink-0"
+                          onClick={() => {
+                            if (
+                              confirm(
+                                `Unlink ${lc.name} from this contact?`
+                              )
+                            ) {
+                              unlinkCompany.mutate({
+                                contactId: id,
+                                companyId: lc.companyId,
+                              });
+                            }
+                          }}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    No companies linked.
+                  </p>
+                )}
+              </div>
+
               {/* Custom Fields */}
               <Separator className="my-4" />
               <CustomFieldsDisplay entityId={id} />
@@ -327,6 +403,12 @@ export default function ContactDetailPage({
         contact={contact}
         open={editOpen}
         onOpenChange={setEditOpen}
+      />
+
+      <LinkCompanyDialog
+        contactId={id}
+        open={linkCompanyOpen}
+        onOpenChange={setLinkCompanyOpen}
       />
     </div>
   );
