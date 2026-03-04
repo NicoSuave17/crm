@@ -72,6 +72,18 @@ export function useUpdateDeal() {
   });
 }
 
+export function useStageHistory(dealId: string) {
+  return useQuery({
+    queryKey: ["deals", dealId, "stage-history"],
+    queryFn: async () => {
+      const res = await fetch(`/api/deals/${dealId}/history`);
+      if (!res.ok) throw new Error("Failed to fetch stage history");
+      return res.json();
+    },
+    enabled: !!dealId,
+  });
+}
+
 export function useDeleteDeal() {
   const queryClient = useQueryClient();
   return useMutation({

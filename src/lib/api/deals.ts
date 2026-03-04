@@ -241,6 +241,45 @@ export async function moveDeal(
   return deal;
 }
 
+export async function getStageHistory(dealId: string) {
+  // Use aliased subqueries to resolve stage names
+  const rows = await db
+    .select({
+      id: dealStageHistory.id,
+      dealId: dealStageHistory.dealId,
+      fromStageId: dealStageHistory.fromStageId,
+      toStageId: dealStageHistory.toStageId,
+      userId: dealStageHistory.userId,
+      changedAt: dealStageHistory.changedAt,
+    })
+    .from(dealStageHistory)
+    .where(eq(dealStageHistory.dealId, dealId))
+    .orderBy(desc(dealStageHistory.changedAt));
+
+  // Resolve stage names in a second query
+  const stageIds = new Set<string>();
+  for (const row of rows) {
+    if (row.fromStageId) stageIds.add(row.fromStageId);
+    stageIds.add(row.toStageId);
+  }
+
+  if (stageIds.size === 0) return rows.map((r) => ({ ...r, fromStageName: null, fromStageColor: null, toStageName: null, toStageColor: null }));
+
+  const stages = await db
+    .select({ id: pipelineStages.id, name: pipelineStages.name, color: pipelineStages.color })
+    .from(pipelineStages);
+
+  const stageMap = new Map(stages.map((s) => [s.id, s]));
+
+  return rows.map((row) => ({
+    ...row,
+    fromStageName: row.fromStageId ? stageMap.get(row.fromStageId)?.name ?? null : null,
+    fromStageColor: row.fromStageId ? stageMap.get(row.fromStageId)?.color ?? null : null,
+    toStageName: stageMap.get(row.toStageId)?.name ?? null,
+    toStageColor: stageMap.get(row.toStageId)?.color ?? null,
+  }));
+}
+
 export async function deleteDeal(id: string) {
   await db.delete(deals).where(eq(deals.id, id));
 }
