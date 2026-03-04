@@ -3,6 +3,8 @@
 import { use, useState } from "react";
 import { useContact } from "@/lib/hooks/use-contacts";
 import { ActivityTimeline } from "@/components/activities/activity-timeline";
+import { ContactDealsTab } from "@/components/contacts/contact-deals-tab";
+import { ContactTasksTab } from "@/components/contacts/contact-tasks-tab";
 import { EditContactDialog } from "@/components/contacts/edit-contact-dialog";
 import { HealthScoreBadge } from "@/components/contacts/health-score-badge";
 import { TagSelector } from "@/components/contacts/tag-selector";
@@ -311,35 +313,11 @@ export default function ContactDetailPage({
             </TabsContent>
 
             <TabsContent value="deals" className="mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Deals</CardTitle>
-                  <CardDescription>
-                    Active and closed deals for this contact
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground py-8 text-center">
-                    No deals yet. Create one from the pipeline view.
-                  </p>
-                </CardContent>
-              </Card>
+              <ContactDealsTab contactId={id} />
             </TabsContent>
 
             <TabsContent value="tasks" className="mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Tasks</CardTitle>
-                  <CardDescription>
-                    Tasks associated with this contact
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground py-8 text-center">
-                    No tasks yet. Create one to track follow-ups.
-                  </p>
-                </CardContent>
-              </Card>
+              <ContactTasksTab contactId={id} />
             </TabsContent>
           </Tabs>
         </div>
