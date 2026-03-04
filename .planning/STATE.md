@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-last_updated: "2026-03-04T21:23:11.277Z"
+last_updated: "2026-03-05"
 progress:
   total_phases: 12
   completed_phases: 7
-  total_plans: 16
-  completed_plans: 16
+  total_plans: 17
+  completed_plans: 17
 ---
 
 # State: Whop CRM
@@ -21,9 +21,9 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 ---
 
 ## Current Phase
-**Phase 7: Company CRUD + Contact-Company Linking**
-Status: Complete
-Plans: 3/3 (07a-company-crud-backend-list, 07b-company-detail-page, 07c-contact-company-linking all complete)
+**Phase 8: Pipeline Management**
+Status: In Progress
+Plans: 1/8 (08a-pipeline-stage-crud-backend complete)
 
 ---
 
@@ -38,13 +38,13 @@ Plans: 3/3 (07a-company-crud-backend-list, 07b-company-detail-page, 07c-contact-
 | 5 | Task Form | ◐ In Progress | 1/5 | 20% |
 | 6 | Contact Detail Tabs | ✓ Complete | 8/8 | 100% |
 | 7 | Company CRUD + Contact-Company Linking | ✓ Complete | 3/3 | 100% |
-| 8 | Pipeline Management | ○ Not Started | 0/8 | 0% |
+| 8 | Pipeline Management | ◐ In Progress | 1/8 | 12.5% |
 | 9 | Bulk Operations | ○ Not Started | 0/5 | 0% |
 | 10 | Activity CRUD + Saved Views + Custom Fields | ○ Not Started | 0/12 | 0% |
 | 11 | Audit Log + Notifications + Dashboard | ○ Not Started | 0/8 | 0% |
 | 12 | Import Wizard + Email Templates + Advanced Search | ○ Not Started | 0/11 | 0% |
 
-**Total:** 16/94 plans complete
+**Total:** 17/94 plans complete
 
 ---
 
@@ -79,4 +79,7 @@ Plans: 3/3 (07a-company-crud-backend-list, 07b-company-detail-page, 07c-contact-
 
 - **07c-contact-company-linking:** Full contact-company linking via junction table. DAL (getContactCompanies, getCompanyContacts, linkContactCompany with onConflictDoUpdate, unlinkContactCompany). Zod validator. API routes: GET/POST `/api/contacts/[id]/companies`, DELETE `/api/contacts/[id]/companies/[companyId]`, GET `/api/companies/[id]/contacts`. React Query hooks: useContactCompanies, useLinkCompany, useUnlinkCompany, useCompanyContacts. LinkCompanyDialog (CompanyPicker + role input). Contact detail page: Companies section in left column with link/unlink. Company detail page: CompanyContactsTab replaces placeholder in Contacts tab.
 
-*Last updated: 2026-03-05 after 07c-contact-company-linking completion (Phase 7 complete)*
+---
+- **08a-pipeline-stage-crud-backend:** Full pipeline and stage CRUD backend. Zod validators (`src/lib/validators/pipeline.ts`). DAL extended with createPipeline, updatePipeline, deletePipeline (409 if deals exist), createStage (auto-position), updateStage, deleteStage (409 if deals exist, re-compacts positions), reorderStages (transactional, validates exact ID set), countDealsByPipeline/Stage. API routes: POST/PATCH/DELETE `/api/pipeline`, POST `/api/pipeline/[id]/stages`, PATCH/DELETE `/api/pipeline/[id]/stages/[stageId]`, PUT `/api/pipeline/[id]/stages/reorder`. React Query hooks: useCreatePipeline, useUpdatePipeline, useDeletePipeline, useCreateStage, useUpdateStage, useDeleteStage, useReorderStages.
+
+*Last updated: 2026-03-05 after 08a-pipeline-stage-crud-backend completion*
