@@ -40,11 +40,11 @@ Plans: 2/8 (08a-pipeline-stage-crud-backend, 08b-pipeline-management-ui complete
 | 7 | Company CRUD + Contact-Company Linking | ✓ Complete | 3/3 | 100% |
 | 8 | Pipeline Management | ◐ In Progress | 2/8 | 25% |
 | 9 | Bulk Operations | ◐ In Progress | 2/5 | 40% |
-| 10 | Activity CRUD + Saved Views + Custom Fields | ◐ In Progress | 2/12 | 17% |
+| 10 | Activity CRUD + Saved Views + Custom Fields | ◐ In Progress | 3/12 | 25% |
 | 11 | Audit Log + Notifications + Dashboard | ○ Not Started | 0/8 | 0% |
 | 12 | Import Wizard + Email Templates + Advanced Search | ○ Not Started | 0/11 | 0% |
 
-**Total:** 22/94 plans complete
+**Total:** 23/94 plans complete
 
 ---
 
@@ -94,4 +94,6 @@ Plans: 2/8 (08a-pipeline-stage-crud-backend, 08b-pipeline-management-ui complete
 
 - **10c-custom-field-options:** OptionsEditor component at `src/components/custom-fields/options-editor.tsx` for adding/removing options during field creation. Multi-select type added to settings field type selector. CustomFieldsDisplay (`src/components/contacts/custom-fields-display.tsx`) updated to render select fields as `<Select>` dropdowns and multi_select as `<Popover>` with checkboxes. Multi-select values stored as JSON array in textValue. useUpdateFieldDefinition hook added for future edit UI. PATCH API already existed.
 
-*Last updated: 2026-03-05 after 10c-custom-field-options completion*
+- **10a-activity-crud:** Edit/delete for activity timeline items. DAL updateActivity/deleteActivity with owner-only WHERE clause. updateActivitySchema validator. /api/activities/[id] route (PATCH + DELETE, 404 for non-owned). useUpdateActivity/useDeleteActivity hooks. ActivityItem converted to client component with inline edit mode (subject/body/duration), dropdown menu (Edit/Delete) on hover, EDITABLE_TYPES set excludes system activities. ActivityTimeline passes currentUserId via useCurrentUser.
+
+*Last updated: 2026-03-05 after 10a-activity-crud completion*
