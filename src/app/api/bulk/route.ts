@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { contacts, deals, contactTags, dealTags } from "@/lib/db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { createContact } from "@/lib/api/contacts";
+import { createContactSchema } from "@/lib/validators/contact";
 import { logAuditEvent } from "@/lib/api/audit-log";
 
 const MAX_BULK_IDS = 500;
@@ -69,15 +70,33 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ success: true, count: body.dealIds.length });
     }
 
-    // CSV import contacts
+    // CSV import contacts (with server-side validation)
     if (body.action === "import_contacts" && body.contacts) {
-      const results = { created: 0, errors: 0 };
-      for (const row of body.contacts) {
+      const results = {
+        created: 0,
+        errors: 0,
+        errorDetails: [] as { index: number; message: string }[],
+      };
+
+      for (let i = 0; i < body.contacts.length; i++) {
         try {
-          await createContact(row);
+          const parsed = createContactSchema.safeParse(body.contacts[i]);
+          if (!parsed.success) {
+            results.errors++;
+            results.errorDetails.push({
+              index: i,
+              message: parsed.error.issues.map((iss) => iss.message).join(", "),
+            });
+            continue;
+          }
+          await createContact(parsed.data);
           results.created++;
-        } catch {
+        } catch (e) {
           results.errors++;
+          results.errorDetails.push({
+            index: i,
+            message: e instanceof Error ? e.message : "Unknown error",
+          });
         }
       }
 
