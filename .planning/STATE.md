@@ -7,8 +7,8 @@ last_updated: "2026-03-04T21:00:00.000Z"
 progress:
   total_phases: 12
   completed_phases: 1
-  total_plans: 5
-  completed_plans: 5
+  total_plans: 6
+  completed_plans: 6
 ---
 
 # State: Whop CRM
@@ -23,7 +23,7 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 ## Current Phase
 **Phase 2: Entity Pickers**
 Status: In Progress
-Plans: 3/5 (02-user-picker-verify, 02-deal-picker, 02-contact-picker complete)
+Plans: 4/5 (02-user-picker-verify, 02-deal-picker, 02-contact-picker, 02-company-picker complete)
 
 ---
 
@@ -32,7 +32,7 @@ Plans: 3/5 (02-user-picker-verify, 02-deal-picker, 02-contact-picker complete)
 | Phase | Name | Status | Plans | Progress |
 |-------|------|--------|-------|----------|
 | 1 | User Management | ✓ Complete | 5/5 | 100% |
-| 2 | Entity Pickers | ◐ In Progress | 3/5 | 60% |
+| 2 | Entity Pickers | ◐ In Progress | 4/5 | 80% |
 | 3 | Edit Contact | ○ Not Started | 0/5 | 0% |
 | 4 | Edit Deal + Deal Detail Enhancement | ○ Not Started | 0/12 | 0% |
 | 5 | Task Form | ○ Not Started | 0/5 | 0% |
@@ -44,7 +44,7 @@ Plans: 3/5 (02-user-picker-verify, 02-deal-picker, 02-contact-picker complete)
 | 11 | Audit Log + Notifications + Dashboard | ○ Not Started | 0/8 | 0% |
 | 12 | Import Wizard + Email Templates + Advanced Search | ○ Not Started | 0/11 | 0% |
 
-**Total:** 5/94 plans complete
+**Total:** 7/94 plans complete
 
 ---
 
@@ -56,5 +56,7 @@ Plans: 3/5 (02-user-picker-verify, 02-deal-picker, 02-contact-picker complete)
 ---
 - **02-user-picker-verify:** UserPicker component from Phase 1 verified to meet all PICK-03 and PICK-05 requirements. No changes needed.
 - **02-deal-picker:** DealPicker combobox at `src/components/pickers/deal-picker.tsx`. Popover + Command pattern matching UserPicker. Searches deals by title, shows stage color dot + name for disambiguation, Handshake icon, clear selection support.
+- **02-contact-picker:** ContactPicker combobox at `src/components/pickers/contact-picker.tsx`. Popover + Command pattern matching UserPicker. Searches contacts by name/email, shows avatar with initials fallback and type badge, clear selection support.
+- **02-company-picker:** CompanyPicker combobox at `src/components/pickers/company-picker.tsx`. Full backend plumbing (data access + API route + hook). Popover + Command pattern, searches by name/domain, Building2 icon, domain shown as muted secondary text.
 
-*Last updated: 2026-03-04 after 02-deal-picker completion*
+*Last updated: 2026-03-04 after 02-company-picker completion*
