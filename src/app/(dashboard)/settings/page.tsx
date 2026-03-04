@@ -45,6 +45,8 @@ import {
 import { usePipelines } from "@/lib/hooks/use-pipeline";
 import { useUsers, useUpdateUser, useCurrentUser } from "@/lib/hooks/use-users";
 import { Plus, Trash2, Tag, Columns, GitBranch, Users } from "lucide-react";
+import { PipelineCard } from "@/components/settings/pipeline-card";
+import { PipelineDialog } from "@/components/settings/pipeline-dialog";
 import { toast } from "sonner";
 
 const TAG_COLORS = [
@@ -576,82 +578,59 @@ function CustomFieldsSettings() {
 
 function PipelinesSettings() {
   const { data: pipelines, isLoading } = usePipelines();
+  const [createOpen, setCreateOpen] = useState(false);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Pipelines</CardTitle>
-        <CardDescription>
-          View pipeline stages. Manage deals from the Pipeline page.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {isLoading ? (
-          <Skeleton className="h-32 w-full" />
-        ) : !pipelines || pipelines.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-8 text-center">
-            No pipelines configured.
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold">Pipelines</h2>
+          <p className="text-sm text-muted-foreground">
+            Manage pipelines and their stages. Drag to reorder stages.
           </p>
-        ) : (
-          <div className="space-y-6">
-            {pipelines.map(
-              (pipeline: {
-                id: string;
-                name: string;
-                type: string;
-                stages?: { id: string; name: string; position: number; color: string | null; probability: number | null }[];
-              }) => (
-                <div key={pipeline.id}>
-                  <div className="flex items-center gap-2 mb-3">
-                    <h3 className="font-medium">{pipeline.name}</h3>
-                    <Badge variant="outline">{pipeline.type.replace("_", " ")}</Badge>
-                  </div>
-                  {pipeline.stages && pipeline.stages.length > 0 ? (
-                    <div className="flex items-center gap-1 overflow-x-auto pb-2">
-                      {pipeline.stages
-                        .sort((a: { position: number }, b: { position: number }) => a.position - b.position)
-                        .map(
-                          (
-                            stage: {
-                              id: string;
-                              name: string;
-                              color: string | null;
-                              probability: number | null;
-                            },
-                            i: number,
-                            arr: unknown[]
-                          ) => (
-                            <div key={stage.id} className="flex items-center">
-                              <div
-                                className="rounded-md border px-3 py-2 text-sm whitespace-nowrap"
-                                style={{
-                                  borderColor: stage.color ?? undefined,
-                                  color: stage.color ?? undefined,
-                                }}
-                              >
-                                {stage.name}
-                                {stage.probability != null && (
-                                  <span className="ml-1 text-xs text-muted-foreground">
-                                    ({stage.probability}%)
-                                  </span>
-                                )}
-                              </div>
-                              {i < arr.length - 1 && (
-                                <span className="mx-1 text-muted-foreground">→</span>
-                              )}
-                            </div>
-                          )
-                        )}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">No stages</p>
-                  )}
-                </div>
-              )
-            )}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+        </div>
+        <Button size="sm" onClick={() => setCreateOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" />
+          Add Pipeline
+        </Button>
+      </div>
+
+      {isLoading ? (
+        <div className="space-y-4">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <Skeleton key={i} className="h-48 w-full" />
+          ))}
+        </div>
+      ) : !pipelines || pipelines.length === 0 ? (
+        <Card>
+          <CardContent className="py-8">
+            <p className="text-sm text-muted-foreground text-center">
+              No pipelines configured. Create one to get started.
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        pipelines.map(
+          (pipeline: {
+            id: string;
+            name: string;
+            description: string | null;
+            type: string;
+            isDefault: boolean;
+            stages: Array<{
+              id: string;
+              name: string;
+              position: number;
+              color: string | null;
+              probability: number | null;
+              isWon: boolean;
+              isLost: boolean;
+            }>;
+          }) => <PipelineCard key={pipeline.id} pipeline={pipeline} />
+        )
+      )}
+
+      <PipelineDialog open={createOpen} onOpenChange={setCreateOpen} />
+    </div>
   );
 }
