@@ -8,7 +8,7 @@ progress:
   total_phases: 12
   completed_phases: 7
   total_plans: 17
-  completed_plans: 17
+  completed_plans: 18
 ---
 
 # State: Whop CRM
@@ -23,7 +23,7 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 ## Current Phase
 **Phase 8: Pipeline Management**
 Status: In Progress
-Plans: 1/8 (08a-pipeline-stage-crud-backend complete)
+Plans: 2/8 (08a-pipeline-stage-crud-backend, 08b-pipeline-management-ui complete)
 
 ---
 
@@ -38,13 +38,13 @@ Plans: 1/8 (08a-pipeline-stage-crud-backend complete)
 | 5 | Task Form | ◐ In Progress | 1/5 | 20% |
 | 6 | Contact Detail Tabs | ✓ Complete | 8/8 | 100% |
 | 7 | Company CRUD + Contact-Company Linking | ✓ Complete | 3/3 | 100% |
-| 8 | Pipeline Management | ◐ In Progress | 1/8 | 12.5% |
+| 8 | Pipeline Management | ◐ In Progress | 2/8 | 25% |
 | 9 | Bulk Operations | ○ Not Started | 0/5 | 0% |
 | 10 | Activity CRUD + Saved Views + Custom Fields | ○ Not Started | 0/12 | 0% |
 | 11 | Audit Log + Notifications + Dashboard | ○ Not Started | 0/8 | 0% |
 | 12 | Import Wizard + Email Templates + Advanced Search | ○ Not Started | 0/11 | 0% |
 
-**Total:** 17/94 plans complete
+**Total:** 18/94 plans complete
 
 ---
 
@@ -82,4 +82,6 @@ Plans: 1/8 (08a-pipeline-stage-crud-backend complete)
 ---
 - **08a-pipeline-stage-crud-backend:** Full pipeline and stage CRUD backend. Zod validators (`src/lib/validators/pipeline.ts`). DAL extended with createPipeline, updatePipeline, deletePipeline (409 if deals exist), createStage (auto-position), updateStage, deleteStage (409 if deals exist, re-compacts positions), reorderStages (transactional, validates exact ID set), countDealsByPipeline/Stage. API routes: POST/PATCH/DELETE `/api/pipeline`, POST `/api/pipeline/[id]/stages`, PATCH/DELETE `/api/pipeline/[id]/stages/[stageId]`, PUT `/api/pipeline/[id]/stages/reorder`. React Query hooks: useCreatePipeline, useUpdatePipeline, useDeletePipeline, useCreateStage, useUpdateStage, useDeleteStage, useReorderStages.
 
-*Last updated: 2026-03-05 after 08a-pipeline-stage-crud-backend completion*
+- **08b-pipeline-management-ui:** Interactive pipeline management UI replacing read-only PipelinesSettings in Settings page. Card-per-pipeline layout with PipelineCard (header + sortable stage list), PipelineDialog (create/edit), StageDialog (create/edit with color picker + probability + isWon/isLost), SortableStageRow (@dnd-kit/sortable drag handle). Stage reorder uses DndContext + SortableContext + restrictToVerticalAxis modifier. Delete confirmations via AlertDialog with 409 error toast for deals-exist case. Added @dnd-kit/modifiers dependency.
+
+*Last updated: 2026-03-05 after 08b-pipeline-management-ui completion*

@@ -15,7 +15,7 @@
 | 5 | 1/1 | Complete    | 2026-03-04 | Phase 2 |
 | 6 | 1/1 | Complete    | 2026-03-04 | Phase 4, Phase 5 |
 | 7 | 3/3 | Complete    | 2026-03-04 | Phase 2 |
-| 8 | 1/2 | In Progress|  | None |
+| 8 | 2/2 | Complete   | 2026-03-04 | None |
 | 9 | Bulk Operations | Add row selection and a bulk action bar to contacts and deals lists, plus a CSV import wizard | BULK-01–05 | Phase 3, Phase 4 |
 | 10 | Activity CRUD + Saved Views + Custom Fields | Add edit/delete to activity timeline items, extend saved views to all list entities, and add select-options UI to custom field definitions | ACTV-01–03, VIEW-01–05, CFLD-01–04 | Phase 3, Phase 4, Phase 7 |
 | 11 | Audit Log + Notifications + Dashboard | Surface the audit log as a settings page, add a notification bell to the top nav, and make dashboard cards interactive | AUDT-01–02, NOTF-01–03, DASH-01–03 | Phase 3 |
@@ -147,7 +147,7 @@
 **Requirements:** PIPE-01, PIPE-02, PIPE-03, PIPE-04, PIPE-05, PIPE-06, PIPE-07, PIPE-08
 **Dependencies:** None
 
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 **Success Criteria:**
 1. Settings > Pipeline tab shows a list of all pipelines with an expand/collapse toggle to reveal their stages.
