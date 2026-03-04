@@ -17,7 +17,7 @@
 | 7 | 3/3 | Complete    | 2026-03-04 | Phase 2 |
 | 8 | 2/2 | Complete    | 2026-03-04 | None |
 | 9 | 2/2 | Complete    | 2026-03-04 | Phase 3, Phase 4 |
-| 10 | 3/3 | Complete   | 2026-03-04 | Phase 3, Phase 4, Phase 7 |
+| 10 | 3/3 | Complete    | 2026-03-04 | Phase 3, Phase 4, Phase 7 |
 | 11 | Audit Log + Notifications + Dashboard | Surface the audit log as a settings page, add a notification bell to the top nav, and make dashboard cards interactive | AUDT-01–02, NOTF-01–03, DASH-01–03 | Phase 3 |
 | 12 | Import Wizard + Email Templates + Advanced Search | Multi-step CSV import, email template CRUD with variable interpolation, and full Cmd+K expansion across all entities | IMPT-01–05, EMTL-01–03, SRCH-01–03 | Phase 9, Phase 3 |
 

@@ -105,24 +105,24 @@ Requirements for this milestone. Each maps to roadmap phases.
 
 ### Activity CRUD
 
-- [ ] **ACTV-01**: User can edit an activity they created (PATCH API + UI)
-- [ ] **ACTV-02**: User can delete an activity they created (DELETE API + UI)
-- [ ] **ACTV-03**: Edit/delete buttons appear only on activities created by the current user
+- [x] **ACTV-01**: User can edit an activity they created (PATCH API + UI)
+- [x] **ACTV-02**: User can delete an activity they created (DELETE API + UI)
+- [x] **ACTV-03**: Edit/delete buttons appear only on activities created by the current user
 
 ### Saved Views
 
-- [ ] **VIEW-01**: Saved views work on deals list page (save/load view bar)
-- [ ] **VIEW-02**: Saved views work on tasks list page
-- [ ] **VIEW-03**: Saved views work on companies list page
-- [ ] **VIEW-04**: Saved views store entity type, filters, sort, and column visibility
-- [ ] **VIEW-05**: Saved view delete button exists in the saved views bar
+- [x] **VIEW-01**: Saved views work on deals list page (save/load view bar)
+- [x] **VIEW-02**: Saved views work on tasks list page
+- [x] **VIEW-03**: Saved views work on companies list page
+- [x] **VIEW-04**: Saved views store entity type, filters, sort, and column visibility
+- [x] **VIEW-05**: Saved view delete button exists in the saved views bar
 
 ### Custom Fields
 
-- [ ] **CFLD-01**: When creating/editing a custom field with type "select" or "multi_select", user can define option values
-- [ ] **CFLD-02**: Options editor shows list of values with add/remove capability
-- [ ] **CFLD-03**: Select-type custom fields render as dropdown with defined options on entity detail pages
-- [ ] **CFLD-04**: Multi-select type is available in the settings UI (currently excluded)
+- [x] **CFLD-01**: When creating/editing a custom field with type "select" or "multi_select", user can define option values
+- [x] **CFLD-02**: Options editor shows list of values with add/remove capability
+- [x] **CFLD-03**: Select-type custom fields render as dropdown with defined options on entity detail pages
+- [x] **CFLD-04**: Multi-select type is available in the settings UI (currently excluded)
 
 ### Audit Log
 
