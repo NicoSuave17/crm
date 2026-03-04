@@ -34,7 +34,7 @@ export function CompanyPicker({
   const [open, setOpen] = useState(false);
   const { data } = useCompanies();
 
-  const companies = (data ?? []) as Array<{ id: string; name: string; domain: string | null }>;
+  const companies = ((data?.data ?? data ?? []) as Array<{ id: string; name: string; domain: string | null }>);
 
   // Find the selected company for display
   const selectedCompany = value ? companies.find((c) => c.id === value) : null;
