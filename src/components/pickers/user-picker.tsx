@@ -74,6 +74,18 @@ export function UserPicker({
                     setOpen(false);
                   }}
                 >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === user.id ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  <Avatar className="h-6 w-6 mr-2">
+                    <AvatarImage src={user.avatarUrl ?? undefined} alt={user.firstName} />
+                    <AvatarFallback className="text-xs">
+                      {user.firstName?.[0]}{user.lastName?.[0]}
+                    </AvatarFallback>
+                  </Avatar>
                   <span className="text-sm">{user.firstName} {user.lastName}</span>
                 </CommandItem>
               ))}
