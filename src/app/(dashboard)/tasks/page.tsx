@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useTasks, useUpdateTask, useDeleteTask } from "@/lib/hooks/use-tasks";
+import { useSavedViews, useCreateSavedView, useDeleteSavedView } from "@/lib/hooks/use-saved-views";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -26,8 +28,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, MoreHorizontal, AlertCircle } from "lucide-react";
+import { Plus, MoreHorizontal, AlertCircle, Save, Bookmark, X } from "lucide-react";
 import { toast } from "sonner";
 import { format, isPast } from "date-fns";
 import Link from "next/link";
@@ -56,10 +65,16 @@ export default function TasksPage() {
   const [statusFilter, setStatusFilter] = useState("pending");
   const [createOpen, setCreateOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<EditingTask | null>(null);
+  const [saveViewOpen, setSaveViewOpen] = useState(false);
+  const [viewName, setViewName] = useState("");
 
   const { data: tasks, isLoading } = useTasks({ status: statusFilter !== "all" ? statusFilter : undefined });
   const updateTask = useUpdateTask();
   const deleteTask = useDeleteTask();
+
+  const { data: savedViews } = useSavedViews("task");
+  const createView = useCreateSavedView();
+  const deleteView = useDeleteSavedView();
 
   async function handleEdit(taskId: string) {
     try {
@@ -87,6 +102,32 @@ export default function TasksPage() {
     });
   }
 
+  function handleSaveView(e: React.FormEvent) {
+    e.preventDefault();
+    if (!viewName.trim()) return;
+    const filters: Record<string, unknown>[] = [];
+    if (statusFilter !== "all") filters.push({ field: "status", value: statusFilter });
+
+    createView.mutate(
+      { name: viewName.trim(), entityType: "task", filters },
+      {
+        onSuccess: () => {
+          toast.success("View saved");
+          setSaveViewOpen(false);
+          setViewName("");
+        },
+        onError: () => toast.error("Failed to save view"),
+      }
+    );
+  }
+
+  function handleLoadView(view: { filters: Record<string, unknown>[] }) {
+    setStatusFilter("all");
+    for (const f of view.filters) {
+      if (f.field === "status") setStatusFilter(f.value as string);
+    }
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -102,6 +143,39 @@ export default function TasksPage() {
         </Button>
       </div>
 
+      {/* Saved Views */}
+      {savedViews && savedViews.length > 0 && (
+        <div className="flex items-center gap-2 overflow-x-auto">
+          <Bookmark className="h-4 w-4 text-muted-foreground shrink-0" />
+          {savedViews.map((view: { id: string; name: string; filters: Record<string, unknown>[] }) => (
+            <div key={view.id} className="flex items-center gap-0.5">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs h-7 rounded-r-none"
+                onClick={() => handleLoadView(view)}
+              >
+                {view.name}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs h-7 px-1.5 rounded-l-none border-l-0"
+                onClick={() => {
+                  deleteView.mutate(view.id, {
+                    onSuccess: () => toast.success("View deleted"),
+                    onError: () => toast.error("Failed to delete view"),
+                  });
+                }}
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Filters */}
       <div className="flex items-center gap-3">
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-[150px]">
@@ -114,6 +188,14 @@ export default function TasksPage() {
             <SelectItem value="completed">Completed</SelectItem>
           </SelectContent>
         </Select>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setSaveViewOpen(true)}
+          title="Save current filters as a view"
+        >
+          <Save className="h-4 w-4" />
+        </Button>
       </div>
 
       <div className="rounded-md border">
@@ -270,6 +352,31 @@ export default function TasksPage() {
           if (!open) setEditingTask(null);
         }}
       />
+
+      {/* Save View Dialog */}
+      <Dialog open={saveViewOpen} onOpenChange={setSaveViewOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Save View</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSaveView} className="space-y-4">
+            <Input
+              placeholder="View name"
+              value={viewName}
+              onChange={(e) => setViewName(e.target.value)}
+              required
+            />
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setSaveViewOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={createView.isPending}>
+                {createView.isPending ? "Saving..." : "Save"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
