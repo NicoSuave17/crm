@@ -42,9 +42,9 @@ Plans: 2/8 (08a-pipeline-stage-crud-backend, 08b-pipeline-management-ui complete
 | 9 | Bulk Operations | ◐ In Progress | 2/5 | 40% |
 | 10 | Activity CRUD + Saved Views + Custom Fields | ◐ In Progress | 3/12 | 25% |
 | 11 | Audit Log + Notifications + Dashboard | ✓ Complete | 3/3 | 100% |
-| 12 | Import Wizard + Email Templates + Advanced Search | ○ Not Started | 0/11 | 0% |
+| 12 | Import Wizard + Email Templates + Advanced Search | ◐ In Progress | 1/11 | 9% |
 
-**Total:** 25/94 plans complete
+**Total:** 26/94 plans complete
 
 ---
 
@@ -102,4 +102,7 @@ Plans: 2/8 (08a-pipeline-stage-crud-backend, 08b-pipeline-management-ui complete
 
 - **11a-audit-log-settings:** Audit Log tab added to Settings page. DAL extended with `until` param and `{ data, total }` return for pagination. API route returns structured response. useAuditLog hook typed with AuditRow interface and date range params. AuditLogSettings component with filter bar (date range, user, entity type), paginated table (timestamp, user, action badge, entity type, change details), and previous/next pagination controls (25 per page).
 
-*Last updated: 2026-03-05 after 11a-audit-log-settings completion*
+---
+- **12a-import-wizard-verification:** Verified that Phase 9b import wizard fully satisfies IMPT-01..05 (Upload, Map columns, Preview, Import with progress, Summary). No additional implementation needed. SUMMARY.md created with full requirement coverage audit.
+
+*Last updated: 2026-03-05 after 12a-import-wizard-verification*
