@@ -5,14 +5,16 @@ import { useCurrentUser } from "@/lib/hooks/use-users";
 import { ActivityItem } from "./activity-item";
 import { ActivityForm } from "./activity-form";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { TemplateContext } from "@/lib/utils/template-interpolation";
 
 interface ActivityTimelineProps {
   contactId?: string;
   dealId?: string;
   companyId?: string;
+  templateContext?: TemplateContext;
 }
 
-export function ActivityTimeline({ contactId, dealId, companyId }: ActivityTimelineProps) {
+export function ActivityTimeline({ contactId, dealId, companyId, templateContext }: ActivityTimelineProps) {
   const { data: currentUser } = useCurrentUser();
   const { data: activities, isLoading } = useActivities(
     dealId ? { dealId } : companyId ? { companyId } : { contactId: contactId! }
@@ -20,7 +22,7 @@ export function ActivityTimeline({ contactId, dealId, companyId }: ActivityTimel
 
   return (
     <div className="space-y-4">
-      <ActivityForm contactId={contactId} dealId={dealId} companyId={companyId} />
+      <ActivityForm contactId={contactId} dealId={dealId} companyId={companyId} templateContext={templateContext} />
 
       <div className="border-t pt-4">
         {isLoading && (

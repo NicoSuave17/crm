@@ -4,16 +4,28 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { useCreateActivity } from "@/lib/hooks/use-activities";
+import { useEmailTemplates } from "@/lib/hooks/use-email-templates";
+import {
+  interpolateTemplate,
+  type TemplateContext,
+} from "@/lib/utils/template-interpolation";
 import { toast } from "sonner";
-import { MessageSquare, Phone, Mail, Calendar, Linkedin } from "lucide-react";
+import { MessageSquare, Phone, Mail, Calendar, Linkedin, FileText } from "lucide-react";
 
 const activityTypes = [
   { value: "note", label: "Note", icon: MessageSquare },
@@ -27,15 +39,24 @@ interface ActivityFormProps {
   contactId?: string;
   dealId?: string;
   companyId?: string;
+  templateContext?: TemplateContext;
   onSuccess?: () => void;
 }
 
-export function ActivityForm({ contactId, dealId, companyId, onSuccess }: ActivityFormProps) {
+export function ActivityForm({
+  contactId,
+  dealId,
+  companyId,
+  templateContext,
+  onSuccess,
+}: ActivityFormProps) {
   const [type, setType] = useState<string>("note");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [duration, setDuration] = useState("");
+  const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
   const createActivity = useCreateActivity();
+  const { data: templates } = useEmailTemplates();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -64,11 +85,18 @@ export function ActivityForm({ contactId, dealId, companyId, onSuccess }: Activi
     );
   }
 
+  function handleSelectTemplate(templateSubject: string, templateBody: string) {
+    const ctx = templateContext ?? {};
+    setSubject(interpolateTemplate(templateSubject, ctx));
+    setBody(interpolateTemplate(templateBody, ctx));
+    setTemplatePickerOpen(false);
+  }
+
   const showDuration = type === "call" || type === "meeting";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         {activityTypes.map((t) => (
           <Button
             key={t.value}
@@ -83,6 +111,46 @@ export function ActivityForm({ contactId, dealId, companyId, onSuccess }: Activi
           </Button>
         ))}
       </div>
+
+      {type === "email_sent" && templates && templates.length > 0 && (
+        <Popover open={templatePickerOpen} onOpenChange={setTemplatePickerOpen}>
+          <PopoverTrigger asChild>
+            <Button type="button" variant="outline" size="sm">
+              <FileText className="mr-1.5 h-3.5 w-3.5" />
+              Use Template
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-64 p-0" align="start">
+            <Command>
+              <CommandInput placeholder="Search templates..." />
+              <CommandList>
+                <CommandEmpty>No templates found.</CommandEmpty>
+                <CommandGroup>
+                  {templates.map((t) => (
+                    <CommandItem
+                      key={t.id}
+                      onSelect={() =>
+                        handleSelectTemplate(t.subject, t.body)
+                      }
+                    >
+                      <span className="truncate">{t.name}</span>
+                      {t.category && (
+                        <Badge
+                          variant="secondary"
+                          className="ml-auto text-[10px] shrink-0"
+                        >
+                          {t.category}
+                        </Badge>
+                      )}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+      )}
+
       <Input
         placeholder="Subject (optional)"
         value={subject}

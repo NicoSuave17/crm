@@ -2,6 +2,7 @@
 
 import { use, useState, useEffect } from "react";
 import { useDeal } from "@/lib/hooks/use-deals";
+import { useCurrentUser } from "@/lib/hooks/use-users";
 import { ActivityTimeline } from "@/components/activities/activity-timeline";
 import { DealTagSelector } from "@/components/deals/deal-tag-selector";
 import { EditDealDialog } from "@/components/deals/edit-deal-dialog";
@@ -54,6 +55,7 @@ export default function DealDetailPage({
 }) {
   const { id } = use(params);
   const { data: deal, isLoading } = useDeal(id);
+  const { data: currentUser } = useCurrentUser();
   const [editOpen, setEditOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("timeline");
 
@@ -375,7 +377,20 @@ export default function DealDetailPage({
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ActivityTimeline contactId={deal.contactId} dealId={id} />
+                  <ActivityTimeline
+                    contactId={deal.contactId}
+                    dealId={id}
+                    templateContext={{
+                      firstName: deal.contactFirstName ?? undefined,
+                      lastName: deal.contactLastName ?? undefined,
+                      companyName: deal.companyName ?? undefined,
+                      dealTitle: deal.title ?? undefined,
+                      dealValue: deal.value ? `$${deal.value}` : undefined,
+                      senderFirstName: currentUser?.firstName ?? undefined,
+                      senderLastName: currentUser?.lastName ?? undefined,
+                      senderEmail: currentUser?.email ?? undefined,
+                    }}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>

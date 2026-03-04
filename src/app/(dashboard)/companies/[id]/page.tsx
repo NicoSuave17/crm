@@ -3,6 +3,7 @@
 import { use, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCompany, useDeleteCompany } from "@/lib/hooks/use-companies";
+import { useCurrentUser } from "@/lib/hooks/use-users";
 import { ActivityTimeline } from "@/components/activities/activity-timeline";
 import { CompanyContactsTab } from "@/components/companies/company-contacts-tab";
 import { CompanyDealsTab } from "@/components/companies/company-deals-tab";
@@ -59,6 +60,7 @@ export default function CompanyDetailPage({
   const { id } = use(params);
   const router = useRouter();
   const { data: company, isLoading } = useCompany(id);
+  const { data: currentUser } = useCurrentUser();
   const deleteCompany = useDeleteCompany();
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -313,7 +315,16 @@ export default function CompanyDetailPage({
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ActivityTimeline companyId={id} />
+                  <ActivityTimeline
+                    companyId={id}
+                    templateContext={{
+                      companyName: company.name ?? undefined,
+                      companyDomain: company.domain ?? undefined,
+                      senderFirstName: currentUser?.firstName ?? undefined,
+                      senderLastName: currentUser?.lastName ?? undefined,
+                      senderEmail: currentUser?.email ?? undefined,
+                    }}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
