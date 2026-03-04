@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-last_updated: "2026-03-04T21:05:44.547Z"
+last_updated: "2026-03-05"
 progress:
   total_phases: 12
   completed_phases: 6
-  total_plans: 13
-  completed_plans: 13
+  total_plans: 14
+  completed_plans: 14
 ---
 
 # State: Whop CRM
@@ -21,9 +21,9 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 ---
 
 ## Current Phase
-**Phase 6: Contact Detail Tabs**
-Status: Complete
-Plans: 8/8 (contact-detail-tabs complete)
+**Phase 7: Company CRUD + Contact-Company Linking**
+Status: In Progress
+Plans: 1/3 (07a-company-crud-backend-list complete)
 
 ---
 
@@ -37,14 +37,14 @@ Plans: 8/8 (contact-detail-tabs complete)
 | 4 | Edit Deal + Deal Detail Enhancement | ✓ Complete | 3/3 | 100% |
 | 5 | Task Form | ◐ In Progress | 1/5 | 20% |
 | 6 | Contact Detail Tabs | ✓ Complete | 8/8 | 100% |
-| 7 | Company CRUD + Contact-Company Linking | ○ Not Started | 0/10 | 0% |
+| 7 | Company CRUD + Contact-Company Linking | ◐ In Progress | 1/3 | 33% |
 | 8 | Pipeline Management | ○ Not Started | 0/8 | 0% |
 | 9 | Bulk Operations | ○ Not Started | 0/5 | 0% |
 | 10 | Activity CRUD + Saved Views + Custom Fields | ○ Not Started | 0/12 | 0% |
 | 11 | Audit Log + Notifications + Dashboard | ○ Not Started | 0/8 | 0% |
 | 12 | Import Wizard + Email Templates + Advanced Search | ○ Not Started | 0/11 | 0% |
 
-**Total:** 13/94 plans complete
+**Total:** 14/94 plans complete
 
 ---
 
@@ -72,4 +72,7 @@ Plans: 8/8 (contact-detail-tabs complete)
 
 - **06-contact-detail-tabs:** ContactDealsTab and ContactTasksTab components replace static placeholders on contact detail page. Deals tab: table with linked titles to `/deals/{id}`, stage color badges, currency values, priority badges, close dates, Add Deal button (DealForm + pipeline context). Tasks tab: checkbox toggle (useUpdateTask), line-through on completion, priority badges, overdue styling with AlertCircle, assignee, Add Task button (TaskFormDialog + defaultContactId). No backend changes needed.
 
-*Last updated: 2026-03-05 after 06-contact-detail-tabs completion (Phase 6 complete)*
+---
+- **07a-company-crud-backend-list:** Full company CRUD backend + list page. Zod validators (`src/lib/validators/company.ts`). DAL rewritten with paginated listCompanies, getCompany (with owner + contactCount), createCompany, updateCompany, deleteCompany. API routes: GET/POST `/api/companies` (role-scoped), GET/PATCH/DELETE `/api/companies/[id]`. React Query hooks: useCompanies (paginated), useCompany, useCreateCompany, useUpdateCompany, useDeleteCompany. CompanyPicker updated for paginated response shape (`data?.data ?? data ?? []`). CompanyForm (create dialog) and EditCompanyDialog with all fields + UserPicker for owner. Companies list page at `/companies` with search, size filter, industry filter, pagination, row actions (view/edit/delete). Sidebar link added between Contacts and Pipeline with Building2 icon.
+
+*Last updated: 2026-03-05 after 07a-company-crud-backend-list completion (Phase 7 in progress)*
