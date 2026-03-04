@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useDeals, useDeleteDeal } from "@/lib/hooks/use-deals";
 import { useRowSelection } from "@/lib/hooks/use-row-selection";
+import { useSavedViews, useCreateSavedView, useDeleteSavedView } from "@/lib/hooks/use-saved-views";
 import { BulkActionBar } from "@/components/bulk/bulk-action-bar";
 import { DealsBulkActions } from "@/components/bulk/deals-bulk-actions";
 import { Checkbox } from "@/components/ui/checkbox";
 import { EditDealDialog } from "@/components/deals/edit-deal-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -18,14 +20,28 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MoreHorizontal, Pencil } from "lucide-react";
+import { MoreHorizontal, Pencil, Search, Save, Bookmark, X } from "lucide-react";
 import { formatCurrency } from "@/lib/utils/format";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -46,13 +62,44 @@ interface EditableDeal {
   priority: string | null;
 }
 
+interface DealRow {
+  id: string;
+  title: string;
+  pipelineName: string;
+  stageName: string;
+  stageColor: string | null;
+  contactId: string;
+  contactFirstName: string;
+  contactLastName: string | null;
+  ownerFirstName: string | null;
+  ownerLastName: string | null;
+  value: string | null;
+  expectedCloseDate: string | null;
+  priority: string | null;
+}
+
 export default function DealsPage() {
   const { data: deals, isLoading } = useDeals();
   const deleteDeal = useDeleteDeal();
   const selection = useRowSelection();
   const [editingDeal, setEditingDeal] = useState<EditableDeal | null>(null);
+  const [search, setSearch] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState<string>("all");
+  const [saveViewOpen, setSaveViewOpen] = useState(false);
+  const [viewName, setViewName] = useState("");
 
-  const currentPageIds = deals?.map((d: { id: string }) => d.id) ?? [];
+  const { data: savedViews } = useSavedViews("deal");
+  const createView = useCreateSavedView();
+  const deleteView = useDeleteSavedView();
+
+  // Client-side filtering
+  const filteredDeals = deals?.filter((deal: DealRow) => {
+    if (search && !deal.title.toLowerCase().includes(search.toLowerCase())) return false;
+    if (priorityFilter !== "all" && deal.priority !== priorityFilter) return false;
+    return true;
+  });
+
+  const currentPageIds = filteredDeals?.map((d: DealRow) => d.id) ?? [];
 
   async function handleEdit(dealId: string) {
     try {
@@ -65,6 +112,35 @@ export default function DealsPage() {
     }
   }
 
+  function handleSaveView(e: React.FormEvent) {
+    e.preventDefault();
+    if (!viewName.trim()) return;
+    const filters: Record<string, unknown>[] = [];
+    if (search) filters.push({ field: "search", value: search });
+    if (priorityFilter !== "all") filters.push({ field: "priority", value: priorityFilter });
+
+    createView.mutate(
+      { name: viewName.trim(), entityType: "deal", filters },
+      {
+        onSuccess: () => {
+          toast.success("View saved");
+          setSaveViewOpen(false);
+          setViewName("");
+        },
+        onError: () => toast.error("Failed to save view"),
+      }
+    );
+  }
+
+  function handleLoadView(view: { filters: Record<string, unknown>[] }) {
+    setSearch("");
+    setPriorityFilter("all");
+    for (const f of view.filters) {
+      if (f.field === "search") setSearch(f.value as string);
+      if (f.field === "priority") setPriorityFilter(f.value as string);
+    }
+  }
+
   return (
     <div className="space-y-4">
       <div>
@@ -72,6 +148,71 @@ export default function DealsPage() {
         <p className="text-sm text-muted-foreground">
           All deals across pipelines.
         </p>
+      </div>
+
+      {/* Saved Views */}
+      {savedViews && savedViews.length > 0 && (
+        <div className="flex items-center gap-2 overflow-x-auto">
+          <Bookmark className="h-4 w-4 text-muted-foreground shrink-0" />
+          {savedViews.map((view: { id: string; name: string; filters: Record<string, unknown>[] }) => (
+            <div key={view.id} className="flex items-center gap-0.5">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs h-7 rounded-r-none"
+                onClick={() => handleLoadView(view)}
+              >
+                {view.name}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs h-7 px-1.5 rounded-l-none border-l-0"
+                onClick={() => {
+                  deleteView.mutate(view.id, {
+                    onSuccess: () => toast.success("View deleted"),
+                    onError: () => toast.error("Failed to delete view"),
+                  });
+                }}
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Filters */}
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 min-w-[200px] max-w-sm">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search deals..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+          <SelectTrigger className="w-[150px]">
+            <SelectValue placeholder="Priority" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Priorities</SelectItem>
+            <SelectItem value="low">Low</SelectItem>
+            <SelectItem value="medium">Medium</SelectItem>
+            <SelectItem value="high">High</SelectItem>
+            <SelectItem value="urgent">Urgent</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setSaveViewOpen(true)}
+          title="Save current filters as a view"
+        >
+          <Save className="h-4 w-4" />
+        </Button>
       </div>
 
       <div className="rounded-md border">
@@ -113,30 +254,15 @@ export default function DealsPage() {
                 </TableRow>
               ))}
 
-            {!isLoading && deals?.length === 0 && (
+            {!isLoading && filteredDeals?.length === 0 && (
               <TableRow>
                 <TableCell colSpan={9} className="h-24 text-center">
-                  No deals yet. Create one from the Pipeline view.
+                  No deals found.
                 </TableCell>
               </TableRow>
             )}
 
-            {deals?.map(
-              (deal: {
-                id: string;
-                title: string;
-                pipelineName: string;
-                stageName: string;
-                stageColor: string | null;
-                contactId: string;
-                contactFirstName: string;
-                contactLastName: string | null;
-                ownerFirstName: string | null;
-                ownerLastName: string | null;
-                value: string | null;
-                expectedCloseDate: string | null;
-                priority: string | null;
-              }) => (
+            {filteredDeals?.map((deal: DealRow) => (
                 <TableRow key={deal.id} data-selected={selection.isSelected(deal.id) || undefined}>
                   <TableCell className="w-[40px]">
                     <Checkbox
@@ -174,12 +300,12 @@ export default function DealsPage() {
                   <TableCell className="text-sm text-muted-foreground">
                     {deal.ownerFirstName
                       ? `${deal.ownerFirstName} ${deal.ownerLastName ?? ""}`
-                      : "—"}
+                      : "\u2014"}
                   </TableCell>
                   <TableCell className="text-sm">
                     {deal.expectedCloseDate
                       ? new Date(deal.expectedCloseDate).toLocaleDateString()
-                      : "—"}
+                      : "\u2014"}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -232,6 +358,31 @@ export default function DealsPage() {
           }}
         />
       )}
+
+      {/* Save View Dialog */}
+      <Dialog open={saveViewOpen} onOpenChange={setSaveViewOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Save View</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSaveView} className="space-y-4">
+            <Input
+              placeholder="View name"
+              value={viewName}
+              onChange={(e) => setViewName(e.target.value)}
+              required
+            />
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setSaveViewOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={createView.isPending}>
+                {createView.isPending ? "Saving..." : "Save"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
