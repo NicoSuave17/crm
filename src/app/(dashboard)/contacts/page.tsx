@@ -1,7 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useContacts, useDeleteContact } from "@/lib/hooks/use-contacts";
+import { useRowSelection } from "@/lib/hooks/use-row-selection";
+import { BulkActionBar } from "@/components/bulk/bulk-action-bar";
+import { ContactsBulkActions } from "@/components/bulk/contacts-bulk-actions";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ContactForm } from "@/components/contacts/contact-form";
 import { EditContactDialog } from "@/components/contacts/edit-contact-dialog";
 import { HealthScoreBadge } from "@/components/contacts/health-score-badge";
@@ -96,12 +100,26 @@ export default function ContactsPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [page, setPage] = useState(1);
 
+  const selection = useRowSelection();
+  const prevFilterKey = useRef("");
+
   const { data, isLoading } = useContacts({
     page,
     search: search || undefined,
     type: typeFilter !== "all" ? typeFilter : undefined,
     status: statusFilter !== "all" ? statusFilter : undefined,
   });
+
+  const currentPageIds = data?.data?.map((c: { id: string }) => c.id) ?? [];
+
+  // Clear selection when filters or page change
+  const filterKey = `${search}|${typeFilter}|${statusFilter}|${page}`;
+  useEffect(() => {
+    if (prevFilterKey.current && prevFilterKey.current !== filterKey) {
+      selection.clear();
+    }
+    prevFilterKey.current = filterKey;
+  }, [filterKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const deleteContact = useDeleteContact();
   const { data: savedViews } = useSavedViews("contact");
@@ -273,6 +291,19 @@ export default function ContactsPage() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[40px]">
+                <Checkbox
+                  checked={
+                    selection.isAllSelected(currentPageIds)
+                      ? true
+                      : selection.isSomeSelected(currentPageIds)
+                        ? "indeterminate"
+                        : false
+                  }
+                  onCheckedChange={() => selection.toggleAll(currentPageIds)}
+                  aria-label="Select all"
+                />
+              </TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Status</TableHead>
@@ -286,6 +317,7 @@ export default function ContactsPage() {
             {isLoading &&
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i}>
+                  <TableCell className="w-[40px]"><Skeleton className="h-4 w-4" /></TableCell>
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Skeleton className="h-8 w-8 rounded-full" />
@@ -303,7 +335,7 @@ export default function ContactsPage() {
 
             {!isLoading && data?.data?.length === 0 && (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center">
+                <TableCell colSpan={8} className="h-24 text-center">
                   No contacts found. Create one to get started.
                 </TableCell>
               </TableRow>
@@ -323,7 +355,14 @@ export default function ContactsPage() {
                 ownerFirstName: string | null;
                 ownerLastName: string | null;
               }) => (
-                <TableRow key={contact.id}>
+                <TableRow key={contact.id} data-selected={selection.isSelected(contact.id) || undefined}>
+                  <TableCell className="w-[40px]">
+                    <Checkbox
+                      checked={selection.isSelected(contact.id)}
+                      onCheckedChange={() => selection.toggle(contact.id)}
+                      aria-label={`Select ${contact.firstName}`}
+                    />
+                  </TableCell>
                   <TableCell>
                     <Link
                       href={`/contacts/${contact.id}`}
@@ -434,6 +473,15 @@ export default function ContactsPage() {
             </Button>
           </div>
         </div>
+      )}
+
+      {selection.count > 0 && (
+        <BulkActionBar selectedCount={selection.count} onClear={selection.clear}>
+          <ContactsBulkActions
+            selectedIds={Array.from(selection.selectedIds)}
+            onComplete={selection.clear}
+          />
+        </BulkActionBar>
       )}
 
       <ContactForm open={createOpen} onOpenChange={setCreateOpen} />
