@@ -256,6 +256,10 @@ export default function DealDetailPage({
                   dealId={id}
                   currentTags={deal.tags ?? []}
                 />
+
+                {/* Custom Fields */}
+                <Separator />
+                <CustomFieldsDisplay entityId={id} />
               </div>
             </CardContent>
           </Card>
