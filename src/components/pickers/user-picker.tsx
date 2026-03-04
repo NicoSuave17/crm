@@ -84,6 +84,20 @@ export function UserPicker({
           <CommandInput placeholder="Search team members..." />
           <CommandList>
             <CommandEmpty>No team member found.</CommandEmpty>
+            {value && (
+              <CommandGroup>
+                <CommandItem
+                  onSelect={() => {
+                    onChange(null);
+                    setOpen(false);
+                  }}
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  <span className="text-muted-foreground">Clear selection</span>
+                </CommandItem>
+              </CommandGroup>
+            )}
+            {value && <CommandSeparator />}
             <CommandGroup>
               {activeUsers.map((user) => (
                 <CommandItem
