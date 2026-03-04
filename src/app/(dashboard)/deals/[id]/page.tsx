@@ -2,8 +2,11 @@
 
 import { use, useState } from "react";
 import { useDeal } from "@/lib/hooks/use-deals";
+import { ActivityTimeline } from "@/components/activities/activity-timeline";
 import { DealTagSelector } from "@/components/deals/deal-tag-selector";
 import { EditDealDialog } from "@/components/deals/edit-deal-dialog";
+import { CustomFieldsDisplay } from "@/components/contacts/custom-fields-display";
+import { StageHistoryList } from "@/components/deals/stage-history-list";
 import { formatCurrency } from "@/lib/utils/format";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -339,13 +342,11 @@ export default function DealDetailPage({
                 <CardHeader>
                   <CardTitle className="text-base">Activity Timeline</CardTitle>
                   <CardDescription>
-                    All activities related to this deal
+                    All interactions for this deal
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground py-8 text-center">
-                    Timeline will be populated in a future update.
-                  </p>
+                  <ActivityTimeline contactId={deal.contactId} dealId={id} />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -355,13 +356,11 @@ export default function DealDetailPage({
                 <CardHeader>
                   <CardTitle className="text-base">Stage History</CardTitle>
                   <CardDescription>
-                    Track how this deal has moved through stages
+                    Progression through pipeline stages
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground py-8 text-center">
-                    Stage history will be populated in a future update.
-                  </p>
+                  <StageHistoryList dealId={id} />
                 </CardContent>
               </Card>
             </TabsContent>
