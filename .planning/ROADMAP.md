@@ -9,7 +9,7 @@
 | # | Phase | Goal | Requirements | Dependencies |
 |---|-------|------|--------------|--------------|
 | 1 | 3/3 | Complete    | 2026-03-04 | None |
-| 2 | 4/4 | Complete   | 2026-03-04 | Phase 1 |
+| 2 | 4/4 | Complete    | 2026-03-04 | Phase 1 |
 | 3 | Edit Contact | Expose the full contact edit dialog from both the detail page and the list dropdown, wiring to the existing PATCH API | CONT-01–05 | Phase 2 |
 | 4 | Edit Deal + Deal Detail Enhancement | Add the deal edit dialog and enrich the deal detail page with activity timeline, stage history, tags, and custom fields | DEAL-01–05, DDET-01–07 | Phase 2 |
 | 5 | Task Form | Build a reusable TaskForm used for both create and edit, exposing all fields including assignee, contact, and deal links | TASK-01–05 | Phase 2 |
