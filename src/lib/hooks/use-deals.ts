@@ -15,10 +15,11 @@ export function useDeal(id: string) {
   });
 }
 
-export function useDeals(params: { ownerId?: string; contactId?: string } = {}) {
+export function useDeals(params: { ownerId?: string; contactId?: string; companyId?: string } = {}) {
   const searchParams = new URLSearchParams();
   if (params.ownerId) searchParams.set("ownerId", params.ownerId);
   if (params.contactId) searchParams.set("contactId", params.contactId);
+  if (params.companyId) searchParams.set("companyId", params.companyId);
 
   return useQuery({
     queryKey: ["deals", params],

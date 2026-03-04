@@ -49,10 +49,11 @@ export async function listDealsByPipeline(pipelineId: string) {
   return data;
 }
 
-export async function listDeals(params: { ownerId?: string; contactId?: string } = {}) {
+export async function listDeals(params: { ownerId?: string; contactId?: string; companyId?: string } = {}) {
   const conditions: SQL[] = [];
   if (params.ownerId) conditions.push(eq(deals.ownerId, params.ownerId));
   if (params.contactId) conditions.push(eq(deals.contactId, params.contactId));
+  if (params.companyId) conditions.push(eq(deals.companyId, params.companyId));
   const where = conditions.length > 0 ? and(...conditions) : undefined;
 
   return db
