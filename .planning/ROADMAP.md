@@ -13,7 +13,7 @@
 | 3 | 1/1 | Complete    | 2026-03-04 | Phase 2 |
 | 4 | 3/3 | Complete    | 2026-03-04 | Phase 2 |
 | 5 | 1/1 | Complete    | 2026-03-04 | Phase 2 |
-| 6 | 1/1 | Complete   | 2026-03-04 | Phase 4, Phase 5 |
+| 6 | 1/1 | Complete    | 2026-03-04 | Phase 4, Phase 5 |
 | 7 | Company CRUD + Contact-Company Linking | Stand up the full Company entity (list, detail, create, edit, delete) and activate the contact_companies junction table UI | COMP-01–06, LINK-01–04 | Phase 2 |
 | 8 | Pipeline Management | Replace the read-only pipeline settings tab with full CRUD for pipelines and stages including drag-to-reorder | PIPE-01–08 | None |
 | 9 | Bulk Operations | Add row selection and a bulk action bar to contacts and deals lists, plus a CSV import wizard | BULK-01–05 | Phase 3, Phase 4 |

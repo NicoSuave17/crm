@@ -41,14 +41,14 @@ Requirements for this milestone. Each maps to roadmap phases.
 
 ### Contact Detail Tabs
 
-- [ ] **CTAB-01**: Contact detail Deals tab shows actual deals where contactId matches
-- [ ] **CTAB-02**: Deals tab displays as mini table: title, stage, value, priority, expected close date
-- [ ] **CTAB-03**: Each deal row links to deal detail page
-- [ ] **CTAB-04**: Deals tab has "Add Deal" button that opens DealForm pre-filled with contactId
-- [ ] **CTAB-05**: Contact detail Tasks tab shows actual tasks where contactId matches
-- [ ] **CTAB-06**: Tasks tab displays: title, status, priority, due date, assignee
-- [ ] **CTAB-07**: Tasks tab has status toggle checkbox (same as tasks page)
-- [ ] **CTAB-08**: Tasks tab has "Add Task" button that opens TaskForm pre-filled with contactId
+- [x] **CTAB-01**: Contact detail Deals tab shows actual deals where contactId matches
+- [x] **CTAB-02**: Deals tab displays as mini table: title, stage, value, priority, expected close date
+- [x] **CTAB-03**: Each deal row links to deal detail page
+- [x] **CTAB-04**: Deals tab has "Add Deal" button that opens DealForm pre-filled with contactId
+- [x] **CTAB-05**: Contact detail Tasks tab shows actual tasks where contactId matches
+- [x] **CTAB-06**: Tasks tab displays: title, status, priority, due date, assignee
+- [x] **CTAB-07**: Tasks tab has status toggle checkbox (same as tasks page)
+- [x] **CTAB-08**: Tasks tab has "Add Task" button that opens TaskForm pre-filled with contactId
 
 ### Pipeline Management
 
