@@ -19,7 +19,7 @@
 | 9 | 2/2 | Complete    | 2026-03-04 | Phase 3, Phase 4 |
 | 10 | 3/3 | Complete    | 2026-03-04 | Phase 3, Phase 4, Phase 7 |
 | 11 | 3/3 | Complete    | 2026-03-04 | Phase 3 |
-| 12 | Import Wizard + Email Templates + Advanced Search | Multi-step CSV import, email template CRUD with variable interpolation, and full Cmd+K expansion across all entities | IMPT-01–05, EMTL-01–03, SRCH-01–03 | Phase 9, Phase 3 |
+| 12 | 1/3 | In Progress|  | Phase 9, Phase 3 |
 
 ---
 
@@ -214,7 +214,7 @@
 **Requirements:** IMPT-01, IMPT-02, IMPT-03, IMPT-04, IMPT-05, EMTL-01, EMTL-02, EMTL-03, SRCH-01, SRCH-02, SRCH-03
 **Dependencies:** Phase 9, Phase 3
 
-**Plans:** IMPT-01, IMPT-02, IMPT-03, IMPT-04, IMPT-05, EMTL-01, EMTL-02, EMTL-03, SRCH-01, SRCH-02, SRCH-03
+**Plans:** 1/3 plans executed
 
 **Success Criteria:**
 1. The import wizard (also reachable from a Settings > Import page) walks through: upload CSV → auto-detect and manually map columns → preview first 5 rows → import with a visible progress bar → summary screen showing created count, skipped count, and any row-level errors.
