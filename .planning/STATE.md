@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-last_updated: "2026-03-04T20:53:09.784Z"
+last_updated: "2026-03-05T00:00:00.000Z"
 progress:
   total_phases: 12
   completed_phases: 4
   total_plans: 11
-  completed_plans: 11
+  completed_plans: 12
 ---
 
 # State: Whop CRM
@@ -21,9 +21,9 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 ---
 
 ## Current Phase
-**Phase 4: Edit Deal + Deal Detail Enhancement**
-Status: Complete
-Plans: 3/3 (04a-edit-deal-dialog, 04b-deal-detail-timeline-history, 04c-deal-detail-entities-tags-fields complete)
+**Phase 5: Task Form**
+Status: In Progress
+Plans: 1/5 (05a-task-form complete)
 
 ---
 
@@ -35,7 +35,7 @@ Plans: 3/3 (04a-edit-deal-dialog, 04b-deal-detail-timeline-history, 04c-deal-det
 | 2 | Entity Pickers | ◐ In Progress | 4/5 | 80% |
 | 3 | Edit Contact | ✓ Complete | 1/1 | 100% |
 | 4 | Edit Deal + Deal Detail Enhancement | ✓ Complete | 3/3 | 100% |
-| 5 | Task Form | ○ Not Started | 0/5 | 0% |
+| 5 | Task Form | ◐ In Progress | 1/5 | 20% |
 | 6 | Contact Detail Tabs | ○ Not Started | 0/8 | 0% |
 | 7 | Company CRUD + Contact-Company Linking | ○ Not Started | 0/10 | 0% |
 | 8 | Pipeline Management | ○ Not Started | 0/8 | 0% |
@@ -44,7 +44,7 @@ Plans: 3/3 (04a-edit-deal-dialog, 04b-deal-detail-timeline-history, 04c-deal-det
 | 11 | Audit Log + Notifications + Dashboard | ○ Not Started | 0/8 | 0% |
 | 12 | Import Wizard + Email Templates + Advanced Search | ○ Not Started | 0/11 | 0% |
 
-**Total:** 11/94 plans complete
+**Total:** 12/94 plans complete
 
 ---
 
@@ -67,4 +67,7 @@ Plans: 3/3 (04a-edit-deal-dialog, 04b-deal-detail-timeline-history, 04c-deal-det
 - **04c-deal-detail-entities-tags-fields:** Deal detail page enriched with clickable contact/company entity cards (Links to detail pages), DealTagSelector for add/remove tags via deal_tags junction table, and CustomFieldsDisplay reused for deal custom fields. API routes extended for deal tag CRUD. getDealWithRelations now returns tags.
 - **04b-deal-detail-timeline-history:** deal_stage_history table created for tracking stage transitions. Stage history recorded in createDeal, moveDeal, and updateDeal. ActivityTimeline/ActivityForm made flexible (contactId optional) for deal-only mode. StageHistoryList component shows vertical timeline of stage changes. Deal detail page wired with live timeline tab, stage history tab, and Log Activity header button.
 
-*Last updated: 2026-03-05 after 04b-deal-detail-timeline-history completion (Phase 4 complete)*
+---
+- **05a-task-form:** TaskFormDialog component at `src/components/tasks/task-form-dialog.tsx`. Unified create/edit dialog with all task fields (title, description, status, priority, dueDate, assigneeId via UserPicker, contactId via ContactPicker, dealId via DealPicker). Status hidden in create mode. Supports defaultContactId/defaultDealId props for Phase 6 pre-fill. GET /api/tasks/[id] endpoint added. getTask(id) data access function added. useTask(id) hook added. Tasks page wired with create dialog + edit via row dropdown (fetch-on-click pattern).
+
+*Last updated: 2026-03-05 after 05a-task-form completion (Phase 5 started)*
