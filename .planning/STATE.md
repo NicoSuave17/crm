@@ -100,4 +100,6 @@ Plans: 2/8 (08a-pipeline-stage-crud-backend, 08b-pipeline-management-ui complete
 
 - **11c-dashboard-enhancement:** Dashboard page rewritten with configurable KPI cards. Date range selector (from/to) scopes contacts and deals metrics. Pipeline selector dropdown filters deal KPIs. Card visibility toggles via Customize popover. Drag-to-reorder with @dnd-kit and localStorage persistence. Uniform 4-column grid. API accepts since/until/pipelineId params. useDashboard hook passes params with cache-key integration.
 
-*Last updated: 2026-03-05 after 11c-dashboard-enhancement completion*
+- **11a-audit-log-settings:** Audit Log tab added to Settings page. DAL extended with `until` param and `{ data, total }` return for pagination. API route returns structured response. useAuditLog hook typed with AuditRow interface and date range params. AuditLogSettings component with filter bar (date range, user, entity type), paginated table (timestamp, user, action badge, entity type, change details), and previous/next pagination controls (25 per page).
+
+*Last updated: 2026-03-05 after 11a-audit-log-settings completion*
