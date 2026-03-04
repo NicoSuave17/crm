@@ -92,4 +92,6 @@ Plans: 2/8 (08a-pipeline-stage-crud-backend, 08b-pipeline-management-ui complete
 ---
 - **10b-saved-views-extension:** Saved views extended from contacts-only to all 4 list pages. Delete button (X) added to view chips. Deals page gained search + priority filter (client-side). Tasks page save captures status filter. Companies page save captures search + size + industry. No backend changes needed -- existing saved views infrastructure supported all entity types.
 
-*Last updated: 2026-03-05 after 10b-saved-views-extension completion*
+- **10c-custom-field-options:** OptionsEditor component at `src/components/custom-fields/options-editor.tsx` for adding/removing options during field creation. Multi-select type added to settings field type selector. CustomFieldsDisplay (`src/components/contacts/custom-fields-display.tsx`) updated to render select fields as `<Select>` dropdowns and multi_select as `<Popover>` with checkboxes. Multi-select values stored as JSON array in textValue. useUpdateFieldDefinition hook added for future edit UI. PATCH API already existed.
+
+*Last updated: 2026-03-05 after 10c-custom-field-options completion*
