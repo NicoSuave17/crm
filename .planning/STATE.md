@@ -42,9 +42,9 @@ Plans: 2/8 (08a-pipeline-stage-crud-backend, 08b-pipeline-management-ui complete
 | 9 | Bulk Operations | ◐ In Progress | 2/5 | 40% |
 | 10 | Activity CRUD + Saved Views + Custom Fields | ◐ In Progress | 3/12 | 25% |
 | 11 | Audit Log + Notifications + Dashboard | ✓ Complete | 3/3 | 100% |
-| 12 | Import Wizard + Email Templates + Advanced Search | ◐ In Progress | 2/11 | 18% |
+| 12 | Import Wizard + Email Templates + Advanced Search | ◐ In Progress | 3/11 | 27% |
 
-**Total:** 27/94 plans complete
+**Total:** 28/94 plans complete
 
 ---
 
@@ -107,4 +107,6 @@ Plans: 2/8 (08a-pipeline-stage-crud-backend, 08b-pipeline-management-ui complete
 
 - **12c-advanced-search:** Command palette expanded with full-entity search (contacts, deals, companies, tasks), client-side settings search, recent items via localStorage, quick actions (create contact/deal/task/company with ?create=true URL handlers), entity type badges in results. Settings page converted to controlled tabs with ?tab= deep linking. Suspense boundaries added for Next.js static generation compat.
 
-*Last updated: 2026-03-05 after 12c-advanced-search completion*
+- **12b-email-templates:** Full email template system. emailTemplates table (name, subject, body, category, createdBy, isShared). DAL + API + hooks for CRUD. Variable interpolation engine with {{firstName}}, {{companyName}}, etc. (12 variables). Settings tab with create/edit dialog, live preview, variable reference panel. Template picker in activity form (email_sent type only) with Popover + Command search. Contact/deal/company detail pages pass templateContext for interpolation.
+
+*Last updated: 2026-03-05 after 12b-email-templates completion*
