@@ -33,6 +33,17 @@ export function UserPicker({
   className,
 }: UserPickerProps) {
   const [open, setOpen] = useState(false);
+  const { data: users = [] } = useUsers();
+
+  // Only show active users in the picker
+  const activeUsers = (users as Array<{
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    avatarUrl: string | null;
+    isActive: boolean;
+  }>).filter((user) => user.isActive === true);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -53,7 +64,20 @@ export function UserPicker({
           <CommandInput placeholder="Search team members..." />
           <CommandList>
             <CommandEmpty>No team member found.</CommandEmpty>
-            <CommandGroup />
+            <CommandGroup>
+              {activeUsers.map((user) => (
+                <CommandItem
+                  key={user.id}
+                  value={`${user.firstName} ${user.lastName} ${user.email}`}
+                  onSelect={() => {
+                    onChange(user.id === value ? null : user.id);
+                    setOpen(false);
+                  }}
+                >
+                  <span className="text-sm">{user.firstName} {user.lastName}</span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
           </CommandList>
         </Command>
       </PopoverContent>
