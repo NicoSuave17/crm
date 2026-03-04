@@ -6,9 +6,9 @@ status: executing
 last_updated: "2026-03-04T22:02:36.991Z"
 progress:
   total_phases: 12
-  completed_phases: 10
+  completed_phases: 11
   total_plans: 23
-  completed_plans: 24
+  completed_plans: 25
 ---
 
 # State: Whop CRM
@@ -41,10 +41,10 @@ Plans: 2/8 (08a-pipeline-stage-crud-backend, 08b-pipeline-management-ui complete
 | 8 | Pipeline Management | ◐ In Progress | 2/8 | 25% |
 | 9 | Bulk Operations | ◐ In Progress | 2/5 | 40% |
 | 10 | Activity CRUD + Saved Views + Custom Fields | ◐ In Progress | 3/12 | 25% |
-| 11 | Audit Log + Notifications + Dashboard | ◐ In Progress | 1/8 | 12% |
+| 11 | Audit Log + Notifications + Dashboard | ✓ Complete | 3/3 | 100% |
 | 12 | Import Wizard + Email Templates + Advanced Search | ○ Not Started | 0/11 | 0% |
 
-**Total:** 24/94 plans complete
+**Total:** 25/94 plans complete
 
 ---
 
@@ -98,4 +98,6 @@ Plans: 2/8 (08a-pipeline-stage-crud-backend, 08b-pipeline-management-ui complete
 
 - **11b-notifications-bell:** NotificationBell component at `src/components/layout/notification-bell.tsx`. Popover dropdown with unread count badge, severity-colored icons, mark-read/mark-all-read mutations, relative timestamps, empty state, and "View all alerts" link to /alerts. Replaced static Bell button in TopNav. Reuses existing useAlerts() hook and /api/alerts PATCH endpoint.
 
-*Last updated: 2026-03-05 after 11b-notifications-bell completion*
+- **11c-dashboard-enhancement:** Dashboard page rewritten with configurable KPI cards. Date range selector (from/to) scopes contacts and deals metrics. Pipeline selector dropdown filters deal KPIs. Card visibility toggles via Customize popover. Drag-to-reorder with @dnd-kit and localStorage persistence. Uniform 4-column grid. API accepts since/until/pipelineId params. useDashboard hook passes params with cache-key integration.
+
+*Last updated: 2026-03-05 after 11c-dashboard-enhancement completion*
