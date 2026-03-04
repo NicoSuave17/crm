@@ -14,7 +14,7 @@
 | 4 | 3/3 | Complete    | 2026-03-04 | Phase 2 |
 | 5 | 1/1 | Complete    | 2026-03-04 | Phase 2 |
 | 6 | 1/1 | Complete    | 2026-03-04 | Phase 4, Phase 5 |
-| 7 | 3/3 | Complete   | 2026-03-04 | Phase 2 |
+| 7 | 3/3 | Complete    | 2026-03-04 | Phase 2 |
 | 8 | Pipeline Management | Replace the read-only pipeline settings tab with full CRUD for pipelines and stages including drag-to-reorder | PIPE-01–08 | None |
 | 9 | Bulk Operations | Add row selection and a bulk action bar to contacts and deals lists, plus a CSV import wizard | BULK-01–05 | Phase 3, Phase 4 |
 | 10 | Activity CRUD + Saved Views + Custom Fields | Add edit/delete to activity timeline items, extend saved views to all list entities, and add select-options UI to custom field definitions | ACTV-01–03, VIEW-01–05, CFLD-01–04 | Phase 3, Phase 4, Phase 7 |
