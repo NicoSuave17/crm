@@ -12,7 +12,7 @@
 | 2 | 4/4 | Complete    | 2026-03-04 | Phase 1 |
 | 3 | 1/1 | Complete    | 2026-03-04 | Phase 2 |
 | 4 | 3/3 | Complete    | 2026-03-04 | Phase 2 |
-| 5 | 1/1 | Complete   | 2026-03-04 | Phase 2 |
+| 5 | 1/1 | Complete    | 2026-03-04 | Phase 2 |
 | 6 | Contact Detail Tabs | Replace empty Deals and Tasks tab placeholders with real data, inline status toggle, and contextual create buttons | CTAB-01–08 | Phase 4, Phase 5 |
 | 7 | Company CRUD + Contact-Company Linking | Stand up the full Company entity (list, detail, create, edit, delete) and activate the contact_companies junction table UI | COMP-01–06, LINK-01–04 | Phase 2 |
 | 8 | Pipeline Management | Replace the read-only pipeline settings tab with full CRUD for pipelines and stages including drag-to-reorder | PIPE-01–08 | None |
