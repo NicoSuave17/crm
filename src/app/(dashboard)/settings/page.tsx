@@ -44,7 +44,9 @@ import {
 } from "@/lib/hooks/use-custom-fields";
 import { usePipelines } from "@/lib/hooks/use-pipeline";
 import { useUsers, useUpdateUser, useCurrentUser } from "@/lib/hooks/use-users";
-import { Plus, Trash2, Tag, Columns, GitBranch, Users } from "lucide-react";
+import { Plus, Trash2, Tag, Columns, GitBranch, Users, FileText } from "lucide-react";
+import { useAuditLog, type AuditRow } from "@/lib/hooks/use-audit-log";
+import { format } from "date-fns";
 import { PipelineCard } from "@/components/settings/pipeline-card";
 import { PipelineDialog } from "@/components/settings/pipeline-dialog";
 import { OptionsEditor } from "@/components/custom-fields/options-editor";
@@ -61,7 +63,7 @@ export default function SettingsPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
         <p className="text-muted-foreground">
-          Configure your CRM — team, tags, custom fields, and pipelines.
+          Configure your CRM — team, tags, custom fields, pipelines, and audit log.
         </p>
       </div>
 
@@ -83,6 +85,10 @@ export default function SettingsPage() {
             <GitBranch className="mr-2 h-4 w-4" />
             Pipelines
           </TabsTrigger>
+          <TabsTrigger value="audit-log">
+            <FileText className="mr-2 h-4 w-4" />
+            Audit Log
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="team" className="mt-4">
@@ -99,6 +105,10 @@ export default function SettingsPage() {
 
         <TabsContent value="pipelines" className="mt-4">
           <PipelinesSettings />
+        </TabsContent>
+
+        <TabsContent value="audit-log" className="mt-4">
+          <AuditLogSettings />
         </TabsContent>
       </Tabs>
     </div>
@@ -658,5 +668,210 @@ function PipelinesSettings() {
 
       <PipelineDialog open={createOpen} onOpenChange={setCreateOpen} />
     </div>
+  );
+}
+
+// ─── Audit Log Tab ──────────────────────────────────────────────
+
+const PAGE_SIZE = 25;
+
+const ENTITY_TYPE_LABELS: Record<string, string> = {
+  contact: "Contact",
+  deal: "Deal",
+  task: "Task",
+  pipeline: "Pipeline",
+  tag: "Tag",
+  custom_field: "Custom Field",
+  user: "User",
+  company: "Company",
+};
+
+function AuditLogSettings() {
+  const [page, setPage] = useState(0);
+  const [entityType, setEntityType] = useState<string>("all");
+  const [userId, setUserId] = useState<string>("all");
+  const [since, setSince] = useState<string>("");
+  const [until, setUntil] = useState<string>("");
+
+  const { data: users } = useUsers();
+
+  const { data: result, isLoading } = useAuditLog({
+    limit: PAGE_SIZE,
+    offset: page * PAGE_SIZE,
+    entityType: entityType !== "all" ? entityType : undefined,
+    userId: userId !== "all" ? userId : undefined,
+    since: since || undefined,
+    until: until || undefined,
+  });
+
+  const entries = result?.data ?? [];
+  const total = result?.total ?? 0;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Audit Log</CardTitle>
+        <CardDescription>
+          Review all system events and changes made by team members.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* Filter bar */}
+        <div className="flex flex-wrap items-end gap-3">
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">From</label>
+            <Input
+              type="date"
+              value={since}
+              onChange={(e) => { setSince(e.target.value); setPage(0); }}
+              className="w-[160px] h-9"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">To</label>
+            <Input
+              type="date"
+              value={until}
+              onChange={(e) => { setUntil(e.target.value); setPage(0); }}
+              className="w-[160px] h-9"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">User</label>
+            <Select value={userId} onValueChange={(v) => { setUserId(v); setPage(0); }}>
+              <SelectTrigger className="w-[180px] h-9">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Users</SelectItem>
+                {users?.map((u: { id: string; firstName: string; lastName: string }) => (
+                  <SelectItem key={u.id} value={u.id}>
+                    {u.firstName} {u.lastName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">Entity Type</label>
+            <Select value={entityType} onValueChange={(v) => { setEntityType(v); setPage(0); }}>
+              <SelectTrigger className="w-[160px] h-9">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                {Object.entries(ENTITY_TYPE_LABELS).map(([value, label]) => (
+                  <SelectItem key={value} value={value}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          {(since || until || entityType !== "all" || userId !== "all") && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSince("");
+                setUntil("");
+                setEntityType("all");
+                setUserId("all");
+                setPage(0);
+              }}
+            >
+              Clear filters
+            </Button>
+          )}
+        </div>
+
+        {/* Table */}
+        {isLoading ? (
+          <div className="space-y-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-10 w-full" />
+            ))}
+          </div>
+        ) : entries.length === 0 ? (
+          <p className="text-sm text-muted-foreground py-8 text-center">
+            No audit log entries found.
+          </p>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[160px]">Timestamp</TableHead>
+                <TableHead className="w-[140px]">User</TableHead>
+                <TableHead className="w-[120px]">Action</TableHead>
+                <TableHead className="w-[100px]">Entity Type</TableHead>
+                <TableHead>Details</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {entries.map((entry: AuditRow) => {
+                const meta = entry.metadata as Record<string, unknown> | null;
+                const entType = (meta?.entityType as string) ?? "—";
+                const changes = meta?.changes as Record<string, { from: unknown; to: unknown }> | undefined;
+                const changesSummary = changes
+                  ? Object.entries(changes)
+                      .map(([field, { from, to }]) => `${field}: ${String(from)} → ${String(to)}`)
+                      .join(", ")
+                  : null;
+
+                return (
+                  <TableRow key={entry.id}>
+                    <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
+                      {format(new Date(entry.occurredAt), "MMM d, yyyy HH:mm")}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {entry.userFirstName} {entry.userLastName}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="text-xs">
+                        {entry.action ?? "—"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {ENTITY_TYPE_LABELS[entType] ?? entType}
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground truncate max-w-[300px]">
+                      {changesSummary ?? (entry.body ?? "—")}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between pt-2">
+            <p className="text-xs text-muted-foreground">
+              Showing {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, total)} of {total}
+            </p>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page === 0}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page >= totalPages - 1}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
