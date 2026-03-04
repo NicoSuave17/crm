@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { Suspense, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useContacts, useDeleteContact } from "@/lib/hooks/use-contacts";
 import { useRowSelection } from "@/lib/hooks/use-row-selection";
@@ -77,7 +77,15 @@ const statusVariants: Record<string, "default" | "secondary" | "destructive" | "
   closed_lost: "outline",
 };
 
-export default function ContactsPage() {
+export default function ContactsPageWrapper() {
+  return (
+    <Suspense>
+      <ContactsPage />
+    </Suspense>
+  );
+}
+
+function ContactsPage() {
   const searchParams = useSearchParams();
   const [createOpen, setCreateOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);

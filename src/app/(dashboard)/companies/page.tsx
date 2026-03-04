@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useCompanies, useDeleteCompany } from "@/lib/hooks/use-companies";
 import { useSavedViews, useCreateSavedView, useDeleteSavedView } from "@/lib/hooks/use-saved-views";
@@ -69,7 +69,15 @@ interface CompanyRow {
   updatedAt: string;
 }
 
-export default function CompaniesPage() {
+export default function CompaniesPageWrapper() {
+  return (
+    <Suspense>
+      <CompaniesPage />
+    </Suspense>
+  );
+}
+
+function CompaniesPage() {
   const searchParams = useSearchParams();
   const [createOpen, setCreateOpen] = useState(false);
 

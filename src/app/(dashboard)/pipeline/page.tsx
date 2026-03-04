@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { usePipelines, usePipelineWithDeals } from "@/lib/hooks/use-pipeline";
 import { KanbanBoard } from "@/components/pipeline/kanban-board";
@@ -16,7 +16,15 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus } from "lucide-react";
 
-export default function PipelinePage() {
+export default function PipelinePageWrapper() {
+  return (
+    <Suspense>
+      <PipelinePage />
+    </Suspense>
+  );
+}
+
+function PipelinePage() {
   const searchParams = useSearchParams();
   const { data: pipelines, isLoading: pipelinesLoading } = usePipelines();
   const [selectedPipelineId, setSelectedPipelineId] = useState<string>("");

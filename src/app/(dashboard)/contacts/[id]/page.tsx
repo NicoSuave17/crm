@@ -2,6 +2,7 @@
 
 import { use, useState, useEffect } from "react";
 import { useContact } from "@/lib/hooks/use-contacts";
+import { useCurrentUser } from "@/lib/hooks/use-users";
 import { useContactCompanies, useUnlinkCompany } from "@/lib/hooks/use-contact-companies";
 import { ActivityTimeline } from "@/components/activities/activity-timeline";
 import { ContactDealsTab } from "@/components/contacts/contact-deals-tab";
@@ -49,10 +50,31 @@ export default function ContactDetailPage({
 }) {
   const { id } = use(params);
   const { data: contact, isLoading } = useContact(id);
+  const { data: currentUser } = useCurrentUser();
   const { data: linkedCompanies } = useContactCompanies(id);
   const unlinkCompany = useUnlinkCompany();
   const [editOpen, setEditOpen] = useState(false);
   const [linkCompanyOpen, setLinkCompanyOpen] = useState(false);
+
+  // Build template context for email template interpolation
+  const primaryCompany = linkedCompanies?.find(
+    (lc: { isPrimary: boolean | null }) => lc.isPrimary
+  ) ?? linkedCompanies?.[0];
+  const templateContext = contact
+    ? {
+        firstName: contact.firstName,
+        lastName: contact.lastName ?? undefined,
+        email: contact.email ?? undefined,
+        whopUsername: contact.whopUsername ?? undefined,
+        tier: contact.tier ?? undefined,
+        status: contact.status ?? undefined,
+        companyName: primaryCompany?.name ?? undefined,
+        companyDomain: primaryCompany?.domain ?? undefined,
+        senderFirstName: currentUser?.firstName ?? undefined,
+        senderLastName: currentUser?.lastName ?? undefined,
+        senderEmail: currentUser?.email ?? undefined,
+      }
+    : undefined;
 
   // Track recent item visit
   useEffect(() => {
@@ -397,7 +419,7 @@ export default function ContactDetailPage({
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ActivityTimeline contactId={id} />
+                  <ActivityTimeline contactId={id} templateContext={templateContext} />
                 </CardContent>
               </Card>
             </TabsContent>

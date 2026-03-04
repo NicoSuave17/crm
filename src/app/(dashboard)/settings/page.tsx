@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -70,7 +70,15 @@ const TAG_COLORS = [
   "#3B82F6", "#8B5CF6", "#EC4899", "#6B7280", "#1F2937",
 ];
 
-export default function SettingsPage() {
+export default function SettingsPageWrapper() {
+  return (
+    <Suspense>
+      <SettingsPage />
+    </Suspense>
+  );
+}
+
+function SettingsPage() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") ?? "team");
 

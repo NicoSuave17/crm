@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTasks, useUpdateTask, useDeleteTask } from "@/lib/hooks/use-tasks";
 import { useSavedViews, useCreateSavedView, useDeleteSavedView } from "@/lib/hooks/use-saved-views";
@@ -62,7 +62,15 @@ interface EditingTask {
   dueDate: string | null;
 }
 
-export default function TasksPage() {
+export default function TasksPageWrapper() {
+  return (
+    <Suspense>
+      <TasksPage />
+    </Suspense>
+  );
+}
+
+function TasksPage() {
   const searchParams = useSearchParams();
   const [statusFilter, setStatusFilter] = useState("pending");
   const [createOpen, setCreateOpen] = useState(false);
