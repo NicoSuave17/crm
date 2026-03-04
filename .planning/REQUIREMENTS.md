@@ -9,11 +9,11 @@ Requirements for this milestone. Each maps to roadmap phases.
 
 ### User Management
 
-- [ ] **USER-01**: Admin can view list of all CRM team members with avatar, name, email, role, and status
-- [ ] **USER-02**: Admin can change a team member's role (admin, manager, account_manager, ae, enterprise_sales)
-- [ ] **USER-03**: Admin can deactivate/reactivate a team member
-- [ ] **USER-04**: Settings page displays a note explaining that new users auto-create on Clerk sign-in
-- [ ] **USER-05**: User picker component shows searchable dropdown of active team members with avatars
+- [x] **USER-01**: Admin can view list of all CRM team members with avatar, name, email, role, and status
+- [x] **USER-02**: Admin can change a team member's role (admin, manager, account_manager, ae, enterprise_sales)
+- [x] **USER-03**: Admin can deactivate/reactivate a team member
+- [x] **USER-04**: Settings page displays a note explaining that new users auto-create on Clerk sign-in
+- [x] **USER-05**: User picker component shows searchable dropdown of active team members with avatars
 
 ### Contact Editing
 
