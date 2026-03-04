@@ -521,6 +521,22 @@ export const savedViews = pgTable("saved_views", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// ─── Email Templates ─────────────────────────────────────────────
+
+export const emailTemplates = pgTable("email_templates", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  subject: text("subject").notNull(),
+  body: text("body").notNull(),
+  category: text("category"),
+  createdBy: uuid("created_by")
+    .references(() => users.id)
+    .notNull(),
+  isShared: boolean("is_shared").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // ─── Alerts ─────────────────────────────────────────────────────
 
 export const alerts = pgTable(
@@ -592,6 +608,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   activities: many(activities),
   alerts: many(alerts),
   savedViews: many(savedViews),
+  emailTemplates: many(emailTemplates),
 }));
 
 export const contactsRelations = relations(contacts, ({ one, many }) => ({
@@ -749,4 +766,8 @@ export const alertsRelations = relations(alerts, ({ one }) => ({
 
 export const savedViewsRelations = relations(savedViews, ({ one }) => ({
   user: one(users, { fields: [savedViews.userId], references: [users.id] }),
+}));
+
+export const emailTemplatesRelations = relations(emailTemplates, ({ one }) => ({
+  creator: one(users, { fields: [emailTemplates.createdBy], references: [users.id] }),
 }));
