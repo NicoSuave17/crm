@@ -2,6 +2,7 @@
 
 import { use, useState } from "react";
 import { useDeal } from "@/lib/hooks/use-deals";
+import { DealTagSelector } from "@/components/deals/deal-tag-selector";
 import { EditDealDialog } from "@/components/deals/edit-deal-dialog";
 import { formatCurrency } from "@/lib/utils/format";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -245,6 +246,13 @@ export default function DealDetailPage({
                     </div>
                   </>
                 )}
+
+                {/* Tags */}
+                <Separator />
+                <DealTagSelector
+                  dealId={id}
+                  currentTags={deal.tags ?? []}
+                />
               </div>
             </CardContent>
           </Card>
