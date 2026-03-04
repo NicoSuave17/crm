@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-03-04T21:38:20.199Z"
+last_updated: "2026-03-05"
 progress:
   total_phases: 12
   completed_phases: 8
-  total_plans: 18
-  completed_plans: 18
+  total_plans: 19
+  completed_plans: 19
 ---
 
 # State: Whop CRM
@@ -39,12 +39,12 @@ Plans: 2/8 (08a-pipeline-stage-crud-backend, 08b-pipeline-management-ui complete
 | 6 | Contact Detail Tabs | ✓ Complete | 8/8 | 100% |
 | 7 | Company CRUD + Contact-Company Linking | ✓ Complete | 3/3 | 100% |
 | 8 | Pipeline Management | ◐ In Progress | 2/8 | 25% |
-| 9 | Bulk Operations | ○ Not Started | 0/5 | 0% |
+| 9 | Bulk Operations | ◐ In Progress | 1/5 | 20% |
 | 10 | Activity CRUD + Saved Views + Custom Fields | ○ Not Started | 0/12 | 0% |
 | 11 | Audit Log + Notifications + Dashboard | ○ Not Started | 0/8 | 0% |
 | 12 | Import Wizard + Email Templates + Advanced Search | ○ Not Started | 0/11 | 0% |
 
-**Total:** 18/94 plans complete
+**Total:** 19/94 plans complete
 
 ---
 
@@ -84,4 +84,7 @@ Plans: 2/8 (08a-pipeline-stage-crud-backend, 08b-pipeline-management-ui complete
 
 - **08b-pipeline-management-ui:** Interactive pipeline management UI replacing read-only PipelinesSettings in Settings page. Card-per-pipeline layout with PipelineCard (header + sortable stage list), PipelineDialog (create/edit), StageDialog (create/edit with color picker + probability + isWon/isLost), SortableStageRow (@dnd-kit/sortable drag handle). Stage reorder uses DndContext + SortableContext + restrictToVerticalAxis modifier. Delete confirmations via AlertDialog with 409 error toast for deals-exist case. Added @dnd-kit/modifiers dependency.
 
-*Last updated: 2026-03-05 after 08b-pipeline-management-ui completion*
+---
+- **09b-csv-import-wizard:** Multi-step CSV import wizard for contacts. Client-side parsing with papaparse, alias-based auto-mapping, preview with Zod validation, batched import (50/batch) with progress bar, summary with created/skipped/errors. ImportWizardDialog at `src/components/import/import-wizard-dialog.tsx`. CSV utilities at `src/lib/utils/csv.ts` and `src/lib/utils/csv-mapping.ts`. Bulk API enhanced with server-side validation and detailed error reporting. Import button added to contacts page.
+
+*Last updated: 2026-03-05 after 09b-csv-import-wizard completion*

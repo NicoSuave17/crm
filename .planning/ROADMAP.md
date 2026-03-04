@@ -16,7 +16,7 @@
 | 6 | 1/1 | Complete    | 2026-03-04 | Phase 4, Phase 5 |
 | 7 | 3/3 | Complete    | 2026-03-04 | Phase 2 |
 | 8 | 2/2 | Complete    | 2026-03-04 | None |
-| 9 | Bulk Operations | Add row selection and a bulk action bar to contacts and deals lists, plus a CSV import wizard | BULK-01–05 | Phase 3, Phase 4 |
+| 9 | 1/2 | In Progress|  | Phase 3, Phase 4 |
 | 10 | Activity CRUD + Saved Views + Custom Fields | Add edit/delete to activity timeline items, extend saved views to all list entities, and add select-options UI to custom field definitions | ACTV-01–03, VIEW-01–05, CFLD-01–04 | Phase 3, Phase 4, Phase 7 |
 | 11 | Audit Log + Notifications + Dashboard | Surface the audit log as a settings page, add a notification bell to the top nav, and make dashboard cards interactive | AUDT-01–02, NOTF-01–03, DASH-01–03 | Phase 3 |
 | 12 | Import Wizard + Email Templates + Advanced Search | Multi-step CSV import, email template CRUD with variable interpolation, and full Cmd+K expansion across all entities | IMPT-01–05, EMTL-01–03, SRCH-01–03 | Phase 9, Phase 3 |
@@ -164,7 +164,7 @@
 **Requirements:** BULK-01, BULK-02, BULK-03, BULK-04, BULK-05
 **Dependencies:** Phase 3, Phase 4
 
-**Plans:** BULK-01, BULK-02, BULK-03, BULK-04, BULK-05
+**Plans:** 1/2 plans executed
 
 **Success Criteria:**
 1. The contacts list has a checkbox column; selecting one or more rows reveals a bulk action bar with: Reassign (UserPicker), Change Status (select), Add Tag (tag picker), Delete.
