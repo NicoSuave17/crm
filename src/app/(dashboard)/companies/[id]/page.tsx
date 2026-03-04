@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCompany, useDeleteCompany } from "@/lib/hooks/use-companies";
 import { ActivityTimeline } from "@/components/activities/activity-timeline";
@@ -45,6 +45,7 @@ import {
 import Link from "next/link";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { addRecentItem } from "@/lib/utils/recent-items";
 
 function getOwnerInitials(firstName: string, lastName: string): string {
   return ((firstName?.[0] ?? "") + (lastName?.[0] ?? "")).toUpperCase() || "?";
@@ -61,6 +62,19 @@ export default function CompanyDetailPage({
   const deleteCompany = useDeleteCompany();
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+
+  // Track recent item visit
+  useEffect(() => {
+    if (company) {
+      addRecentItem({
+        id: company.id,
+        type: "company",
+        label: company.name,
+        sublabel: company.domain ?? undefined,
+        path: `/companies/${company.id}`,
+      });
+    }
+  }, [company?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleDelete() {
     deleteCompany.mutate(id, {

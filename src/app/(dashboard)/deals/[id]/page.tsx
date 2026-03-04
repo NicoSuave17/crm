@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useState, useEffect } from "react";
 import { useDeal } from "@/lib/hooks/use-deals";
 import { ActivityTimeline } from "@/components/activities/activity-timeline";
 import { DealTagSelector } from "@/components/deals/deal-tag-selector";
@@ -32,6 +32,7 @@ import {
   User,
 } from "lucide-react";
 import Link from "next/link";
+import { addRecentItem } from "@/lib/utils/recent-items";
 
 const priorityColors: Record<string, string> = {
   low: "bg-gray-100 text-gray-700",
@@ -55,6 +56,18 @@ export default function DealDetailPage({
   const { data: deal, isLoading } = useDeal(id);
   const [editOpen, setEditOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("timeline");
+
+  // Track recent item visit
+  useEffect(() => {
+    if (deal) {
+      addRecentItem({
+        id: deal.id,
+        type: "deal",
+        label: deal.title,
+        path: `/deals/${deal.id}`,
+      });
+    }
+  }, [deal?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isLoading) {
     return (

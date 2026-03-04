@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useState, useEffect } from "react";
 import { useContact } from "@/lib/hooks/use-contacts";
 import { useContactCompanies, useUnlinkCompany } from "@/lib/hooks/use-contact-companies";
 import { ActivityTimeline } from "@/components/activities/activity-timeline";
@@ -40,6 +40,7 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
+import { addRecentItem } from "@/lib/utils/recent-items";
 
 export default function ContactDetailPage({
   params,
@@ -52,6 +53,19 @@ export default function ContactDetailPage({
   const unlinkCompany = useUnlinkCompany();
   const [editOpen, setEditOpen] = useState(false);
   const [linkCompanyOpen, setLinkCompanyOpen] = useState(false);
+
+  // Track recent item visit
+  useEffect(() => {
+    if (contact) {
+      addRecentItem({
+        id: contact.id,
+        type: "contact",
+        label: `${contact.firstName} ${contact.lastName ?? ""}`.trim(),
+        sublabel: contact.email ?? undefined,
+        path: `/contacts/${contact.id}`,
+      });
+    }
+  }, [contact?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isLoading) {
     return (
