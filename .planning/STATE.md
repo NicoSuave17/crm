@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-last_updated: "2026-03-04T20:34:15.377Z"
+last_updated: "2026-03-04T23:00:00.000Z"
 progress:
   total_phases: 12
   completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
+  total_plans: 9
+  completed_plans: 9
 ---
 
 # State: Whop CRM
@@ -21,9 +21,9 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 ---
 
 ## Current Phase
-**Phase 3: Edit Contact**
-Status: Complete
-Plans: 1/1 (03-edit-contact complete)
+**Phase 4: Edit Deal + Deal Detail Enhancement**
+Status: In Progress
+Plans: 1/3 (04a-edit-deal-dialog complete)
 
 ---
 
@@ -34,7 +34,7 @@ Plans: 1/1 (03-edit-contact complete)
 | 1 | User Management | ✓ Complete | 5/5 | 100% |
 | 2 | Entity Pickers | ◐ In Progress | 4/5 | 80% |
 | 3 | Edit Contact | ✓ Complete | 1/1 | 100% |
-| 4 | Edit Deal + Deal Detail Enhancement | ○ Not Started | 0/12 | 0% |
+| 4 | Edit Deal + Deal Detail Enhancement | ◐ In Progress | 1/3 | 33% |
 | 5 | Task Form | ○ Not Started | 0/5 | 0% |
 | 6 | Contact Detail Tabs | ○ Not Started | 0/8 | 0% |
 | 7 | Company CRUD + Contact-Company Linking | ○ Not Started | 0/10 | 0% |
@@ -44,7 +44,7 @@ Plans: 1/1 (03-edit-contact complete)
 | 11 | Audit Log + Notifications + Dashboard | ○ Not Started | 0/8 | 0% |
 | 12 | Import Wizard + Email Templates + Advanced Search | ○ Not Started | 0/11 | 0% |
 
-**Total:** 8/94 plans complete
+**Total:** 9/94 plans complete
 
 ---
 
@@ -62,4 +62,7 @@ Plans: 1/1 (03-edit-contact complete)
 ---
 - **03-edit-contact:** EditContactDialog component at `src/components/contacts/edit-contact-dialog.tsx`. Pre-fills all 11 contact fields, uses existing PATCH API + useUpdateContact hook. Wired into detail page (Edit button) and list page (row dropdown Edit item). updateContactSchema extended with healthScore and whopUsername.
 
-*Last updated: 2026-03-04 after 03-edit-contact completion*
+---
+- **04a-edit-deal-dialog:** EditDealDialog component at `src/components/deals/edit-deal-dialog.tsx`. Pre-fills all deal fields, uses PATCH API + useUpdateDeal hook. Conditional lostReason field (shown only when selected stage has isLost=true). getDealWithRelations() enriches GET /api/deals/[id] with stage/pipeline/contact/company/owner joins. Deal detail page created at `/deals/[id]` with Edit button. Deals list row dropdown wired with Edit option (fetch-on-click pattern).
+
+*Last updated: 2026-03-04 after 04a-edit-deal-dialog completion*
