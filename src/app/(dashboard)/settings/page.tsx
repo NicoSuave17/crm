@@ -36,7 +36,15 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Textarea } from "@/components/ui/textarea";
 import { useTags, useCreateTag, useDeleteTag } from "@/lib/hooks/use-tags";
+import {
+  useEmailTemplates,
+  useCreateEmailTemplate,
+  useUpdateEmailTemplate,
+  useDeleteEmailTemplate,
+  type EmailTemplate,
+} from "@/lib/hooks/use-email-templates";
 import {
   useFieldDefinitions,
   useCreateFieldDefinition,
@@ -44,7 +52,11 @@ import {
 } from "@/lib/hooks/use-custom-fields";
 import { usePipelines } from "@/lib/hooks/use-pipeline";
 import { useUsers, useUpdateUser, useCurrentUser } from "@/lib/hooks/use-users";
-import { Plus, Trash2, Tag, Columns, GitBranch, Users, FileText } from "lucide-react";
+import {
+  previewTemplate,
+  TEMPLATE_VARIABLES,
+} from "@/lib/utils/template-interpolation";
+import { Plus, Trash2, Tag, Columns, GitBranch, Users, FileText, Mail, Pencil, Eye, EyeOff, ChevronDown } from "lucide-react";
 import { useAuditLog, type AuditRow } from "@/lib/hooks/use-audit-log";
 import { format } from "date-fns";
 import { PipelineCard } from "@/components/settings/pipeline-card";
@@ -85,6 +97,10 @@ export default function SettingsPage() {
             <GitBranch className="mr-2 h-4 w-4" />
             Pipelines
           </TabsTrigger>
+          <TabsTrigger value="email-templates">
+            <Mail className="mr-2 h-4 w-4" />
+            Email Templates
+          </TabsTrigger>
           <TabsTrigger value="audit-log">
             <FileText className="mr-2 h-4 w-4" />
             Audit Log
@@ -105,6 +121,10 @@ export default function SettingsPage() {
 
         <TabsContent value="pipelines" className="mt-4">
           <PipelinesSettings />
+        </TabsContent>
+
+        <TabsContent value="email-templates" className="mt-4">
+          <EmailTemplatesSettings />
         </TabsContent>
 
         <TabsContent value="audit-log" className="mt-4">
@@ -668,6 +688,341 @@ function PipelinesSettings() {
 
       <PipelineDialog open={createOpen} onOpenChange={setCreateOpen} />
     </div>
+  );
+}
+
+// ─── Email Templates Tab ────────────────────────────────────────
+
+function EmailTemplatesSettings() {
+  const { data: templates, isLoading } = useEmailTemplates();
+  const { data: currentUser } = useCurrentUser();
+  const createTemplate = useCreateEmailTemplate();
+  const updateTemplate = useUpdateEmailTemplate();
+  const deleteTemplate = useDeleteEmailTemplate();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editing, setEditing] = useState<EmailTemplate | null>(null);
+
+  // Form state
+  const [name, setName] = useState("");
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState("");
+  const [category, setCategory] = useState("");
+  const [isShared, setIsShared] = useState(true);
+  const [showPreview, setShowPreview] = useState(false);
+  const [showVariables, setShowVariables] = useState(false);
+
+  function openCreate() {
+    setEditing(null);
+    setName("");
+    setSubject("");
+    setBody("");
+    setCategory("");
+    setIsShared(true);
+    setShowPreview(false);
+    setShowVariables(false);
+    setDialogOpen(true);
+  }
+
+  function openEdit(template: EmailTemplate) {
+    setEditing(template);
+    setName(template.name);
+    setSubject(template.subject);
+    setBody(template.body);
+    setCategory(template.category ?? "");
+    setIsShared(template.isShared ?? true);
+    setShowPreview(false);
+    setShowVariables(false);
+    setDialogOpen(true);
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name.trim() || !subject.trim() || !body.trim()) return;
+
+    const payload = {
+      name: name.trim(),
+      subject: subject.trim(),
+      body: body.trim(),
+      category: category.trim() || undefined,
+      isShared,
+    };
+
+    if (editing) {
+      updateTemplate.mutate(
+        { id: editing.id, data: payload },
+        {
+          onSuccess: () => {
+            toast.success("Template updated");
+            setDialogOpen(false);
+          },
+          onError: () => toast.error("Failed to update template"),
+        }
+      );
+    } else {
+      createTemplate.mutate(payload, {
+        onSuccess: () => {
+          toast.success("Template created");
+          setDialogOpen(false);
+        },
+        onError: () => toast.error("Failed to create template"),
+      });
+    }
+  }
+
+  const isMine = (t: EmailTemplate) => t.createdBy === currentUser?.id;
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>Email Templates</CardTitle>
+          <CardDescription>
+            Create reusable email templates with variable interpolation for quick
+            activity logging.
+          </CardDescription>
+        </div>
+        <Button size="sm" onClick={openCreate}>
+          <Plus className="mr-2 h-4 w-4" />
+          Add Template
+        </Button>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <div className="space-y-2">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-12 w-full" />
+            ))}
+          </div>
+        ) : !templates || templates.length === 0 ? (
+          <p className="text-sm text-muted-foreground py-8 text-center">
+            No email templates yet. Create one to get started.
+          </p>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Subject</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Created By</TableHead>
+                <TableHead className="w-20">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {templates.map((t) => (
+                <TableRow key={t.id}>
+                  <TableCell className="font-medium">{t.name}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground truncate max-w-[200px]">
+                    {t.subject}
+                  </TableCell>
+                  <TableCell>
+                    {t.category && (
+                      <Badge variant="secondary" className="text-xs">
+                        {t.category}
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    {t.creatorFirstName} {t.creatorLastName}
+                  </TableCell>
+                  <TableCell>
+                    {isMine(t) && (
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => openEdit(t)}
+                          className="text-muted-foreground hover:text-foreground"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() =>
+                            deleteTemplate.mutate(t.id, {
+                              onSuccess: () => toast.success("Template deleted"),
+                              onError: () =>
+                                toast.error("Failed to delete template"),
+                            })
+                          }
+                          className="text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </CardContent>
+
+      <Dialog
+        open={dialogOpen}
+        onOpenChange={(open) => {
+          setDialogOpen(open);
+          if (!open) setEditing(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>
+              {editing ? "Edit Template" : "Create Template"}
+            </DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Name</label>
+              <Input
+                placeholder="e.g. Welcome Email"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Subject</label>
+              <Input
+                placeholder='e.g. Welcome to Whop, {{firstName}}!'
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                required
+              />
+              <p className="text-xs text-muted-foreground">
+                Use {"{{firstName}}"}, {"{{companyName}}"}, etc. for dynamic
+                content.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Body</label>
+              <Textarea
+                placeholder='e.g. Hi {{firstName}}, thanks for joining Whop...'
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                rows={8}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                Category{" "}
+                <span className="text-muted-foreground font-normal">
+                  (optional)
+                </span>
+              </label>
+              <Input
+                placeholder="e.g. Onboarding, Follow Up, Outreach"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="template-shared"
+                checked={isShared}
+                onChange={(e) => setIsShared(e.target.checked)}
+                className="rounded border-gray-300"
+              />
+              <label htmlFor="template-shared" className="text-sm">
+                Share with team
+              </label>
+            </div>
+
+            {/* Variable reference */}
+            <div>
+              <button
+                type="button"
+                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                onClick={() => setShowVariables(!showVariables)}
+              >
+                <ChevronDown
+                  className={`h-3 w-3 transition-transform ${
+                    showVariables ? "rotate-0" : "-rotate-90"
+                  }`}
+                />
+                Available Variables
+              </button>
+              {showVariables && (
+                <div className="mt-2 rounded-md border bg-muted/50 p-3 text-xs space-y-1">
+                  {TEMPLATE_VARIABLES.map((v) => (
+                    <div key={v.key} className="flex gap-2">
+                      <code className="font-mono text-primary">
+                        {`{{${v.key}}}`}
+                      </code>
+                      <span className="text-muted-foreground">
+                        {v.label} (e.g. &quot;{v.example}&quot;)
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Preview toggle */}
+            <div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setShowPreview(!showPreview)}
+              >
+                {showPreview ? (
+                  <EyeOff className="mr-1.5 h-3.5 w-3.5" />
+                ) : (
+                  <Eye className="mr-1.5 h-3.5 w-3.5" />
+                )}
+                {showPreview ? "Hide Preview" : "Preview"}
+              </Button>
+            </div>
+            {showPreview && (subject || body) && (
+              <div className="rounded-md border bg-muted/50 p-4 space-y-2">
+                <p className="text-xs font-medium text-muted-foreground">
+                  Preview with example data
+                </p>
+                {subject && (
+                  <div>
+                    <p className="text-xs text-muted-foreground">Subject:</p>
+                    <p className="text-sm font-medium">
+                      {previewTemplate(subject)}
+                    </p>
+                  </div>
+                )}
+                {body && (
+                  <div>
+                    <p className="text-xs text-muted-foreground">Body:</p>
+                    <p className="text-sm whitespace-pre-wrap">
+                      {previewTemplate(body)}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={
+                  createTemplate.isPending || updateTemplate.isPending
+                }
+              >
+                {createTemplate.isPending || updateTemplate.isPending
+                  ? "Saving..."
+                  : editing
+                    ? "Update"
+                    : "Create"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </Card>
   );
 }
 
