@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useCompanies, useDeleteCompany } from "@/lib/hooks/use-companies";
+import { useSavedViews, useCreateSavedView, useDeleteSavedView } from "@/lib/hooks/use-saved-views";
 import { CompanyForm } from "@/components/companies/company-form";
 import { EditCompanyDialog } from "@/components/companies/edit-company-dialog";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Plus,
@@ -37,6 +45,9 @@ import {
   ChevronRight,
   Pencil,
   Building2,
+  Save,
+  Bookmark,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -64,6 +75,8 @@ export default function CompaniesPage() {
   const [sizeFilter, setSizeFilter] = useState<string>("all");
   const [industryFilter, setIndustryFilter] = useState("");
   const [page, setPage] = useState(1);
+  const [saveViewOpen, setSaveViewOpen] = useState(false);
+  const [viewName, setViewName] = useState("");
 
   const { data, isLoading } = useCompanies({
     page,
@@ -73,6 +86,10 @@ export default function CompaniesPage() {
   });
 
   const deleteCompany = useDeleteCompany();
+
+  const { data: savedViews } = useSavedViews("company");
+  const createView = useCreateSavedView();
+  const deleteView = useDeleteSavedView();
 
   function handleDelete(id: string, name: string) {
     if (!confirm(`Delete ${name}? This cannot be undone.`)) return;
@@ -93,6 +110,39 @@ export default function CompaniesPage() {
     }
   }
 
+  function handleSaveView(e: React.FormEvent) {
+    e.preventDefault();
+    if (!viewName.trim()) return;
+    const filters: Record<string, unknown>[] = [];
+    if (search) filters.push({ field: "search", value: search });
+    if (sizeFilter !== "all") filters.push({ field: "size", value: sizeFilter });
+    if (industryFilter) filters.push({ field: "industry", value: industryFilter });
+
+    createView.mutate(
+      { name: viewName.trim(), entityType: "company", filters },
+      {
+        onSuccess: () => {
+          toast.success("View saved");
+          setSaveViewOpen(false);
+          setViewName("");
+        },
+        onError: () => toast.error("Failed to save view"),
+      }
+    );
+  }
+
+  function handleLoadView(view: { filters: Record<string, unknown>[] }) {
+    setPage(1);
+    setSearch("");
+    setSizeFilter("all");
+    setIndustryFilter("");
+    for (const f of view.filters) {
+      if (f.field === "search") setSearch(f.value as string);
+      if (f.field === "size") setSizeFilter(f.value as string);
+      if (f.field === "industry") setIndustryFilter(f.value as string);
+    }
+  }
+
   return (
     <div className="space-y-4">
       {/* Header */}
@@ -108,6 +158,38 @@ export default function CompaniesPage() {
           Add Company
         </Button>
       </div>
+
+      {/* Saved Views */}
+      {savedViews && savedViews.length > 0 && (
+        <div className="flex items-center gap-2 overflow-x-auto">
+          <Bookmark className="h-4 w-4 text-muted-foreground shrink-0" />
+          {savedViews.map((view: { id: string; name: string; filters: Record<string, unknown>[] }) => (
+            <div key={view.id} className="flex items-center gap-0.5">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs h-7 rounded-r-none"
+                onClick={() => handleLoadView(view)}
+              >
+                {view.name}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs h-7 px-1.5 rounded-l-none border-l-0"
+                onClick={() => {
+                  deleteView.mutate(view.id, {
+                    onSuccess: () => toast.success("View deleted"),
+                    onError: () => toast.error("Failed to delete view"),
+                  });
+                }}
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
@@ -152,6 +234,14 @@ export default function CompaniesPage() {
             }}
           />
         </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setSaveViewOpen(true)}
+          title="Save current filters as a view"
+        >
+          <Save className="h-4 w-4" />
+        </Button>
       </div>
 
       {/* Table */}
@@ -299,6 +389,31 @@ export default function CompaniesPage() {
           }}
         />
       )}
+
+      {/* Save View Dialog */}
+      <Dialog open={saveViewOpen} onOpenChange={setSaveViewOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Save View</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSaveView} className="space-y-4">
+            <Input
+              placeholder="View name"
+              value={viewName}
+              onChange={(e) => setViewName(e.target.value)}
+              required
+            />
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setSaveViewOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={createView.isPending}>
+                {createView.isPending ? "Saving..." : "Save"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
