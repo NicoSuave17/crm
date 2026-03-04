@@ -26,6 +26,7 @@ import {
   Building2,
   Calendar,
   DollarSign,
+  MessageSquare,
   Pencil,
   TrendingUp,
   User,
@@ -53,6 +54,7 @@ export default function DealDetailPage({
   const { id } = use(params);
   const { data: deal, isLoading } = useDeal(id);
   const [editOpen, setEditOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("timeline");
 
   if (isLoading) {
     return (
@@ -91,10 +93,20 @@ export default function DealDetailPage({
             Pipeline
           </Link>
         </Button>
-        <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
-          <Pencil className="mr-2 h-4 w-4" />
-          Edit
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setActiveTab("timeline")}
+          >
+            <MessageSquare className="mr-2 h-4 w-4" />
+            Log Activity
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
+            <Pencil className="mr-2 h-4 w-4" />
+            Edit
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-5">
@@ -335,7 +347,7 @@ export default function DealDetailPage({
 
         {/* Right column - Tabs */}
         <div className="lg:col-span-3">
-          <Tabs defaultValue="timeline">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList>
               <TabsTrigger value="timeline">Timeline</TabsTrigger>
               <TabsTrigger value="stage-history">Stage History</TabsTrigger>
