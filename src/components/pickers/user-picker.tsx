@@ -35,15 +35,21 @@ export function UserPicker({
   const [open, setOpen] = useState(false);
   const { data: users = [] } = useUsers();
 
-  // Only show active users in the picker
-  const activeUsers = (users as Array<{
+  // Type the users array
+  const allUsers = users as Array<{
     id: string;
     firstName: string;
     lastName: string;
     email: string;
     avatarUrl: string | null;
     isActive: boolean;
-  }>).filter((user) => user.isActive === true);
+  }>;
+
+  // Only show active users in the picker
+  const activeUsers = allUsers.filter((user) => user.isActive === true);
+
+  // Find the selected user from all users (including inactive) for display
+  const selectedUser = value ? allUsers.find((u) => u.id === value) : null;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -55,7 +61,21 @@ export function UserPicker({
           className={cn("w-full justify-between", className)}
           disabled={disabled}
         >
-          <span className="truncate">{placeholder}</span>
+          {selectedUser ? (
+            <span className="flex items-center gap-2 truncate">
+              <Avatar className="h-5 w-5">
+                <AvatarImage src={selectedUser.avatarUrl ?? undefined} alt={selectedUser.firstName} />
+                <AvatarFallback className="text-xs">
+                  {selectedUser.firstName?.[0]}{selectedUser.lastName?.[0]}
+                </AvatarFallback>
+              </Avatar>
+              <span className="truncate">{selectedUser.firstName} {selectedUser.lastName}</span>
+            </span>
+          ) : value ? (
+            <span className="truncate text-muted-foreground">Unknown user</span>
+          ) : (
+            <span className="truncate">{placeholder}</span>
+          )}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
