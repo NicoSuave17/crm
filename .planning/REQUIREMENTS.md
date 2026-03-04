@@ -184,102 +184,102 @@ Deferred to future milestone. Not in current roadmap.
 
 ## Traceability
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| USER-01 | Phase 1 | Pending |
-| USER-02 | Phase 1 | Pending |
-| USER-03 | Phase 1 | Pending |
-| USER-04 | Phase 1 | Pending |
-| USER-05 | Phase 1 | Pending |
-| PICK-01 | Phase 2 | Pending |
-| PICK-02 | Phase 2 | Pending |
-| PICK-03 | Phase 2 | Pending |
-| PICK-04 | Phase 2 | Pending |
-| PICK-05 | Phase 2 | Pending |
-| CONT-01 | Phase 3 | Pending |
-| CONT-02 | Phase 3 | Pending |
-| CONT-03 | Phase 3 | Pending |
-| CONT-04 | Phase 3 | Pending |
-| CONT-05 | Phase 3 | Pending |
-| DEAL-01 | Phase 4 | Pending |
-| DEAL-02 | Phase 4 | Pending |
-| DEAL-03 | Phase 4 | Pending |
-| DEAL-04 | Phase 4 | Pending |
-| DEAL-05 | Phase 4 | Pending |
-| DDET-01 | Phase 4 | Pending |
-| DDET-02 | Phase 4 | Pending |
-| DDET-03 | Phase 4 | Pending |
-| DDET-04 | Phase 4 | Pending |
-| DDET-05 | Phase 4 | Pending |
-| DDET-06 | Phase 4 | Pending |
-| DDET-07 | Phase 4 | Pending |
-| TASK-01 | Phase 5 | Pending |
-| TASK-02 | Phase 5 | Pending |
-| TASK-03 | Phase 5 | Pending |
-| TASK-04 | Phase 5 | Pending |
-| TASK-05 | Phase 5 | Pending |
-| CTAB-01 | Phase 6 | Pending |
-| CTAB-02 | Phase 6 | Pending |
-| CTAB-03 | Phase 6 | Pending |
-| CTAB-04 | Phase 6 | Pending |
-| CTAB-05 | Phase 6 | Pending |
-| CTAB-06 | Phase 6 | Pending |
-| CTAB-07 | Phase 6 | Pending |
-| CTAB-08 | Phase 6 | Pending |
-| COMP-01 | Phase 7 | Pending |
-| COMP-02 | Phase 7 | Pending |
-| COMP-03 | Phase 7 | Pending |
-| COMP-04 | Phase 7 | Pending |
-| COMP-05 | Phase 7 | Pending |
-| COMP-06 | Phase 7 | Pending |
-| LINK-01 | Phase 7 | Pending |
-| LINK-02 | Phase 7 | Pending |
-| LINK-03 | Phase 7 | Pending |
-| LINK-04 | Phase 7 | Pending |
-| PIPE-01 | Phase 8 | Pending |
-| PIPE-02 | Phase 8 | Pending |
-| PIPE-03 | Phase 8 | Pending |
-| PIPE-04 | Phase 8 | Pending |
-| PIPE-05 | Phase 8 | Pending |
-| PIPE-06 | Phase 8 | Pending |
-| PIPE-07 | Phase 8 | Pending |
-| PIPE-08 | Phase 8 | Pending |
-| BULK-01 | Phase 9 | Pending |
-| BULK-02 | Phase 9 | Pending |
-| BULK-03 | Phase 9 | Pending |
-| BULK-04 | Phase 9 | Pending |
-| BULK-05 | Phase 9 | Pending |
-| ACTV-01 | Phase 10 | Pending |
-| ACTV-02 | Phase 10 | Pending |
-| ACTV-03 | Phase 10 | Pending |
-| VIEW-01 | Phase 10 | Pending |
-| VIEW-02 | Phase 10 | Pending |
-| VIEW-03 | Phase 10 | Pending |
-| VIEW-04 | Phase 10 | Pending |
-| VIEW-05 | Phase 10 | Pending |
-| CFLD-01 | Phase 10 | Pending |
-| CFLD-02 | Phase 10 | Pending |
-| CFLD-03 | Phase 10 | Pending |
-| CFLD-04 | Phase 10 | Pending |
-| AUDT-01 | Phase 11 | Pending |
-| AUDT-02 | Phase 11 | Pending |
-| NOTF-01 | Phase 11 | Pending |
-| NOTF-02 | Phase 11 | Pending |
-| NOTF-03 | Phase 11 | Pending |
-| DASH-01 | Phase 11 | Pending |
-| DASH-02 | Phase 11 | Pending |
-| DASH-03 | Phase 11 | Pending |
-| IMPT-01 | Phase 12 | Pending |
-| IMPT-02 | Phase 12 | Pending |
-| IMPT-03 | Phase 12 | Pending |
-| IMPT-04 | Phase 12 | Pending |
-| IMPT-05 | Phase 12 | Pending |
-| EMTL-01 | Phase 12 | Pending |
-| EMTL-02 | Phase 12 | Pending |
-| EMTL-03 | Phase 12 | Pending |
-| SRCH-01 | Phase 12 | Pending |
-| SRCH-02 | Phase 12 | Pending |
-| SRCH-03 | Phase 12 | Pending |
+| Requirement | Phase | Phase Name | Status |
+|-------------|-------|------------|--------|
+| USER-01 | Phase 1 | User Management | Pending |
+| USER-02 | Phase 1 | User Management | Pending |
+| USER-03 | Phase 1 | User Management | Pending |
+| USER-04 | Phase 1 | User Management | Pending |
+| USER-05 | Phase 1 | User Management | Pending |
+| PICK-01 | Phase 2 | Entity Pickers | Pending |
+| PICK-02 | Phase 2 | Entity Pickers | Pending |
+| PICK-03 | Phase 2 | Entity Pickers | Pending |
+| PICK-04 | Phase 2 | Entity Pickers | Pending |
+| PICK-05 | Phase 2 | Entity Pickers | Pending |
+| CONT-01 | Phase 3 | Edit Contact | Pending |
+| CONT-02 | Phase 3 | Edit Contact | Pending |
+| CONT-03 | Phase 3 | Edit Contact | Pending |
+| CONT-04 | Phase 3 | Edit Contact | Pending |
+| CONT-05 | Phase 3 | Edit Contact | Pending |
+| DEAL-01 | Phase 4 | Edit Deal + Deal Detail Enhancement | Pending |
+| DEAL-02 | Phase 4 | Edit Deal + Deal Detail Enhancement | Pending |
+| DEAL-03 | Phase 4 | Edit Deal + Deal Detail Enhancement | Pending |
+| DEAL-04 | Phase 4 | Edit Deal + Deal Detail Enhancement | Pending |
+| DEAL-05 | Phase 4 | Edit Deal + Deal Detail Enhancement | Pending |
+| DDET-01 | Phase 4 | Edit Deal + Deal Detail Enhancement | Pending |
+| DDET-02 | Phase 4 | Edit Deal + Deal Detail Enhancement | Pending |
+| DDET-03 | Phase 4 | Edit Deal + Deal Detail Enhancement | Pending |
+| DDET-04 | Phase 4 | Edit Deal + Deal Detail Enhancement | Pending |
+| DDET-05 | Phase 4 | Edit Deal + Deal Detail Enhancement | Pending |
+| DDET-06 | Phase 4 | Edit Deal + Deal Detail Enhancement | Pending |
+| DDET-07 | Phase 4 | Edit Deal + Deal Detail Enhancement | Pending |
+| TASK-01 | Phase 5 | Task Form | Pending |
+| TASK-02 | Phase 5 | Task Form | Pending |
+| TASK-03 | Phase 5 | Task Form | Pending |
+| TASK-04 | Phase 5 | Task Form | Pending |
+| TASK-05 | Phase 5 | Task Form | Pending |
+| CTAB-01 | Phase 6 | Contact Detail Tabs | Pending |
+| CTAB-02 | Phase 6 | Contact Detail Tabs | Pending |
+| CTAB-03 | Phase 6 | Contact Detail Tabs | Pending |
+| CTAB-04 | Phase 6 | Contact Detail Tabs | Pending |
+| CTAB-05 | Phase 6 | Contact Detail Tabs | Pending |
+| CTAB-06 | Phase 6 | Contact Detail Tabs | Pending |
+| CTAB-07 | Phase 6 | Contact Detail Tabs | Pending |
+| CTAB-08 | Phase 6 | Contact Detail Tabs | Pending |
+| COMP-01 | Phase 7 | Company CRUD + Contact-Company Linking | Pending |
+| COMP-02 | Phase 7 | Company CRUD + Contact-Company Linking | Pending |
+| COMP-03 | Phase 7 | Company CRUD + Contact-Company Linking | Pending |
+| COMP-04 | Phase 7 | Company CRUD + Contact-Company Linking | Pending |
+| COMP-05 | Phase 7 | Company CRUD + Contact-Company Linking | Pending |
+| COMP-06 | Phase 7 | Company CRUD + Contact-Company Linking | Pending |
+| LINK-01 | Phase 7 | Company CRUD + Contact-Company Linking | Pending |
+| LINK-02 | Phase 7 | Company CRUD + Contact-Company Linking | Pending |
+| LINK-03 | Phase 7 | Company CRUD + Contact-Company Linking | Pending |
+| LINK-04 | Phase 7 | Company CRUD + Contact-Company Linking | Pending |
+| PIPE-01 | Phase 8 | Pipeline Management | Pending |
+| PIPE-02 | Phase 8 | Pipeline Management | Pending |
+| PIPE-03 | Phase 8 | Pipeline Management | Pending |
+| PIPE-04 | Phase 8 | Pipeline Management | Pending |
+| PIPE-05 | Phase 8 | Pipeline Management | Pending |
+| PIPE-06 | Phase 8 | Pipeline Management | Pending |
+| PIPE-07 | Phase 8 | Pipeline Management | Pending |
+| PIPE-08 | Phase 8 | Pipeline Management | Pending |
+| BULK-01 | Phase 9 | Bulk Operations | Pending |
+| BULK-02 | Phase 9 | Bulk Operations | Pending |
+| BULK-03 | Phase 9 | Bulk Operations | Pending |
+| BULK-04 | Phase 9 | Bulk Operations | Pending |
+| BULK-05 | Phase 9 | Bulk Operations | Pending |
+| ACTV-01 | Phase 10 | Activity CRUD + Saved Views + Custom Fields | Pending |
+| ACTV-02 | Phase 10 | Activity CRUD + Saved Views + Custom Fields | Pending |
+| ACTV-03 | Phase 10 | Activity CRUD + Saved Views + Custom Fields | Pending |
+| VIEW-01 | Phase 10 | Activity CRUD + Saved Views + Custom Fields | Pending |
+| VIEW-02 | Phase 10 | Activity CRUD + Saved Views + Custom Fields | Pending |
+| VIEW-03 | Phase 10 | Activity CRUD + Saved Views + Custom Fields | Pending |
+| VIEW-04 | Phase 10 | Activity CRUD + Saved Views + Custom Fields | Pending |
+| VIEW-05 | Phase 10 | Activity CRUD + Saved Views + Custom Fields | Pending |
+| CFLD-01 | Phase 10 | Activity CRUD + Saved Views + Custom Fields | Pending |
+| CFLD-02 | Phase 10 | Activity CRUD + Saved Views + Custom Fields | Pending |
+| CFLD-03 | Phase 10 | Activity CRUD + Saved Views + Custom Fields | Pending |
+| CFLD-04 | Phase 10 | Activity CRUD + Saved Views + Custom Fields | Pending |
+| AUDT-01 | Phase 11 | Audit Log + Notifications + Dashboard | Pending |
+| AUDT-02 | Phase 11 | Audit Log + Notifications + Dashboard | Pending |
+| NOTF-01 | Phase 11 | Audit Log + Notifications + Dashboard | Pending |
+| NOTF-02 | Phase 11 | Audit Log + Notifications + Dashboard | Pending |
+| NOTF-03 | Phase 11 | Audit Log + Notifications + Dashboard | Pending |
+| DASH-01 | Phase 11 | Audit Log + Notifications + Dashboard | Pending |
+| DASH-02 | Phase 11 | Audit Log + Notifications + Dashboard | Pending |
+| DASH-03 | Phase 11 | Audit Log + Notifications + Dashboard | Pending |
+| IMPT-01 | Phase 12 | Import Wizard + Email Templates + Advanced Search | Pending |
+| IMPT-02 | Phase 12 | Import Wizard + Email Templates + Advanced Search | Pending |
+| IMPT-03 | Phase 12 | Import Wizard + Email Templates + Advanced Search | Pending |
+| IMPT-04 | Phase 12 | Import Wizard + Email Templates + Advanced Search | Pending |
+| IMPT-05 | Phase 12 | Import Wizard + Email Templates + Advanced Search | Pending |
+| EMTL-01 | Phase 12 | Import Wizard + Email Templates + Advanced Search | Pending |
+| EMTL-02 | Phase 12 | Import Wizard + Email Templates + Advanced Search | Pending |
+| EMTL-03 | Phase 12 | Import Wizard + Email Templates + Advanced Search | Pending |
+| SRCH-01 | Phase 12 | Import Wizard + Email Templates + Advanced Search | Pending |
+| SRCH-02 | Phase 12 | Import Wizard + Email Templates + Advanced Search | Pending |
+| SRCH-03 | Phase 12 | Import Wizard + Email Templates + Advanced Search | Pending |
 
 **Coverage:**
 - v1 requirements: 84 total
@@ -288,4 +288,4 @@ Deferred to future milestone. Not in current roadmap.
 
 ---
 *Requirements defined: 2026-03-04*
-*Last updated: 2026-03-04 after initial definition*
+*Last updated: 2026-03-04 after roadmap creation — phase names added to traceability*
