@@ -7,6 +7,7 @@ import {
   pipelineStages,
   pipelines,
   activities,
+  dealStageHistory,
 } from "@/lib/db/schema";
 import { eq, and, desc, type SQL } from "drizzle-orm";
 import type { CreateDealInput, UpdateDealInput } from "@/lib/validators/deal";
@@ -158,6 +159,14 @@ export async function createDeal(data: CreateDealInput, ownerId: string) {
     })
     .returning();
 
+  // Record initial stage in history
+  await db.insert(dealStageHistory).values({
+    dealId: deal.id,
+    fromStageId: null,
+    toStageId: data.stageId,
+    userId: ownerId,
+  });
+
   // Log activity
   await db.insert(activities).values({
     type: "deal_stage_change",
@@ -170,7 +179,20 @@ export async function createDeal(data: CreateDealInput, ownerId: string) {
   return deal;
 }
 
-export async function updateDeal(id: string, data: UpdateDealInput) {
+export async function updateDeal(id: string, data: UpdateDealInput, userId?: string) {
+  // If stageId is being changed, record stage history
+  if (data.stageId) {
+    const existing = await getDeal(id);
+    if (existing && existing.stageId !== data.stageId) {
+      await db.insert(dealStageHistory).values({
+        dealId: id,
+        fromStageId: existing.stageId,
+        toStageId: data.stageId,
+        userId: userId ?? null,
+      });
+    }
+  }
+
   const [deal] = await db
     .update(deals)
     .set({ ...data, updatedAt: new Date() })
@@ -192,6 +214,14 @@ export async function moveDeal(
     .set({ stageId, updatedAt: new Date() })
     .where(eq(deals.id, id))
     .returning();
+
+  // Record stage transition in history
+  await db.insert(dealStageHistory).values({
+    dealId: id,
+    fromStageId: existing.stageId,
+    toStageId: stageId,
+    userId,
+  });
 
   // Log stage change activity
   const [newStage] = await db

@@ -47,7 +47,7 @@ export async function PATCH(
       );
     }
 
-    const deal = await updateDeal(id, parsed.data);
+    const deal = await updateDeal(id, parsed.data, user.id);
     if (!deal) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(deal);
   } catch (error) {
