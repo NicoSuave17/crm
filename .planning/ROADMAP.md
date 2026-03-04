@@ -9,7 +9,7 @@
 | # | Phase | Goal | Requirements | Dependencies |
 |---|-------|------|--------------|--------------|
 | 1 | 3/3 | Complete    | 2026-03-04 | None |
-| 2 | Entity Pickers | Create all four searchable combobox pickers (contact, company, user, deal) so edit forms can reference related entities | PICK-01–05 | Phase 1 |
+| 2 | 1/4 | In Progress|  | Phase 1 |
 | 3 | Edit Contact | Expose the full contact edit dialog from both the detail page and the list dropdown, wiring to the existing PATCH API | CONT-01–05 | Phase 2 |
 | 4 | Edit Deal + Deal Detail Enhancement | Add the deal edit dialog and enrich the deal detail page with activity timeline, stage history, tags, and custom fields | DEAL-01–05, DDET-01–07 | Phase 2 |
 | 5 | Task Form | Build a reusable TaskForm used for both create and edit, exposing all fields including assignee, contact, and deal links | TASK-01–05 | Phase 2 |
@@ -46,7 +46,7 @@
 **Requirements:** PICK-01, PICK-02, PICK-03, PICK-04, PICK-05
 **Dependencies:** Phase 1
 
-**Plans:** PICK-01, PICK-02, PICK-03, PICK-04, PICK-05
+**Plans:** 1/4 plans executed
 
 **Success Criteria:**
 1. Typing a name into the ContactPicker filters results in real time and shows avatar, name, and type badge; selecting a contact closes the popover and returns the contact's ID.
