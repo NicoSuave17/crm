@@ -4,6 +4,7 @@ import { use, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCompany, useDeleteCompany } from "@/lib/hooks/use-companies";
 import { ActivityTimeline } from "@/components/activities/activity-timeline";
+import { CompanyContactsTab } from "@/components/companies/company-contacts-tab";
 import { CompanyDealsTab } from "@/components/companies/company-deals-tab";
 import { EditCompanyDialog } from "@/components/companies/edit-company-dialog";
 import { CustomFieldsDisplay } from "@/components/contacts/custom-fields-display";
@@ -308,20 +309,7 @@ export default function CompanyDetailPage({
             </TabsContent>
 
             <TabsContent value="contacts" className="mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Linked Contacts</CardTitle>
-                  <CardDescription>
-                    Contacts associated with this company
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground text-center py-8">
-                    Linked contacts will appear here once contact-company
-                    linking is implemented.
-                  </p>
-                </CardContent>
-              </Card>
+              <CompanyContactsTab companyId={id} />
             </TabsContent>
           </Tabs>
         </div>
