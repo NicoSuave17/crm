@@ -6,9 +6,9 @@ status: executing
 last_updated: "2026-03-04T21:00:12.112Z"
 progress:
   total_phases: 12
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 12
-  completed_plans: 12
+  completed_plans: 13
 ---
 
 # State: Whop CRM
@@ -21,9 +21,9 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 ---
 
 ## Current Phase
-**Phase 5: Task Form**
-Status: In Progress
-Plans: 1/5 (05a-task-form complete)
+**Phase 6: Contact Detail Tabs**
+Status: Complete
+Plans: 8/8 (contact-detail-tabs complete)
 
 ---
 
@@ -36,7 +36,7 @@ Plans: 1/5 (05a-task-form complete)
 | 3 | Edit Contact | ✓ Complete | 1/1 | 100% |
 | 4 | Edit Deal + Deal Detail Enhancement | ✓ Complete | 3/3 | 100% |
 | 5 | Task Form | ◐ In Progress | 1/5 | 20% |
-| 6 | Contact Detail Tabs | ○ Not Started | 0/8 | 0% |
+| 6 | Contact Detail Tabs | ✓ Complete | 8/8 | 100% |
 | 7 | Company CRUD + Contact-Company Linking | ○ Not Started | 0/10 | 0% |
 | 8 | Pipeline Management | ○ Not Started | 0/8 | 0% |
 | 9 | Bulk Operations | ○ Not Started | 0/5 | 0% |
@@ -44,7 +44,7 @@ Plans: 1/5 (05a-task-form complete)
 | 11 | Audit Log + Notifications + Dashboard | ○ Not Started | 0/8 | 0% |
 | 12 | Import Wizard + Email Templates + Advanced Search | ○ Not Started | 0/11 | 0% |
 
-**Total:** 12/94 plans complete
+**Total:** 13/94 plans complete
 
 ---
 
@@ -70,4 +70,6 @@ Plans: 1/5 (05a-task-form complete)
 ---
 - **05a-task-form:** TaskFormDialog component at `src/components/tasks/task-form-dialog.tsx`. Unified create/edit dialog with all task fields (title, description, status, priority, dueDate, assigneeId via UserPicker, contactId via ContactPicker, dealId via DealPicker). Status hidden in create mode. Supports defaultContactId/defaultDealId props for Phase 6 pre-fill. GET /api/tasks/[id] endpoint added. getTask(id) data access function added. useTask(id) hook added. Tasks page wired with create dialog + edit via row dropdown (fetch-on-click pattern).
 
-*Last updated: 2026-03-05 after 05a-task-form completion (Phase 5 started)*
+- **06-contact-detail-tabs:** ContactDealsTab and ContactTasksTab components replace static placeholders on contact detail page. Deals tab: table with linked titles to `/deals/{id}`, stage color badges, currency values, priority badges, close dates, Add Deal button (DealForm + pipeline context). Tasks tab: checkbox toggle (useUpdateTask), line-through on completion, priority badges, overdue styling with AlertCircle, assignee, Add Task button (TaskFormDialog + defaultContactId). No backend changes needed.
+
+*Last updated: 2026-03-05 after 06-contact-detail-tabs completion (Phase 6 complete)*

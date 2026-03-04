@@ -13,7 +13,7 @@
 | 3 | 1/1 | Complete    | 2026-03-04 | Phase 2 |
 | 4 | 3/3 | Complete    | 2026-03-04 | Phase 2 |
 | 5 | 1/1 | Complete    | 2026-03-04 | Phase 2 |
-| 6 | Contact Detail Tabs | Replace empty Deals and Tasks tab placeholders with real data, inline status toggle, and contextual create buttons | CTAB-01–08 | Phase 4, Phase 5 |
+| 6 | 1/1 | Complete   | 2026-03-04 | Phase 4, Phase 5 |
 | 7 | Company CRUD + Contact-Company Linking | Stand up the full Company entity (list, detail, create, edit, delete) and activate the contact_companies junction table UI | COMP-01–06, LINK-01–04 | Phase 2 |
 | 8 | Pipeline Management | Replace the read-only pipeline settings tab with full CRUD for pipelines and stages including drag-to-reorder | PIPE-01–08 | None |
 | 9 | Bulk Operations | Add row selection and a bulk action bar to contacts and deals lists, plus a CSV import wizard | BULK-01–05 | Phase 3, Phase 4 |
@@ -112,7 +112,7 @@
 **Requirements:** CTAB-01, CTAB-02, CTAB-03, CTAB-04, CTAB-05, CTAB-06, CTAB-07, CTAB-08
 **Dependencies:** Phase 4, Phase 5
 
-**Plans:** CTAB-01, CTAB-02, CTAB-03, CTAB-04, CTAB-05, CTAB-06, CTAB-07, CTAB-08
+**Plans:** 1/1 plans complete
 
 **Success Criteria:**
 1. The Deals tab on a contact detail page shows a table of all deals where contactId matches, with columns: title, stage badge, value, priority, expected close date.
