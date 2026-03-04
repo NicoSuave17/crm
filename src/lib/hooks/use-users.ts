@@ -15,6 +15,19 @@ export function useUsers() {
   });
 }
 
+async function fetchCurrentUser() {
+  const res = await fetch("/api/users/me");
+  if (!res.ok) throw new Error("Failed to fetch current user");
+  return res.json();
+}
+
+export function useCurrentUser() {
+  return useQuery({
+    queryKey: ["currentUser"],
+    queryFn: fetchCurrentUser,
+  });
+}
+
 export function useUpdateUser() {
   const queryClient = useQueryClient();
   return useMutation({
