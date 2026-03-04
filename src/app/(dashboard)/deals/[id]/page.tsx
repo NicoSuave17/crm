@@ -297,8 +297,13 @@ export default function DealDetailPage({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center gap-3 p-2 -m-2">
-                  <Building2 className="h-8 w-8 text-muted-foreground" />
+                <Link
+                  href={`/companies/${deal.companyId}`}
+                  className="flex items-center gap-3 hover:bg-muted/50 rounded-md p-2 -m-2 transition-colors"
+                >
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+                    <Building2 className="h-4 w-4 text-muted-foreground" />
+                  </div>
                   <div>
                     <p className="text-sm font-medium">{deal.companyName}</p>
                     {deal.companyDomain && (
@@ -307,7 +312,7 @@ export default function DealDetailPage({
                       </p>
                     )}
                   </div>
-                </div>
+                </Link>
               </CardContent>
             </Card>
           )}

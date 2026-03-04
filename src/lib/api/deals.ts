@@ -11,6 +11,7 @@ import {
 } from "@/lib/db/schema";
 import { eq, and, desc, type SQL } from "drizzle-orm";
 import type { CreateDealInput, UpdateDealInput } from "@/lib/validators/deal";
+import { getDealTags } from "@/lib/api/tags";
 
 export async function listDealsByPipeline(pipelineId: string) {
   const data = await db
@@ -143,7 +144,11 @@ export async function getDealWithRelations(id: string) {
     .where(eq(deals.id, id))
     .limit(1);
 
-  return deal ?? null;
+  if (!deal) return null;
+
+  const dealTagsList = await getDealTags(id);
+
+  return { ...deal, tags: dealTagsList };
 }
 
 export async function createDeal(data: CreateDealInput, ownerId: string) {
