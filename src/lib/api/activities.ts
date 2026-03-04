@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { activities, users } from "@/lib/db/schema";
 import { eq, desc, and, type SQL } from "drizzle-orm";
-import type { CreateActivityInput } from "@/lib/validators/activity";
+import type { CreateActivityInput, UpdateActivityInput } from "@/lib/validators/activity";
 
 export interface ActivityListParams {
   contactId?: string;
@@ -68,7 +68,7 @@ export async function createActivity(
 export async function updateActivity(
   id: string,
   userId: string,
-  data: { type?: string; subject?: string | null; body?: string | null; duration?: number | null }
+  data: UpdateActivityInput
 ) {
   const [updated] = await db
     .update(activities)
