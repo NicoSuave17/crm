@@ -47,6 +47,7 @@ import {
   Save,
   Bookmark,
   Pencil,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -212,15 +213,29 @@ export default function ContactsPage() {
         <div className="flex items-center gap-2 overflow-x-auto">
           <Bookmark className="h-4 w-4 text-muted-foreground shrink-0" />
           {savedViews.map((view: { id: string; name: string; filters: Record<string, unknown>[] }) => (
-            <Button
-              key={view.id}
-              variant="outline"
-              size="sm"
-              className="text-xs h-7"
-              onClick={() => handleLoadView(view)}
-            >
-              {view.name}
-            </Button>
+            <div key={view.id} className="flex items-center gap-0.5">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs h-7 rounded-r-none"
+                onClick={() => handleLoadView(view)}
+              >
+                {view.name}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs h-7 px-1.5 rounded-l-none border-l-0"
+                onClick={() => {
+                  deleteView.mutate(view.id, {
+                    onSuccess: () => toast.success("View deleted"),
+                    onError: () => toast.error("Failed to delete view"),
+                  });
+                }}
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            </div>
           ))}
         </div>
       )}
