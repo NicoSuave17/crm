@@ -2,6 +2,10 @@
 
 import { useState } from "react";
 import { useDeals, useDeleteDeal } from "@/lib/hooks/use-deals";
+import { useRowSelection } from "@/lib/hooks/use-row-selection";
+import { BulkActionBar } from "@/components/bulk/bulk-action-bar";
+import { DealsBulkActions } from "@/components/bulk/deals-bulk-actions";
+import { Checkbox } from "@/components/ui/checkbox";
 import { EditDealDialog } from "@/components/deals/edit-deal-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -45,7 +49,10 @@ interface EditableDeal {
 export default function DealsPage() {
   const { data: deals, isLoading } = useDeals();
   const deleteDeal = useDeleteDeal();
+  const selection = useRowSelection();
   const [editingDeal, setEditingDeal] = useState<EditableDeal | null>(null);
+
+  const currentPageIds = deals?.map((d: { id: string }) => d.id) ?? [];
 
   async function handleEdit(dealId: string) {
     try {
@@ -71,6 +78,19 @@ export default function DealsPage() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[40px]">
+                <Checkbox
+                  checked={
+                    selection.isAllSelected(currentPageIds)
+                      ? true
+                      : selection.isSomeSelected(currentPageIds)
+                        ? "indeterminate"
+                        : false
+                  }
+                  onCheckedChange={() => selection.toggleAll(currentPageIds)}
+                  aria-label="Select all"
+                />
+              </TableHead>
               <TableHead>Deal</TableHead>
               <TableHead>Pipeline</TableHead>
               <TableHead>Stage</TableHead>
@@ -85,7 +105,7 @@ export default function DealsPage() {
             {isLoading &&
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i}>
-                  {Array.from({ length: 8 }).map((_, j) => (
+                  {Array.from({ length: 9 }).map((_, j) => (
                     <TableCell key={j}>
                       <Skeleton className="h-4 w-20" />
                     </TableCell>
@@ -95,7 +115,7 @@ export default function DealsPage() {
 
             {!isLoading && deals?.length === 0 && (
               <TableRow>
-                <TableCell colSpan={8} className="h-24 text-center">
+                <TableCell colSpan={9} className="h-24 text-center">
                   No deals yet. Create one from the Pipeline view.
                 </TableCell>
               </TableRow>
@@ -117,7 +137,14 @@ export default function DealsPage() {
                 expectedCloseDate: string | null;
                 priority: string | null;
               }) => (
-                <TableRow key={deal.id}>
+                <TableRow key={deal.id} data-selected={selection.isSelected(deal.id) || undefined}>
+                  <TableCell className="w-[40px]">
+                    <Checkbox
+                      checked={selection.isSelected(deal.id)}
+                      onCheckedChange={() => selection.toggle(deal.id)}
+                      aria-label={`Select ${deal.title}`}
+                    />
+                  </TableCell>
                   <TableCell className="font-medium">{deal.title}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {deal.pipelineName}
@@ -186,6 +213,15 @@ export default function DealsPage() {
           </TableBody>
         </Table>
       </div>
+
+      {selection.count > 0 && (
+        <BulkActionBar selectedCount={selection.count} onClear={selection.clear}>
+          <DealsBulkActions
+            selectedIds={Array.from(selection.selectedIds)}
+            onComplete={selection.clear}
+          />
+        </BulkActionBar>
+      )}
 
       {editingDeal && (
         <EditDealDialog
