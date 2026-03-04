@@ -39,12 +39,14 @@ import {
   ChevronLeft,
   ChevronRight,
   Download,
+  Upload,
   Save,
   Bookmark,
   Pencil,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { ImportWizardDialog } from "@/components/import/import-wizard-dialog";
 import { useSavedViews, useCreateSavedView, useDeleteSavedView } from "@/lib/hooks/use-saved-views";
 import {
   Dialog,
@@ -71,6 +73,7 @@ const statusVariants: Record<string, "default" | "secondary" | "destructive" | "
 
 export default function ContactsPage() {
   const [createOpen, setCreateOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<{
     id: string;
     firstName: string;
@@ -171,6 +174,10 @@ export default function ContactsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => setImportOpen(true)}>
+            <Upload className="mr-2 h-4 w-4" />
+            Import
+          </Button>
           <Button variant="outline" size="sm" onClick={handleExportCsv}>
             <Download className="mr-2 h-4 w-4" />
             Export
@@ -440,6 +447,8 @@ export default function ContactsPage() {
           }}
         />
       )}
+
+      <ImportWizardDialog open={importOpen} onOpenChange={setImportOpen} />
 
       {/* Save View Dialog */}
       <Dialog open={saveViewOpen} onOpenChange={setSaveViewOpen}>
