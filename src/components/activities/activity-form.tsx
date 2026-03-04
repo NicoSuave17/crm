@@ -26,10 +26,11 @@ const activityTypes = [
 interface ActivityFormProps {
   contactId?: string;
   dealId?: string;
+  companyId?: string;
   onSuccess?: () => void;
 }
 
-export function ActivityForm({ contactId, dealId, onSuccess }: ActivityFormProps) {
+export function ActivityForm({ contactId, dealId, companyId, onSuccess }: ActivityFormProps) {
   const [type, setType] = useState<string>("note");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
@@ -47,6 +48,7 @@ export function ActivityForm({ contactId, dealId, onSuccess }: ActivityFormProps
         body: body || undefined,
         contactId,
         dealId,
+        companyId,
         duration: duration ? parseInt(duration) : undefined,
       },
       {

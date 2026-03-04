@@ -8,16 +8,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface ActivityTimelineProps {
   contactId?: string;
   dealId?: string;
+  companyId?: string;
 }
 
-export function ActivityTimeline({ contactId, dealId }: ActivityTimelineProps) {
+export function ActivityTimeline({ contactId, dealId, companyId }: ActivityTimelineProps) {
   const { data: activities, isLoading } = useActivities(
-    dealId ? { dealId } : { contactId: contactId! }
+    dealId ? { dealId } : companyId ? { companyId } : { contactId: contactId! }
   );
 
   return (
     <div className="space-y-4">
-      <ActivityForm contactId={contactId} dealId={dealId} />
+      <ActivityForm contactId={contactId} dealId={dealId} companyId={companyId} />
 
       <div className="border-t pt-4">
         {isLoading && (
