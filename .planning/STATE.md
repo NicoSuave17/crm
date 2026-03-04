@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-03-04T20:30:00.000Z"
+last_updated: "2026-03-04T21:00:00.000Z"
 progress:
   total_phases: 12
   completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 5
+  completed_plans: 5
 ---
 
 # State: Whop CRM
@@ -23,7 +23,7 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 ## Current Phase
 **Phase 2: Entity Pickers**
 Status: In Progress
-Plans: 1/5 (02-user-picker-verify complete)
+Plans: 3/5 (02-user-picker-verify, 02-deal-picker, 02-contact-picker complete)
 
 ---
 
@@ -32,7 +32,7 @@ Plans: 1/5 (02-user-picker-verify complete)
 | Phase | Name | Status | Plans | Progress |
 |-------|------|--------|-------|----------|
 | 1 | User Management | ✓ Complete | 5/5 | 100% |
-| 2 | Entity Pickers | ◐ In Progress | 1/5 | 20% |
+| 2 | Entity Pickers | ◐ In Progress | 3/5 | 60% |
 | 3 | Edit Contact | ○ Not Started | 0/5 | 0% |
 | 4 | Edit Deal + Deal Detail Enhancement | ○ Not Started | 0/12 | 0% |
 | 5 | Task Form | ○ Not Started | 0/5 | 0% |
@@ -44,7 +44,7 @@ Plans: 1/5 (02-user-picker-verify complete)
 | 11 | Audit Log + Notifications + Dashboard | ○ Not Started | 0/8 | 0% |
 | 12 | Import Wizard + Email Templates + Advanced Search | ○ Not Started | 0/11 | 0% |
 
-**Total:** 4/94 plans complete
+**Total:** 5/94 plans complete
 
 ---
 
@@ -55,5 +55,6 @@ Plans: 1/5 (02-user-picker-verify complete)
 
 ---
 - **02-user-picker-verify:** UserPicker component from Phase 1 verified to meet all PICK-03 and PICK-05 requirements. No changes needed.
+- **02-deal-picker:** DealPicker combobox at `src/components/pickers/deal-picker.tsx`. Popover + Command pattern matching UserPicker. Searches deals by title, shows stage color dot + name for disambiguation, Handshake icon, clear selection support.
 
-*Last updated: 2026-03-04 after 02-user-picker-verify completion*
+*Last updated: 2026-03-04 after 02-deal-picker completion*
