@@ -6,9 +6,9 @@ status: completed
 last_updated: "2026-03-05"
 progress:
   total_phases: 12
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 14
-  completed_plans: 15
+  completed_plans: 16
 ---
 
 # State: Whop CRM
@@ -22,8 +22,8 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 
 ## Current Phase
 **Phase 7: Company CRUD + Contact-Company Linking**
-Status: In Progress
-Plans: 2/3 (07a-company-crud-backend-list complete, 07b-company-detail-page complete)
+Status: Complete
+Plans: 3/3 (07a-company-crud-backend-list, 07b-company-detail-page, 07c-contact-company-linking all complete)
 
 ---
 
@@ -37,14 +37,14 @@ Plans: 2/3 (07a-company-crud-backend-list complete, 07b-company-detail-page comp
 | 4 | Edit Deal + Deal Detail Enhancement | ✓ Complete | 3/3 | 100% |
 | 5 | Task Form | ◐ In Progress | 1/5 | 20% |
 | 6 | Contact Detail Tabs | ✓ Complete | 8/8 | 100% |
-| 7 | Company CRUD + Contact-Company Linking | ◐ In Progress | 2/3 | 67% |
+| 7 | Company CRUD + Contact-Company Linking | ✓ Complete | 3/3 | 100% |
 | 8 | Pipeline Management | ○ Not Started | 0/8 | 0% |
 | 9 | Bulk Operations | ○ Not Started | 0/5 | 0% |
 | 10 | Activity CRUD + Saved Views + Custom Fields | ○ Not Started | 0/12 | 0% |
 | 11 | Audit Log + Notifications + Dashboard | ○ Not Started | 0/8 | 0% |
 | 12 | Import Wizard + Email Templates + Advanced Search | ○ Not Started | 0/11 | 0% |
 
-**Total:** 15/94 plans complete
+**Total:** 16/94 plans complete
 
 ---
 
@@ -77,4 +77,6 @@ Plans: 2/3 (07a-company-crud-backend-list complete, 07b-company-detail-page comp
 
 - **07b-company-detail-page:** Company detail page at `/companies/[id]`. Profile card (Building2 icon, name, domain link, industry/size badges, description, website/LinkedIn links, owner, custom fields). Stats card (contact count, created date). Tabs: Timeline (ActivityTimeline extended with companyId), Deals (CompanyDealsTab with useDeals({companyId}) + DealForm defaultCompanyId), Contacts (placeholder for 07c). Edit button (EditCompanyDialog from 7a) + Delete button (AlertDialog confirmation, redirect to /companies). Extended: ActivityTimeline/ActivityForm/useActivities for companyId, listDeals/useDeals/deals API route for companyId filter, DealForm for defaultCompanyId.
 
-*Last updated: 2026-03-05 after 07b-company-detail-page completion (Phase 7 in progress)*
+- **07c-contact-company-linking:** Full contact-company linking via junction table. DAL (getContactCompanies, getCompanyContacts, linkContactCompany with onConflictDoUpdate, unlinkContactCompany). Zod validator. API routes: GET/POST `/api/contacts/[id]/companies`, DELETE `/api/contacts/[id]/companies/[companyId]`, GET `/api/companies/[id]/contacts`. React Query hooks: useContactCompanies, useLinkCompany, useUnlinkCompany, useCompanyContacts. LinkCompanyDialog (CompanyPicker + role input). Contact detail page: Companies section in left column with link/unlink. Company detail page: CompanyContactsTab replaces placeholder in Contacts tab.
+
+*Last updated: 2026-03-05 after 07c-contact-company-linking completion (Phase 7 complete)*
