@@ -19,7 +19,7 @@
 | 9 | 2/2 | Complete    | 2026-03-04 | Phase 3, Phase 4 |
 | 10 | 3/3 | Complete    | 2026-03-04 | Phase 3, Phase 4, Phase 7 |
 | 11 | 3/3 | Complete    | 2026-03-04 | Phase 3 |
-| 12 | 3/3 | Complete   | 2026-03-04 | Phase 9, Phase 3 |
+| 12 | 3/3 | Complete    | 2026-03-04 | Phase 9, Phase 3 |
 
 ---
 
