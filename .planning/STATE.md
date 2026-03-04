@@ -8,7 +8,7 @@ progress:
   total_phases: 12
   completed_phases: 10
   total_plans: 23
-  completed_plans: 23
+  completed_plans: 24
 ---
 
 # State: Whop CRM
@@ -41,10 +41,10 @@ Plans: 2/8 (08a-pipeline-stage-crud-backend, 08b-pipeline-management-ui complete
 | 8 | Pipeline Management | ◐ In Progress | 2/8 | 25% |
 | 9 | Bulk Operations | ◐ In Progress | 2/5 | 40% |
 | 10 | Activity CRUD + Saved Views + Custom Fields | ◐ In Progress | 3/12 | 25% |
-| 11 | Audit Log + Notifications + Dashboard | ○ Not Started | 0/8 | 0% |
+| 11 | Audit Log + Notifications + Dashboard | ◐ In Progress | 1/8 | 12% |
 | 12 | Import Wizard + Email Templates + Advanced Search | ○ Not Started | 0/11 | 0% |
 
-**Total:** 23/94 plans complete
+**Total:** 24/94 plans complete
 
 ---
 
@@ -96,4 +96,6 @@ Plans: 2/8 (08a-pipeline-stage-crud-backend, 08b-pipeline-management-ui complete
 
 - **10a-activity-crud:** Edit/delete for activity timeline items. DAL updateActivity/deleteActivity with owner-only WHERE clause. updateActivitySchema validator. /api/activities/[id] route (PATCH + DELETE, 404 for non-owned). useUpdateActivity/useDeleteActivity hooks. ActivityItem converted to client component with inline edit mode (subject/body/duration), dropdown menu (Edit/Delete) on hover, EDITABLE_TYPES set excludes system activities. ActivityTimeline passes currentUserId via useCurrentUser.
 
-*Last updated: 2026-03-05 after 10a-activity-crud completion*
+- **11b-notifications-bell:** NotificationBell component at `src/components/layout/notification-bell.tsx`. Popover dropdown with unread count badge, severity-colored icons, mark-read/mark-all-read mutations, relative timestamps, empty state, and "View all alerts" link to /alerts. Replaced static Bell button in TopNav. Reuses existing useAlerts() hook and /api/alerts PATCH endpoint.
+
+*Last updated: 2026-03-05 after 11b-notifications-bell completion*
