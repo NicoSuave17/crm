@@ -1,6 +1,7 @@
 "use client";
 
 import { useActivities } from "@/lib/hooks/use-activities";
+import { useCurrentUser } from "@/lib/hooks/use-users";
 import { ActivityItem } from "./activity-item";
 import { ActivityForm } from "./activity-form";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,6 +13,7 @@ interface ActivityTimelineProps {
 }
 
 export function ActivityTimeline({ contactId, dealId, companyId }: ActivityTimelineProps) {
+  const { data: currentUser } = useCurrentUser();
   const { data: activities, isLoading } = useActivities(
     dealId ? { dealId } : companyId ? { companyId } : { contactId: contactId! }
   );
@@ -47,13 +49,18 @@ export function ActivityTimeline({ contactId, dealId, companyId }: ActivityTimel
             type: string;
             subject: string | null;
             body: string | null;
+            userId: string | null;
             userFirstName: string | null;
             userLastName: string | null;
             userAvatarUrl: string | null;
             occurredAt: string;
             duration: number | null;
           }) => (
-            <ActivityItem key={activity.id} activity={activity} />
+            <ActivityItem
+              key={activity.id}
+              activity={activity}
+              currentUserId={currentUser?.id}
+            />
           )
         )}
       </div>
