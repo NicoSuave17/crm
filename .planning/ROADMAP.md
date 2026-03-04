@@ -8,7 +8,7 @@
 
 | # | Phase | Goal | Requirements | Dependencies |
 |---|-------|------|--------------|--------------|
-| 1 | 2/3 | In Progress|  | None |
+| 1 | 3/3 | Complete   | 2026-03-04 | None |
 | 2 | Entity Pickers | Create all four searchable combobox pickers (contact, company, user, deal) so edit forms can reference related entities | PICK-01–05 | Phase 1 |
 | 3 | Edit Contact | Expose the full contact edit dialog from both the detail page and the list dropdown, wiring to the existing PATCH API | CONT-01–05 | Phase 2 |
 | 4 | Edit Deal + Deal Detail Enhancement | Add the deal edit dialog and enrich the deal detail page with activity timeline, stage history, tags, and custom fields | DEAL-01–05, DDET-01–07 | Phase 2 |
@@ -30,7 +30,7 @@
 **Requirements:** USER-01, USER-02, USER-03, USER-04, USER-05
 **Dependencies:** None
 
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 **Success Criteria:**
 1. An admin navigating to Settings > Team sees a table listing every CRM user with their avatar, name, email, role badge, and active/inactive status.
