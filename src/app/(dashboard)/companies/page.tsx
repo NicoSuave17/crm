@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useCompanies, useDeleteCompany } from "@/lib/hooks/use-companies";
 import { useSavedViews, useCreateSavedView, useDeleteSavedView } from "@/lib/hooks/use-saved-views";
 import { CompanyForm } from "@/components/companies/company-form";
@@ -69,7 +70,18 @@ interface CompanyRow {
 }
 
 export default function CompaniesPage() {
+  const searchParams = useSearchParams();
   const [createOpen, setCreateOpen] = useState(false);
+
+  // Handle ?create=true from command palette quick action
+  useEffect(() => {
+    if (searchParams.get("create") === "true") {
+      setCreateOpen(true);
+      const url = new URL(window.location.href);
+      url.searchParams.delete("create");
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, [searchParams]);
   const [editingCompany, setEditingCompany] = useState<CompanyRow | null>(null);
   const [search, setSearch] = useState("");
   const [sizeFilter, setSizeFilter] = useState<string>("all");

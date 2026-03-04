@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useTasks, useUpdateTask, useDeleteTask } from "@/lib/hooks/use-tasks";
 import { useSavedViews, useCreateSavedView, useDeleteSavedView } from "@/lib/hooks/use-saved-views";
 import { Button } from "@/components/ui/button";
@@ -62,8 +63,19 @@ interface EditingTask {
 }
 
 export default function TasksPage() {
+  const searchParams = useSearchParams();
   const [statusFilter, setStatusFilter] = useState("pending");
   const [createOpen, setCreateOpen] = useState(false);
+
+  // Handle ?create=true from command palette quick action
+  useEffect(() => {
+    if (searchParams.get("create") === "true") {
+      setCreateOpen(true);
+      const url = new URL(window.location.href);
+      url.searchParams.delete("create");
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, [searchParams]);
   const [editingTask, setEditingTask] = useState<EditingTask | null>(null);
   const [saveViewOpen, setSaveViewOpen] = useState(false);
   const [viewName, setViewName] = useState("");

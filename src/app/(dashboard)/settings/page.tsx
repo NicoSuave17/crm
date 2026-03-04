@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
@@ -70,6 +71,15 @@ const TAG_COLORS = [
 ];
 
 export default function SettingsPage() {
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") ?? "team");
+
+  // Update tab when navigating from command palette with ?tab= param
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab) setActiveTab(tab);
+  }, [searchParams]);
+
   return (
     <div className="space-y-6">
       <div>
@@ -79,7 +89,7 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="team">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="team">
             <Users className="mr-2 h-4 w-4" />

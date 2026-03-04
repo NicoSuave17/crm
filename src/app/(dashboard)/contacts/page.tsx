@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import { useContacts, useDeleteContact } from "@/lib/hooks/use-contacts";
 import { useRowSelection } from "@/lib/hooks/use-row-selection";
 import { BulkActionBar } from "@/components/bulk/bulk-action-bar";
@@ -77,6 +78,7 @@ const statusVariants: Record<string, "default" | "secondary" | "destructive" | "
 };
 
 export default function ContactsPage() {
+  const searchParams = useSearchParams();
   const [createOpen, setCreateOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<{
@@ -121,6 +123,16 @@ export default function ContactsPage() {
     }
     prevFilterKey.current = filterKey;
   }, [filterKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Handle ?create=true from command palette quick action
+  useEffect(() => {
+    if (searchParams.get("create") === "true") {
+      setCreateOpen(true);
+      const url = new URL(window.location.href);
+      url.searchParams.delete("create");
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, [searchParams]);
 
   const deleteContact = useDeleteContact();
   const { data: savedViews } = useSavedViews("contact");
