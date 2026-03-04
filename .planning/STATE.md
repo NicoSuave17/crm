@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-last_updated: "2026-03-04T23:00:00.000Z"
+last_updated: "2026-03-05T00:00:00.000Z"
 progress:
   total_phases: 12
-  completed_phases: 3
-  total_plans: 9
-  completed_plans: 9
+  completed_phases: 4
+  total_plans: 94
+  completed_plans: 11
 ---
 
 # State: Whop CRM
@@ -22,8 +22,8 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 
 ## Current Phase
 **Phase 4: Edit Deal + Deal Detail Enhancement**
-Status: In Progress
-Plans: 1/3 (04a-edit-deal-dialog complete)
+Status: Complete
+Plans: 3/3 (04a-edit-deal-dialog, 04b-deal-detail-timeline-history, 04c-deal-detail-entities-tags-fields complete)
 
 ---
 
@@ -34,7 +34,7 @@ Plans: 1/3 (04a-edit-deal-dialog complete)
 | 1 | User Management | ✓ Complete | 5/5 | 100% |
 | 2 | Entity Pickers | ◐ In Progress | 4/5 | 80% |
 | 3 | Edit Contact | ✓ Complete | 1/1 | 100% |
-| 4 | Edit Deal + Deal Detail Enhancement | ◐ In Progress | 1/3 | 33% |
+| 4 | Edit Deal + Deal Detail Enhancement | ✓ Complete | 3/3 | 100% |
 | 5 | Task Form | ○ Not Started | 0/5 | 0% |
 | 6 | Contact Detail Tabs | ○ Not Started | 0/8 | 0% |
 | 7 | Company CRUD + Contact-Company Linking | ○ Not Started | 0/10 | 0% |
@@ -44,7 +44,7 @@ Plans: 1/3 (04a-edit-deal-dialog complete)
 | 11 | Audit Log + Notifications + Dashboard | ○ Not Started | 0/8 | 0% |
 | 12 | Import Wizard + Email Templates + Advanced Search | ○ Not Started | 0/11 | 0% |
 
-**Total:** 9/94 plans complete
+**Total:** 11/94 plans complete
 
 ---
 
@@ -64,5 +64,7 @@ Plans: 1/3 (04a-edit-deal-dialog complete)
 
 ---
 - **04a-edit-deal-dialog:** EditDealDialog component at `src/components/deals/edit-deal-dialog.tsx`. Pre-fills all deal fields, uses PATCH API + useUpdateDeal hook. Conditional lostReason field (shown only when selected stage has isLost=true). getDealWithRelations() enriches GET /api/deals/[id] with stage/pipeline/contact/company/owner joins. Deal detail page created at `/deals/[id]` with Edit button. Deals list row dropdown wired with Edit option (fetch-on-click pattern).
+- **04c-deal-detail-entities-tags-fields:** Deal detail page enriched with clickable contact/company entity cards (Links to detail pages), DealTagSelector for add/remove tags via deal_tags junction table, and CustomFieldsDisplay reused for deal custom fields. API routes extended for deal tag CRUD. getDealWithRelations now returns tags.
+- **04b-deal-detail-timeline-history:** deal_stage_history table created for tracking stage transitions. Stage history recorded in createDeal, moveDeal, and updateDeal. ActivityTimeline/ActivityForm made flexible (contactId optional) for deal-only mode. StageHistoryList component shows vertical timeline of stage changes. Deal detail page wired with live timeline tab, stage history tab, and Log Activity header button.
 
-*Last updated: 2026-03-04 after 04a-edit-deal-dialog completion*
+*Last updated: 2026-03-05 after 04b-deal-detail-timeline-history completion (Phase 4 complete)*
