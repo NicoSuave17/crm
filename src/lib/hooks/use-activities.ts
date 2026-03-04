@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { CreateActivityInput } from "@/lib/validators/activity";
+import type { CreateActivityInput, UpdateActivityInput } from "@/lib/validators/activity";
 
 export function useActivities(params: { contactId?: string; dealId?: string; companyId?: string } = {}) {
   const searchParams = new URLSearchParams();
@@ -30,6 +30,44 @@ export function useCreateActivity() {
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error("Failed to create activity");
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["activities"] });
+    },
+  });
+}
+
+export function useUpdateActivity() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: UpdateActivityInput }) => {
+      const res = await fetch(`/api/activities/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to update activity");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["activities"] });
+    },
+  });
+}
+
+export function useDeleteActivity() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/activities/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to delete activity");
+      }
       return res.json();
     },
     onSuccess: () => {
