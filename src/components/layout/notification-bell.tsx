@@ -27,9 +27,9 @@ type Alert = {
 };
 
 const severityColors: Record<string, string> = {
-  critical: "text-red-500",
-  warning: "text-yellow-500",
-  info: "text-blue-500",
+  critical: "text-[#E86644]",
+  warning: "text-[#FA4616]",
+  info: "text-[#1754D8]",
 };
 
 const severityIcons: Record<string, typeof AlertTriangle> = {

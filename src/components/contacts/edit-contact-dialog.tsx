@@ -19,8 +19,12 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { UserPicker } from "@/components/pickers/user-picker";
+import { CustomFieldsFormSection } from "@/components/custom-fields/custom-fields-form-section";
 import { useUpdateContact } from "@/lib/hooks/use-contacts";
+import { VERTICALS } from "@/lib/constants/verticals";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
+import { useFieldLabels } from "@/lib/hooks/use-field-labels";
 
 interface EditContactDialogProps {
   contact: {
@@ -35,8 +39,17 @@ interface EditContactDialogProps {
     ownerId: string | null;
     healthScore: number | null;
     whopUsername: string | null;
+    vertical: string | null;
     twitterUrl: string | null;
     websiteUrl: string | null;
+    linkedinUrl: string | null;
+    title: string | null;
+    address: string | null;
+    city: string | null;
+    state: string | null;
+    country: string | null;
+    source: string | null;
+    sourceDetails: string | null;
   };
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -47,13 +60,23 @@ interface FormState {
   lastName: string;
   email: string;
   phone: string;
+  title: string;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  type: string;
   status: string;
   tier: string | undefined;
+  vertical: string | undefined;
+  linkedinUrl: string;
   twitterUrl: string;
   websiteUrl: string;
   ownerId: string | undefined;
   healthScore: number | undefined;
   whopUsername: string;
+  source: string | undefined;
+  sourceDetails: string;
 }
 
 export function EditContactDialog({
@@ -62,19 +85,60 @@ export function EditContactDialog({
   onOpenChange,
 }: EditContactDialogProps) {
   const updateContact = useUpdateContact();
+  const { getLabel } = useFieldLabels();
+  const [customFieldValues, setCustomFieldValues] = useState<Record<string, string | boolean>>({});
+
+  // Fetch existing custom field values
+  const { data: existingCfValues } = useQuery({
+    queryKey: ["custom-field-values", contact.id],
+    queryFn: async () => {
+      const res = await fetch(`/api/custom-fields?entityId=${contact.id}`);
+      if (!res.ok) return [];
+      return res.json() as Promise<{ fieldDefinitionId: string; textValue: string | null; numberValue: string | null; booleanValue: boolean | null; dateValue: string | null; fieldType: string }[]>;
+    },
+    enabled: open,
+  });
+
+  useEffect(() => {
+    if (existingCfValues && open) {
+      const vals: Record<string, string | boolean> = {};
+      for (const v of existingCfValues) {
+        if (v.fieldType === "boolean") {
+          vals[v.fieldDefinitionId] = v.booleanValue ?? false;
+        } else if (v.fieldType === "number" || v.fieldType === "currency") {
+          vals[v.fieldDefinitionId] = v.numberValue ?? "";
+        } else if (v.fieldType === "date") {
+          vals[v.fieldDefinitionId] = v.dateValue ? new Date(v.dateValue).toISOString().slice(0, 10) : "";
+        } else {
+          vals[v.fieldDefinitionId] = v.textValue ?? "";
+        }
+      }
+      setCustomFieldValues(vals);
+    }
+  }, [existingCfValues, open]);
 
   const [form, setForm] = useState<FormState>({
     firstName: contact.firstName,
     lastName: contact.lastName ?? "",
     email: contact.email ?? "",
     phone: contact.phone ?? "",
+    title: contact.title ?? "",
+    address: contact.address ?? "",
+    city: contact.city ?? "",
+    state: contact.state ?? "",
+    country: contact.country ?? "",
+    type: contact.type,
     status: contact.status,
     tier: contact.tier ?? undefined,
+    vertical: contact.vertical ?? undefined,
+    linkedinUrl: contact.linkedinUrl ?? "",
     twitterUrl: contact.twitterUrl ?? "",
     websiteUrl: contact.websiteUrl ?? "",
     ownerId: contact.ownerId ?? undefined,
     healthScore: contact.healthScore ?? undefined,
     whopUsername: contact.whopUsername ?? "",
+    source: contact.source ?? undefined,
+    sourceDetails: contact.sourceDetails ?? "",
   });
 
   useEffect(() => {
@@ -84,13 +148,23 @@ export function EditContactDialog({
         lastName: contact.lastName ?? "",
         email: contact.email ?? "",
         phone: contact.phone ?? "",
+        title: contact.title ?? "",
+        address: contact.address ?? "",
+        city: contact.city ?? "",
+        state: contact.state ?? "",
+        country: contact.country ?? "",
+        type: contact.type,
         status: contact.status,
         tier: contact.tier ?? undefined,
+        vertical: contact.vertical ?? undefined,
+        linkedinUrl: contact.linkedinUrl ?? "",
         twitterUrl: contact.twitterUrl ?? "",
         websiteUrl: contact.websiteUrl ?? "",
         ownerId: contact.ownerId ?? undefined,
         healthScore: contact.healthScore ?? undefined,
         whopUsername: contact.whopUsername ?? "",
+        source: contact.source ?? undefined,
+        sourceDetails: contact.sourceDetails ?? "",
       });
     }
   }, [contact, open]);
@@ -103,8 +177,16 @@ export function EditContactDialog({
       lastName: form.lastName || undefined,
       email: form.email || undefined,
       phone: form.phone || undefined,
+      title: form.title || undefined,
+      address: form.address || undefined,
+      city: form.city || undefined,
+      state: form.state || undefined,
+      country: form.country || undefined,
+      type: form.type,
       status: form.status,
       tier: form.tier || undefined,
+      vertical: form.vertical || undefined,
+      linkedinUrl: form.linkedinUrl || undefined,
       twitterUrl: form.twitterUrl || undefined,
       websiteUrl: form.websiteUrl || undefined,
       ownerId: form.ownerId || null,
@@ -113,12 +195,26 @@ export function EditContactDialog({
           ? Number(form.healthScore)
           : null,
       whopUsername: form.whopUsername || undefined,
+      source: form.source || undefined,
+      sourceDetails: form.sourceDetails || undefined,
     };
 
     updateContact.mutate(
       { id: contact.id, data },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
+          // Save custom field values
+          for (const [fieldId, value] of Object.entries(customFieldValues)) {
+            const body: Record<string, unknown> = { fieldDefinitionId: fieldId, entityId: contact.id };
+            if (typeof value === "boolean") {
+              body.booleanValue = value;
+            } else if (!isNaN(Number(value)) && value !== "") {
+              body.numberValue = String(value);
+            } else {
+              body.textValue = String(value);
+            }
+            await fetch("/api/custom-fields", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+          }
           toast.success("Contact updated");
           onOpenChange(false);
         },
@@ -139,7 +235,7 @@ export function EditContactDialog({
           {/* Name row */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-firstName">First Name *</Label>
+              <Label htmlFor="edit-firstName">{getLabel("firstName", "First Name")} *</Label>
               <Input
                 id="edit-firstName"
                 value={form.firstName}
@@ -150,7 +246,7 @@ export function EditContactDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-lastName">Last Name</Label>
+              <Label htmlFor="edit-lastName">{getLabel("lastName", "Last Name")}</Label>
               <Input
                 id="edit-lastName"
                 value={form.lastName}
@@ -163,7 +259,7 @@ export function EditContactDialog({
 
           {/* Email */}
           <div className="space-y-2">
-            <Label htmlFor="edit-email">Email</Label>
+            <Label htmlFor="edit-email">{getLabel("email", "Email")}</Label>
             <Input
               id="edit-email"
               type="email"
@@ -176,7 +272,7 @@ export function EditContactDialog({
 
           {/* Phone */}
           <div className="space-y-2">
-            <Label htmlFor="edit-phone">Phone</Label>
+            <Label htmlFor="edit-phone">{getLabel("phone", "Phone")}</Label>
             <Input
               id="edit-phone"
               value={form.phone}
@@ -186,10 +282,68 @@ export function EditContactDialog({
             />
           </div>
 
+          {/* Title */}
+          <div className="space-y-2">
+            <Label htmlFor="edit-title">Title</Label>
+            <Input
+              id="edit-title"
+              value={form.title}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, title: e.target.value }))
+              }
+              placeholder="e.g. CEO, Account Manager"
+            />
+          </div>
+
+          {/* Address */}
+          <div className="space-y-2">
+            <Label htmlFor="edit-address">Address</Label>
+            <Input
+              id="edit-address"
+              value={form.address}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, address: e.target.value }))
+              }
+              placeholder="Street address"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-city">City</Label>
+              <Input
+                id="edit-city"
+                value={form.city}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, city: e.target.value }))
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-state">State</Label>
+              <Input
+                id="edit-state"
+                value={form.state}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, state: e.target.value }))
+                }
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="edit-country">Country</Label>
+            <Input
+              id="edit-country"
+              value={form.country}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, country: e.target.value }))
+              }
+            />
+          </div>
+
           {/* Status + Tier row */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Status</Label>
+              <Label>{getLabel("status", "Status")}</Label>
               <Select
                 value={form.status}
                 onValueChange={(v) =>
@@ -233,6 +387,98 @@ export function EditContactDialog({
             </div>
           </div>
 
+          {/* Type + Source row */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>{getLabel("type", "Type")}</Label>
+              <Select
+                value={form.type}
+                onValueChange={(v) =>
+                  setForm((prev) => ({ ...prev, type: v }))
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="creator">Creator</SelectItem>
+                  <SelectItem value="lead">Lead</SelectItem>
+                  <SelectItem value="enterprise_prospect">Enterprise Prospect</SelectItem>
+                  <SelectItem value="partner">Partner</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Source</Label>
+              <Select
+                value={form.source ?? "none"}
+                onValueChange={(v) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    source: v === "none" ? undefined : v,
+                  }))
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select source" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  <SelectItem value="manual">Manual</SelectItem>
+                  <SelectItem value="linkedin">LinkedIn</SelectItem>
+                  <SelectItem value="referral">Referral</SelectItem>
+                  <SelectItem value="inbound">Inbound</SelectItem>
+                  <SelectItem value="import">Import</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Source Details */}
+          <div className="space-y-2">
+            <Label htmlFor="edit-sourceDetails">Source Details</Label>
+            <Input
+              id="edit-sourceDetails"
+              value={form.sourceDetails}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, sourceDetails: e.target.value }))
+              }
+              placeholder="e.g. referred by John, LinkedIn campaign Q1"
+            />
+          </div>
+
+          {/* Vertical */}
+          <div className="space-y-2">
+            <Label>Vertical</Label>
+            <Select
+              value={form.vertical ?? "none"}
+              onValueChange={(v) => setForm((prev) => ({ ...prev, vertical: v === "none" ? undefined : v }))}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select vertical" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                {VERTICALS.map((v) => (
+                  <SelectItem key={v.value} value={v.value}>{v.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* LinkedIn URL */}
+          <div className="space-y-2">
+            <Label htmlFor="edit-linkedinUrl">LinkedIn URL</Label>
+            <Input
+              id="edit-linkedinUrl"
+              value={form.linkedinUrl}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, linkedinUrl: e.target.value }))
+              }
+              placeholder="https://linkedin.com/in/..."
+            />
+          </div>
+
           {/* Twitter URL */}
           <div className="space-y-2">
             <Label htmlFor="edit-twitterUrl">Twitter URL</Label>
@@ -261,7 +507,7 @@ export function EditContactDialog({
 
           {/* Owner */}
           <div className="space-y-2">
-            <Label>Owner</Label>
+            <Label>{getLabel("owner", "Owner")}</Label>
             <UserPicker
               value={form.ownerId ?? null}
               onChange={(userId) =>
@@ -276,7 +522,7 @@ export function EditContactDialog({
           {/* Health Score + Whop Username row */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-healthScore">Health Score</Label>
+              <Label htmlFor="edit-healthScore">{getLabel("healthScore", "Health Score")}</Label>
               <Input
                 id="edit-healthScore"
                 type="number"
@@ -309,6 +555,14 @@ export function EditContactDialog({
               />
             </div>
           </div>
+
+          <CustomFieldsFormSection
+            entityType="contact"
+            values={customFieldValues}
+            onChange={(fieldId, value) =>
+              setCustomFieldValues((prev) => ({ ...prev, [fieldId]: value }))
+            }
+          />
 
           <DialogFooter>
             <Button

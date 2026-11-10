@@ -12,6 +12,7 @@ import { LinkCompanyDialog } from "@/components/contacts/link-company-dialog";
 import { HealthScoreBadge } from "@/components/contacts/health-score-badge";
 import { TagSelector } from "@/components/contacts/tag-selector";
 import { CustomFieldsDisplay } from "@/components/contacts/custom-fields-display";
+import { ChangeHistoryTab } from "@/components/history/change-history-tab";
 import { formatCurrency, formatNumber, getInitials } from "@/lib/utils/format";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -33,12 +34,16 @@ import {
   Phone,
   Globe,
   Linkedin,
+  Twitter,
   Users,
   DollarSign,
   TrendingUp,
+  Briefcase,
+  MapPin,
   ExternalLink,
   Pencil,
   X,
+  Clock,
 } from "lucide-react";
 import Link from "next/link";
 import { addRecentItem } from "@/lib/utils/recent-items";
@@ -147,12 +152,19 @@ export default function ContactDetailPage({
                 <h2 className="text-xl font-semibold">
                   {contact.firstName} {contact.lastName}
                 </h2>
+                <span className="text-xs font-mono text-muted-foreground">{contact.crmId}</span>
+                {contact.title && (
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+                    <Briefcase className="h-3 w-3" />
+                    <span>{contact.title}</span>
+                  </div>
+                )}
                 {contact.whopUsername && (
                   <p className="text-sm text-muted-foreground">
                     @{contact.whopUsername}
                   </p>
                 )}
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-wrap gap-2 mt-2">
                   <Badge variant="outline">{contact.type.replace("_", " ")}</Badge>
                   <Badge
                     variant={
@@ -165,6 +177,11 @@ export default function ContactDetailPage({
                   >
                     {contact.status.replace("_", " ")}
                   </Badge>
+                  {contact.vertical && (
+                    <Badge variant="secondary">
+                      {contact.vertical.replace(/_/g, " ")}
+                    </Badge>
+                  )}
                 </div>
               </div>
 
@@ -199,6 +216,19 @@ export default function ContactDetailPage({
                     </a>
                   </div>
                 )}
+                {contact.twitterUrl && (
+                  <div className="flex items-center gap-3 text-sm">
+                    <Twitter className="h-4 w-4 text-muted-foreground" />
+                    <a
+                      href={contact.twitterUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline flex items-center gap-1"
+                    >
+                      Twitter / X <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </div>
+                )}
                 {contact.websiteUrl && (
                   <div className="flex items-center gap-3 text-sm">
                     <Globe className="h-4 w-4 text-muted-foreground" />
@@ -212,7 +242,33 @@ export default function ContactDetailPage({
                     </a>
                   </div>
                 )}
+                {(contact.city || contact.state || contact.country || contact.address) && (
+                  <div className="flex items-center gap-3 text-sm">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <span>
+                      {[contact.address, [contact.city, contact.state].filter(Boolean).join(", "), contact.country]
+                        .filter(Boolean)
+                        .join(", ")}
+                    </span>
+                  </div>
+                )}
               </div>
+
+              {/* Source info */}
+              {(contact.source || contact.sourceDetails) && (
+                <>
+                  <Separator className="my-4" />
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground font-medium">Source</p>
+                    <p className="text-sm">
+                      {contact.source?.replace(/_/g, " ") ?? "Unknown"}
+                      {contact.sourceDetails && (
+                        <span className="text-muted-foreground"> — {contact.sourceDetails}</span>
+                      )}
+                    </p>
+                  </div>
+                </>
+              )}
 
               {/* Owner */}
               {contact.owner && (
@@ -319,6 +375,16 @@ export default function ContactDetailPage({
               {/* Custom Fields */}
               <Separator className="my-4" />
               <CustomFieldsDisplay entityId={id} />
+
+              {/* Created metadata */}
+              {contact.createdAt && (
+                <>
+                  <Separator className="my-4" />
+                  <p className="text-xs text-muted-foreground">
+                    Created {new Date(contact.createdAt).toLocaleDateString()}
+                  </p>
+                </>
+              )}
             </CardContent>
           </Card>
 
@@ -397,6 +463,19 @@ export default function ContactDetailPage({
                   </Badge>
                 </div>
               )}
+              {contact.lastActiveAt && (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">
+                      Last Active
+                    </span>
+                  </div>
+                  <span className="text-sm">
+                    {new Date(contact.lastActiveAt).toLocaleDateString()}
+                  </span>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -408,6 +487,7 @@ export default function ContactDetailPage({
               <TabsTrigger value="timeline">Timeline</TabsTrigger>
               <TabsTrigger value="deals">Deals</TabsTrigger>
               <TabsTrigger value="tasks">Tasks</TabsTrigger>
+              <TabsTrigger value="history">History</TabsTrigger>
             </TabsList>
 
             <TabsContent value="timeline" className="mt-4">
@@ -430,6 +510,20 @@ export default function ContactDetailPage({
 
             <TabsContent value="tasks" className="mt-4">
               <ContactTasksTab contactId={id} />
+            </TabsContent>
+
+            <TabsContent value="history" className="mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Change History</CardTitle>
+                  <CardDescription>
+                    Field-level changes for this contact
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChangeHistoryTab entityType="contact" entityId={id} />
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>

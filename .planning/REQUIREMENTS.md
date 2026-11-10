@@ -143,23 +143,23 @@ Requirements for this milestone. Each maps to roadmap phases.
 
 ### Import Wizard
 
-- [ ] **IMPT-01**: Import wizard: Step 1 — Upload CSV file
-- [ ] **IMPT-02**: Import wizard: Step 2 — Map columns to fields with auto-detect
-- [ ] **IMPT-03**: Import wizard: Step 3 — Preview first 5 rows
-- [ ] **IMPT-04**: Import wizard: Step 4 — Import with progress bar
-- [ ] **IMPT-05**: Import wizard: Step 5 — Summary (created, skipped, errors)
+- [x] **IMPT-01**: Import wizard: Step 1 — Upload CSV file
+- [x] **IMPT-02**: Import wizard: Step 2 — Map columns to fields with auto-detect
+- [x] **IMPT-03**: Import wizard: Step 3 — Preview first 5 rows
+- [x] **IMPT-04**: Import wizard: Step 4 — Import with progress bar
+- [x] **IMPT-05**: Import wizard: Step 5 — Summary (created, skipped, errors)
 
 ### Email Templates
 
-- [ ] **EMTL-01**: User can create/edit/delete email templates in settings
-- [ ] **EMTL-02**: Templates support variable interpolation ({{firstName}}, {{companyName}}, etc.)
-- [ ] **EMTL-03**: Templates can be used when logging email activities
+- [x] **EMTL-01**: User can create/edit/delete email templates in settings
+- [x] **EMTL-02**: Templates support variable interpolation ({{firstName}}, {{companyName}}, etc.)
+- [x] **EMTL-03**: Templates can be used when logging email activities
 
 ### Advanced Search
 
-- [ ] **SRCH-01**: Command palette searches deals, companies, tasks, and settings pages (not just contacts)
-- [ ] **SRCH-02**: Command palette shows recent items
-- [ ] **SRCH-03**: Command palette offers quick actions: "Create contact", "Create deal", etc.
+- [x] **SRCH-01**: Command palette searches deals, companies, tasks, and settings pages (not just contacts)
+- [x] **SRCH-02**: Command palette shows recent items
+- [x] **SRCH-03**: Command palette offers quick actions: "Create contact", "Create deal", etc.
 
 ## v2 Requirements
 

@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
     // Create tag
     if (body.name) {
-      const tag = await createTag(body.name, body.color ?? "#6B7280");
+      const tag = await createTag(body.name, body.color ?? "#8A7E7D");
       return NextResponse.json(tag, { status: 201 });
     }
 

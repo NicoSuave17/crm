@@ -15,10 +15,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useCreateStage, useUpdateStage } from "@/lib/hooks/use-pipeline";
 import { toast } from "sonner";
 
-const STAGE_COLORS = [
-  "#EF4444", "#F97316", "#EAB308", "#22C55E", "#06B6D4",
-  "#3B82F6", "#8B5CF6", "#EC4899", "#6B7280", "#1F2937",
-];
+import { STAGE_PICKER_COLORS } from "@/lib/constants/brand-colors";
+
+const STAGE_COLORS = STAGE_PICKER_COLORS;
 
 interface StageDialogProps {
   open: boolean;
@@ -41,7 +40,7 @@ export function StageDialog({
   stage,
 }: StageDialogProps) {
   const [name, setName] = useState("");
-  const [color, setColor] = useState("#3B82F6");
+  const [color, setColor] = useState("#1754D8");
   const [probability, setProbability] = useState("");
   const [isWon, setIsWon] = useState(false);
   const [isLost, setIsLost] = useState(false);
@@ -55,13 +54,13 @@ export function StageDialog({
   useEffect(() => {
     if (open && stage) {
       setName(stage.name);
-      setColor(stage.color ?? "#3B82F6");
+      setColor(stage.color ?? "#1754D8");
       setProbability(stage.probability != null ? String(stage.probability) : "");
       setIsWon(stage.isWon);
       setIsLost(stage.isLost);
     } else if (open) {
       setName("");
-      setColor("#3B82F6");
+      setColor("#1754D8");
       setProbability("");
       setIsWon(false);
       setIsLost(false);

@@ -79,12 +79,12 @@ export async function seedDefaultPipelines() {
     .returning();
 
   const sellerStages = [
-    { name: "Lead", position: 0, color: "#6B7280", probability: 10 },
-    { name: "Qualified", position: 1, color: "#3B82F6", probability: 25 },
-    { name: "Demo Scheduled", position: 2, color: "#8B5CF6", probability: 50 },
-    { name: "Proposal", position: 3, color: "#F59E0B", probability: 75 },
-    { name: "Closed Won", position: 4, color: "#10B981", probability: 100, isWon: true },
-    { name: "Closed Lost", position: 5, color: "#EF4444", probability: 0, isLost: true },
+    { name: "Lead", position: 0, color: "#8A7E7D", probability: 10 },
+    { name: "Qualified", position: 1, color: "#1754D8", probability: 25 },
+    { name: "Demo Scheduled", position: 2, color: "#8160CE", probability: 50 },
+    { name: "Proposal", position: 3, color: "#FA4616", probability: 75 },
+    { name: "Closed Won", position: 4, color: "#00876D", probability: 100, isWon: true },
+    { name: "Closed Lost", position: 5, color: "#E86644", probability: 0, isLost: true },
   ];
 
   await db.insert(pipelineStages).values(
@@ -107,12 +107,12 @@ export async function seedDefaultPipelines() {
     .returning();
 
   const enterpriseStages = [
-    { name: "Prospect", position: 0, color: "#6B7280", probability: 5 },
-    { name: "Discovery", position: 1, color: "#3B82F6", probability: 20 },
-    { name: "Evaluation", position: 2, color: "#8B5CF6", probability: 40 },
-    { name: "Negotiation", position: 3, color: "#F59E0B", probability: 70 },
-    { name: "Closed Won", position: 4, color: "#10B981", probability: 100, isWon: true },
-    { name: "Closed Lost", position: 5, color: "#EF4444", probability: 0, isLost: true },
+    { name: "Prospect", position: 0, color: "#8A7E7D", probability: 5 },
+    { name: "Discovery", position: 1, color: "#1754D8", probability: 20 },
+    { name: "Evaluation", position: 2, color: "#8160CE", probability: 40 },
+    { name: "Negotiation", position: 3, color: "#FA4616", probability: 70 },
+    { name: "Closed Won", position: 4, color: "#00876D", probability: 100, isWon: true },
+    { name: "Closed Lost", position: 5, color: "#E86644", probability: 0, isLost: true },
   ];
 
   await db.insert(pipelineStages).values(

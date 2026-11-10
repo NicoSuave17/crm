@@ -19,9 +19,23 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 import { UserPicker } from "@/components/pickers/user-picker";
+import { CustomFieldsFormSection } from "@/components/custom-fields/custom-fields-form-section";
 import { useCreateCompany } from "@/lib/hooks/use-companies";
+import { VERTICALS } from "@/lib/constants/verticals";
 import { toast } from "sonner";
+import { useFieldLabels } from "@/lib/hooks/use-field-labels";
 import type { CreateCompanyInput } from "@/lib/validators/company";
 
 interface CompanyFormProps {
@@ -31,18 +45,28 @@ interface CompanyFormProps {
 
 export function CompanyForm({ open, onOpenChange }: CompanyFormProps) {
   const createCompany = useCreateCompany();
+  const { getLabel } = useFieldLabels();
   const [form, setForm] = useState<CreateCompanyInput>({
     name: "",
   });
+  const [customFieldValues, setCustomFieldValues] = useState<Record<string, string | boolean>>({});
+  const [duplicateWarning, setDuplicateWarning] = useState<Array<{ record: { id: string; name: string; domain: string | null }; confidence: number; matchReason: string }>>([]);
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-
+  function doCreate() {
     createCompany.mutate(form, {
-      onSuccess: () => {
+      onSuccess: async (data: { id: string }) => {
+        for (const [fieldId, value] of Object.entries(customFieldValues)) {
+          if (value === "" || value === undefined) continue;
+          const body: Record<string, unknown> = { fieldDefinitionId: fieldId, entityId: data.id };
+          if (typeof value === "boolean") body.booleanValue = value;
+          else if (!isNaN(Number(value)) && value !== "") body.numberValue = value;
+          else body.textValue = value;
+          await fetch("/api/custom-fields", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+        }
         toast.success("Company created");
         onOpenChange(false);
         setForm({ name: "" });
+        setCustomFieldValues({});
       },
       onError: (error) => {
         toast.error(error.message);
@@ -50,7 +74,30 @@ export function CompanyForm({ open, onOpenChange }: CompanyFormProps) {
     });
   }
 
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    try {
+      const params = new URLSearchParams({ name: form.name });
+      if (form.domain) params.set("domain", form.domain);
+
+      const res = await fetch(`/api/companies/duplicates?${params}`);
+      if (res.ok) {
+        const { duplicates } = await res.json();
+        if (duplicates && duplicates.length > 0) {
+          setDuplicateWarning(duplicates);
+          return;
+        }
+      }
+    } catch {
+      // If duplicate check fails, proceed with creation
+    }
+
+    doCreate();
+  }
+
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
@@ -60,7 +107,7 @@ export function CompanyForm({ open, onOpenChange }: CompanyFormProps) {
           {/* Name + Domain row */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="company-name">Name *</Label>
+              <Label htmlFor="company-name">{getLabel("name", "Name")} *</Label>
               <Input
                 id="company-name"
                 value={form.name}
@@ -86,7 +133,7 @@ export function CompanyForm({ open, onOpenChange }: CompanyFormProps) {
           {/* Industry + Size row */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="company-industry">Industry</Label>
+              <Label htmlFor="company-industry">{getLabel("industry", "Industry")}</Label>
               <Input
                 id="company-industry"
                 value={form.industry ?? ""}
@@ -97,7 +144,7 @@ export function CompanyForm({ open, onOpenChange }: CompanyFormProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label>Size</Label>
+              <Label>{getLabel("size", "Size")}</Label>
               <Select
                 value={form.size ?? "none"}
                 onValueChange={(v) =>
@@ -120,6 +167,25 @@ export function CompanyForm({ open, onOpenChange }: CompanyFormProps) {
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          {/* Vertical */}
+          <div className="space-y-2">
+            <Label>Vertical</Label>
+            <Select
+              value={form.vertical ?? "none"}
+              onValueChange={(v) => setForm((prev) => ({ ...prev, vertical: v === "none" ? undefined : (v as any) }))}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select vertical" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                {VERTICALS.map((v) => (
+                  <SelectItem key={v.value} value={v.value}>{v.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Description */}
@@ -161,9 +227,54 @@ export function CompanyForm({ open, onOpenChange }: CompanyFormProps) {
             />
           </div>
 
+          {/* Address */}
+          <div className="space-y-2">
+            <Label htmlFor="company-address">Address</Label>
+            <Input
+              id="company-address"
+              value={form.address ?? ""}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, address: e.target.value }))
+              }
+              placeholder="Street address"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="company-city">City</Label>
+              <Input
+                id="company-city"
+                value={form.city ?? ""}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, city: e.target.value }))
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="company-state">State</Label>
+              <Input
+                id="company-state"
+                value={form.state ?? ""}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, state: e.target.value }))
+                }
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="company-country">Country</Label>
+            <Input
+              id="company-country"
+              value={form.country ?? ""}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, country: e.target.value }))
+              }
+            />
+          </div>
+
           {/* Owner */}
           <div className="space-y-2">
-            <Label>Owner</Label>
+            <Label>{getLabel("owner", "Owner")}</Label>
             <UserPicker
               value={form.ownerId ?? null}
               onChange={(userId) =>
@@ -174,6 +285,14 @@ export function CompanyForm({ open, onOpenChange }: CompanyFormProps) {
               }
             />
           </div>
+
+          <CustomFieldsFormSection
+            entityType="company"
+            values={customFieldValues}
+            onChange={(fieldId, value) =>
+              setCustomFieldValues((prev) => ({ ...prev, [fieldId]: value }))
+            }
+          />
 
           <DialogFooter>
             <Button
@@ -190,5 +309,34 @@ export function CompanyForm({ open, onOpenChange }: CompanyFormProps) {
         </form>
       </DialogContent>
     </Dialog>
+
+      <AlertDialog open={duplicateWarning.length > 0} onOpenChange={() => setDuplicateWarning([])}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Possible Duplicates Found</AlertDialogTitle>
+            <AlertDialogDescription>
+              The following existing companies may be duplicates:
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-2 my-2">
+            {duplicateWarning.map((dup) => (
+              <div key={dup.record.id} className="flex items-center justify-between rounded-md border p-2">
+                <div className="text-sm">
+                  <span className="font-medium">{dup.record.name}</span>
+                  {dup.record.domain && <span className="text-muted-foreground ml-2">{dup.record.domain}</span>}
+                </div>
+                <Badge variant="secondary" className="text-xs">{dup.confidence}% — {dup.matchReason}</Badge>
+              </div>
+            ))}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => { setDuplicateWarning([]); doCreate(); }}>
+              Create Anyway
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser } from "@/lib/auth/helpers";
+import { requireUser, requireRole } from "@/lib/auth/helpers";
 import { getPipelineWithStages, updatePipeline, deletePipeline } from "@/lib/api/pipelines";
 import { listDealsByPipeline } from "@/lib/api/deals";
+import { getDealChecklistProgress } from "@/lib/api/checklists";
 import { updatePipelineSchema } from "@/lib/validators/pipeline";
 
 export async function GET(
@@ -19,7 +20,15 @@ export async function GET(
 
     const deals = await listDealsByPipeline(id);
 
-    return NextResponse.json({ ...pipeline, deals });
+    // Attach checklist progress to each deal
+    const dealIds = deals.map((d) => d.id);
+    const progressMap = await getDealChecklistProgress(dealIds);
+    const dealsWithProgress = deals.map((d) => ({
+      ...d,
+      checklistProgress: progressMap.get(d.id) ?? null,
+    }));
+
+    return NextResponse.json({ ...pipeline, deals: dealsWithProgress });
   } catch (error) {
     if (error instanceof Error && error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -34,7 +43,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireUser();
+    await requireRole(["admin", "manager"]);
     const { id } = await params;
     const body = await request.json();
     const parsed = updatePipelineSchema.safeParse(body);
@@ -53,6 +62,9 @@ export async function PATCH(
     if (error instanceof Error && error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    if (error instanceof Error && error.message === "Forbidden") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     console.error("PATCH /api/pipeline/[id] error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
@@ -63,13 +75,16 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireUser();
+    await requireRole(["admin", "manager"]);
     const { id } = await params;
     await deletePipeline(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     if (error instanceof Error && error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error instanceof Error && error.message === "Forbidden") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
     if (error instanceof Error && error.message.includes("Cannot delete")) {
       return NextResponse.json({ error: error.message }, { status: 409 });

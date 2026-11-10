@@ -37,6 +37,7 @@ export async function listActivities(params: ActivityListParams) {
       userAvatarUrl: users.avatarUrl,
       occurredAt: activities.occurredAt,
       duration: activities.duration,
+      nextFollowUpDate: activities.nextFollowUpDate,
       createdAt: activities.createdAt,
     })
     .from(activities)
@@ -53,12 +54,18 @@ export async function createActivity(
   data: CreateActivityInput,
   userId: string
 ) {
+  const { outcome, nextFollowUpDate: followUp, ...rest } = data;
   const [activity] = await db
     .insert(activities)
     .values({
-      ...data,
+      ...rest,
       userId,
       occurredAt: data.occurredAt ? new Date(data.occurredAt) : new Date(),
+      metadata: {
+        ...(rest.metadata ?? {}),
+        ...(outcome ? { outcome } : {}),
+      },
+      nextFollowUpDate: followUp || null,
     })
     .returning();
 

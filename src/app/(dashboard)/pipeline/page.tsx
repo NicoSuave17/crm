@@ -1,10 +1,12 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useRef, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { usePipelines, usePipelineWithDeals } from "@/lib/hooks/use-pipeline";
 import { KanbanBoard } from "@/components/pipeline/kanban-board";
 import { DealForm } from "@/components/pipeline/deal-form";
+import { OwnerFilter, type OwnerFilterValue } from "@/components/filters/owner-filter";
+import { useCurrentUser } from "@/lib/hooks/use-current-user";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -30,6 +32,18 @@ function PipelinePage() {
   const [selectedPipelineId, setSelectedPipelineId] = useState<string>("");
   const [dealFormOpen, setDealFormOpen] = useState(false);
 
+  const { user: currentUser, isAdminOrManager } = useCurrentUser();
+  const [ownerFilter, setOwnerFilter] = useState<OwnerFilterValue>("all");
+  const ownerFilterInitialized = useRef(false);
+  useEffect(() => {
+    if (currentUser && !ownerFilterInitialized.current) {
+      ownerFilterInitialized.current = true;
+      if (!isAdminOrManager) {
+        setOwnerFilter("my");
+      }
+    }
+  }, [currentUser, isAdminOrManager]);
+
   // Handle ?create=true from command palette quick action
   useEffect(() => {
     if (searchParams.get("create") === "true") {
@@ -46,6 +60,14 @@ function PipelinePage() {
 
   const { data: pipelineData, isLoading: pipelineLoading } =
     usePipelineWithDeals(activePipelineId);
+
+  const filteredDeals = useMemo(() => {
+    const allDeals = pipelineData?.deals ?? [];
+    if (ownerFilter === "all") return allDeals;
+    if (ownerFilter === "unassigned") return allDeals.filter((d: { ownerId: string | null }) => !d.ownerId);
+    if (ownerFilter === "my" && currentUser?.id) return allDeals.filter((d: { ownerId: string | null }) => d.ownerId === currentUser.id);
+    return allDeals;
+  }, [pipelineData?.deals, ownerFilter, currentUser?.id]);
 
   if (pipelinesLoading) {
     return (
@@ -85,6 +107,7 @@ function PipelinePage() {
               </SelectContent>
             </Select>
           )}
+          <OwnerFilter value={ownerFilter} onChange={setOwnerFilter} />
           <Button
             onClick={() => setDealFormOpen(true)}
             disabled={!pipelineData?.stages?.length}
@@ -104,7 +127,7 @@ function PipelinePage() {
       ) : pipelineData ? (
         <KanbanBoard
           stages={pipelineData.stages ?? []}
-          deals={pipelineData.deals ?? []}
+          deals={filteredDeals}
         />
       ) : (
         <p className="text-muted-foreground text-center py-20">

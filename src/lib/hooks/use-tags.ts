@@ -111,3 +111,51 @@ export function useRemoveTagFromDeal() {
     },
   });
 }
+
+export function useCompanyTags(companyId: string) {
+  return useQuery({
+    queryKey: ["companyTags", companyId],
+    queryFn: async () => {
+      const res = await fetch(`/api/tags/company?companyId=${companyId}`);
+      if (!res.ok) throw new Error("Failed to fetch company tags");
+      return res.json();
+    },
+    enabled: !!companyId,
+  });
+}
+
+export function useAddTagToCompany() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: { companyId: string; tagId: string }) => {
+      const res = await fetch("/api/tags/company", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("Failed to add tag");
+    },
+    onSuccess: (_, { companyId }) => {
+      queryClient.invalidateQueries({ queryKey: ["companyTags", companyId] });
+      queryClient.invalidateQueries({ queryKey: ["companies"] });
+    },
+  });
+}
+
+export function useRemoveTagFromCompany() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: { companyId: string; tagId: string }) => {
+      const res = await fetch("/api/tags/company", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("Failed to remove tag");
+    },
+    onSuccess: (_, { companyId }) => {
+      queryClient.invalidateQueries({ queryKey: ["companyTags", companyId] });
+      queryClient.invalidateQueries({ queryKey: ["companies"] });
+    },
+  });
+}

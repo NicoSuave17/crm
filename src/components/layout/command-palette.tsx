@@ -20,6 +20,7 @@ import {
   Settings,
   Building2,
   Plus,
+  MessageSquare,
 } from "lucide-react";
 import { getRecentItems, type RecentItem } from "@/lib/utils/recent-items";
 
@@ -28,6 +29,7 @@ interface SearchResult {
   deals: { id: string; title: string }[];
   companies: { id: string; name: string; domain: string | null }[];
   tasks: { id: string; title: string; status: string }[];
+  activities: { id: string; type: string; subject: string | null; contactId: string | null; dealId: string | null }[];
 }
 
 const ENTITY_ICONS: Record<RecentItem["type"], typeof Users> = {
@@ -54,6 +56,7 @@ export function CommandPalette() {
     deals: [],
     companies: [],
     tasks: [],
+    activities: [],
   });
   const [recents, setRecents] = useState<RecentItem[]>([]);
   const router = useRouter();
@@ -80,7 +83,7 @@ export function CommandPalette() {
   // Search debounce
   useEffect(() => {
     if (query.length < 2) {
-      setResults({ contacts: [], deals: [], companies: [], tasks: [] });
+      setResults({ contacts: [], deals: [], companies: [], tasks: [], activities: [] });
       return;
     }
 
@@ -140,6 +143,7 @@ export function CommandPalette() {
     results.deals.length > 0 ||
     results.companies.length > 0 ||
     results.tasks.length > 0 ||
+    results.activities.length > 0 ||
     matchingSettings.length > 0;
 
   return (
@@ -219,6 +223,27 @@ export function CommandPalette() {
                 {t.title}
                 <Badge variant="outline" className="ml-2 text-[10px]">
                   {t.status.replace("_", " ")}
+                </Badge>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        )}
+
+        {results.activities.length > 0 && (
+          <CommandGroup heading="Activities">
+            {results.activities.map((a) => (
+              <CommandItem
+                key={a.id}
+                onSelect={() => {
+                  // Navigate to the related contact or deal
+                  if (a.contactId) navigate(`/contacts/${a.contactId}`);
+                  else if (a.dealId) navigate(`/deals/${a.dealId}`);
+                }}
+              >
+                <MessageSquare className="mr-2 h-4 w-4" />
+                {a.subject || `${a.type} activity`}
+                <Badge variant="outline" className="ml-2 text-[10px]">
+                  {a.type.replace("_", " ")}
                 </Badge>
               </CommandItem>
             ))}

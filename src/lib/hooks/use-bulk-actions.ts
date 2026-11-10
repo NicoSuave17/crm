@@ -61,6 +61,41 @@ export function useBulkDeleteContacts() {
   });
 }
 
+export function useBulkLinkCompany() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: { contactIds: string[]; companyId: string }) =>
+      bulkPatch({ action: "link_contacts_company", ...data }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contacts"] });
+    },
+  });
+}
+
+// ─── Companies ────────────────────────────────────────────────
+
+export function useBulkReassignCompanies() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: { companyIds: string[]; newOwnerId: string }) =>
+      bulkPatch({ action: "reassign_companies", ...data }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["companies"] });
+    },
+  });
+}
+
+export function useBulkDeleteCompanies() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: { companyIds: string[] }) =>
+      bulkPatch({ action: "delete_companies", ...data }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["companies"] });
+    },
+  });
+}
+
 // ─── Deals ─────────────────────────────────────────────────────
 
 export function useBulkStageDeal() {
@@ -94,6 +129,37 @@ export function useBulkDeleteDeals() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["deals"] });
       queryClient.invalidateQueries({ queryKey: ["pipeline"] });
+    },
+  });
+}
+
+export function useBulkReassignDeals() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: { dealIds: string[]; newOwnerId: string }) =>
+      bulkPatch({ action: "reassign_deals", ...data }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["deals"] });
+      queryClient.invalidateQueries({ queryKey: ["pipeline"] });
+    },
+  });
+}
+
+// ─── Round Robin ──────────────────────────────────────────────
+
+export function useBulkRoundRobin() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: {
+      entityIds: string[];
+      entityType: "contact" | "deal" | "company";
+      userIds: string[];
+    }) => bulkPatch({ action: "round_robin", ...data }),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: [variables.entityType === "contact" ? "contacts" : variables.entityType === "deal" ? "deals" : "companies"] });
+      if (variables.entityType === "deal") {
+        queryClient.invalidateQueries({ queryKey: ["pipeline"] });
+      }
     },
   });
 }

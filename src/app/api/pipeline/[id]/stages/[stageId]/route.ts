@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser } from "@/lib/auth/helpers";
+import { requireRole } from "@/lib/auth/helpers";
 import { updateStage, deleteStage } from "@/lib/api/pipelines";
 import { updateStageSchema } from "@/lib/validators/pipeline";
 
@@ -8,7 +8,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string; stageId: string }> }
 ) {
   try {
-    await requireUser();
+    await requireRole(["admin", "manager"]);
     const { stageId } = await params;
 
     const body = await request.json();
@@ -32,6 +32,9 @@ export async function PATCH(
     if (error instanceof Error && error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    if (error instanceof Error && error.message === "Forbidden") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     console.error("PATCH /api/pipeline/[id]/stages/[stageId] error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -45,7 +48,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string; stageId: string }> }
 ) {
   try {
-    await requireUser();
+    await requireRole(["admin", "manager"]);
     const { stageId } = await params;
 
     await deleteStage(stageId);
@@ -53,6 +56,9 @@ export async function DELETE(
   } catch (error) {
     if (error instanceof Error && error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error instanceof Error && error.message === "Forbidden") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
     if (error instanceof Error && error.message.includes("Cannot delete")) {
       return NextResponse.json({ error: error.message }, { status: 409 });

@@ -8,6 +8,8 @@ import { DealTagSelector } from "@/components/deals/deal-tag-selector";
 import { EditDealDialog } from "@/components/deals/edit-deal-dialog";
 import { CustomFieldsDisplay } from "@/components/contacts/custom-fields-display";
 import { StageHistoryList } from "@/components/deals/stage-history-list";
+import { ChangeHistoryTab } from "@/components/history/change-history-tab";
+import { DealChecklistCard } from "@/components/deals/deal-checklist-card";
 import { formatCurrency } from "@/lib/utils/format";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -35,12 +37,9 @@ import {
 import Link from "next/link";
 import { addRecentItem } from "@/lib/utils/recent-items";
 
-const priorityColors: Record<string, string> = {
-  low: "bg-gray-100 text-gray-700",
-  medium: "bg-blue-100 text-blue-700",
-  high: "bg-orange-100 text-orange-700",
-  urgent: "bg-red-100 text-red-700",
-};
+import { PRIORITY_COLORS, STAGE_FALLBACK } from "@/lib/constants/brand-colors";
+
+const priorityColors = PRIORITY_COLORS;
 
 function getInitials(firstName: string | null, lastName: string | null): string {
   const first = firstName?.[0] ?? "";
@@ -133,9 +132,10 @@ export default function DealDetailPage({
               <div className="space-y-4">
                 <div>
                   <h2 className="text-xl font-semibold">{deal.title}</h2>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {deal.pipelineName}
-                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-xs font-mono text-muted-foreground">{deal.crmId}</span>
+                    <span className="text-sm text-muted-foreground">{deal.pipelineName}</span>
+                  </div>
                 </div>
 
                 {/* Stage badge */}
@@ -150,7 +150,7 @@ export default function DealDetailPage({
                     <span
                       className="inline-block h-2 w-2 rounded-full mr-1.5"
                       style={{
-                        backgroundColor: deal.stageColor ?? "#6B7280",
+                        backgroundColor: deal.stageColor ?? "#8A7E7D",
                       }}
                     />
                     {deal.stageName}
@@ -203,6 +203,29 @@ export default function DealDetailPage({
                       </div>
                       <span className="text-sm">
                         {new Date(deal.expectedCloseDate).toLocaleDateString()}
+                      </span>
+                    </div>
+                  )}
+                  {deal.actualCloseDate && (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">
+                          Actual Close
+                        </span>
+                      </div>
+                      <span className="text-sm">
+                        {new Date(deal.actualCloseDate).toLocaleDateString()}
+                      </span>
+                    </div>
+                  )}
+                  {deal.closedAt && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">
+                        Closed At
+                      </span>
+                      <span className="text-sm">
+                        {new Date(deal.closedAt).toLocaleDateString()}
                       </span>
                     </div>
                   )}
@@ -287,6 +310,16 @@ export default function DealDetailPage({
                 {/* Custom Fields */}
                 <Separator />
                 <CustomFieldsDisplay entityId={id} />
+
+                {/* Created metadata */}
+                {deal.createdAt && (
+                  <>
+                    <Separator />
+                    <p className="text-xs text-muted-foreground">
+                      Created {new Date(deal.createdAt).toLocaleDateString()}
+                    </p>
+                  </>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -329,6 +362,9 @@ export default function DealDetailPage({
             </CardContent>
           </Card>
 
+          {/* Checklist card */}
+          <DealChecklistCard dealId={id} />
+
           {/* Company card */}
           {deal.companyId && deal.companyName && (
             <Card>
@@ -366,6 +402,7 @@ export default function DealDetailPage({
             <TabsList>
               <TabsTrigger value="timeline">Timeline</TabsTrigger>
               <TabsTrigger value="stage-history">Stage History</TabsTrigger>
+              <TabsTrigger value="history">History</TabsTrigger>
             </TabsList>
 
             <TabsContent value="timeline" className="mt-4">
@@ -405,6 +442,20 @@ export default function DealDetailPage({
                 </CardHeader>
                 <CardContent>
                   <StageHistoryList dealId={id} />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="history" className="mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Change History</CardTitle>
+                  <CardDescription>
+                    Field-level changes for this deal
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChangeHistoryTab entityType="deal" entityId={id} />
                 </CardContent>
               </Card>
             </TabsContent>

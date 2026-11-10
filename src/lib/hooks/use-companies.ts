@@ -9,7 +9,9 @@ interface CompanyListParams {
   search?: string;
   industry?: string;
   size?: string;
+  vertical?: string;
   ownerId?: string;
+  tagId?: string;
   sortBy?: string;
   sortDir?: "asc" | "desc";
 }
@@ -54,11 +56,10 @@ export function useCreateCompany() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error || "Failed to create company");
-      }
-      return res.json();
+      const json = await res.json();
+      if (res.status === 202) return { ...json, _pendingReview: true };
+      if (!res.ok) throw new Error(json.error || "Failed to create company");
+      return json;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["companies"] });
@@ -81,11 +82,10 @@ export function useUpdateCompany() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error || "Failed to update company");
-      }
-      return res.json();
+      const json = await res.json();
+      if (res.status === 202) return { ...json, _pendingReview: true };
+      if (!res.ok) throw new Error(json.error || "Failed to update company");
+      return json;
     },
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["companies"] });

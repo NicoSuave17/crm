@@ -66,7 +66,7 @@ export function StageHistoryList({ dealId }: StageHistoryListProps) {
               >
                 <CircleDot
                   className="h-4 w-4"
-                  style={{ color: entry.toStageColor ?? "#6B7280" }}
+                  style={{ color: entry.toStageColor ?? "#8A7E7D" }}
                 />
               </div>
 

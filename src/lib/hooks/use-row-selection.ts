@@ -7,6 +7,7 @@ export interface UseRowSelectionReturn {
   isSelected: (id: string) => boolean;
   toggle: (id: string) => void;
   toggleAll: (allIds: string[]) => void;
+  selectMany: (ids: string[]) => void;
   clear: () => void;
   count: number;
   isAllSelected: (allIds: string[]) => boolean;
@@ -49,6 +50,10 @@ export function useRowSelection(): UseRowSelectionReturn {
     });
   }, []);
 
+  const selectMany = useCallback((ids: string[]) => {
+    setSelectedIds(new Set(ids));
+  }, []);
+
   const clear = useCallback(() => {
     setSelectedIds(new Set());
   }, []);
@@ -80,6 +85,7 @@ export function useRowSelection(): UseRowSelectionReturn {
     isSelected,
     toggle,
     toggleAll,
+    selectMany,
     clear,
     count,
     isAllSelected,

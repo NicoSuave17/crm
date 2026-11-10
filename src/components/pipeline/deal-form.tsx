@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +21,9 @@ import {
 } from "@/components/ui/dialog";
 import { useCreateDeal } from "@/lib/hooks/use-deals";
 import { useContacts } from "@/lib/hooks/use-contacts";
+import { useContactCompanies, useCompanyContacts } from "@/lib/hooks/use-contact-companies";
+import { CompanyPicker } from "@/components/pickers/company-picker";
+import { UserPicker } from "@/components/pickers/user-picker";
 import { toast } from "sonner";
 
 interface DealFormProps {
@@ -41,16 +44,49 @@ export function DealForm({
   defaultCompanyId,
 }: DealFormProps) {
   const createDeal = useCreateDeal();
-  const { data: contactsData } = useContacts({ limit: 100 });
   const [form, setForm] = useState({
     title: "",
     description: "",
     stageId: stages[0]?.id ?? "",
     contactId: defaultContactId ?? "",
+    companyId: defaultCompanyId ?? "",
+    ownerId: "" as string,
     value: "",
+    expectedMrr: "",
     expectedCloseDate: "",
+    currency: "USD" as string,
     priority: "medium" as string,
   });
+
+  // When creating from company context, only show that company's contacts
+  const { data: companyContacts } = useCompanyContacts(defaultCompanyId ?? "");
+
+  // When a contact is selected, fetch their companies to auto-populate
+  const { data: contactCompanies } = useContactCompanies(
+    !defaultCompanyId && form.contactId ? form.contactId : ""
+  );
+
+  // For general contact list (no company filter)
+  const { data: contactsData } = useContacts({ limit: 100 });
+
+  // Auto-populate company when contact is selected (only if not in company context)
+  useEffect(() => {
+    if (defaultCompanyId || !contactCompanies) return;
+    if (contactCompanies.length === 1) {
+      setForm((prev) => ({ ...prev, companyId: contactCompanies[0].companyId }));
+    } else if (contactCompanies.length === 0) {
+      setForm((prev) => ({ ...prev, companyId: "" }));
+    }
+  }, [contactCompanies, defaultCompanyId]);
+
+  // Build the contacts list depending on context
+  const contactsList = defaultCompanyId && companyContacts
+    ? companyContacts.map((c) => ({
+        id: c.contactId,
+        firstName: c.firstName,
+        lastName: c.lastName,
+      }))
+    : (contactsData?.data as { id: string; firstName: string; lastName: string | null }[] | undefined) ?? [];
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -63,8 +99,10 @@ export function DealForm({
         pipelineId,
         stageId: form.stageId,
         contactId: form.contactId,
-        companyId: defaultCompanyId || undefined,
+        companyId: form.companyId || defaultCompanyId || undefined,
+        ownerId: form.ownerId || undefined,
         value: form.value || undefined,
+        expectedMrr: form.expectedMrr || undefined,
         expectedCloseDate: form.expectedCloseDate || undefined,
         priority: form.priority as "low" | "medium" | "high" | "urgent",
       },
@@ -77,8 +115,12 @@ export function DealForm({
             description: "",
             stageId: stages[0]?.id ?? "",
             contactId: defaultContactId ?? "",
+            companyId: defaultCompanyId ?? "",
+            ownerId: "",
             value: "",
+            expectedMrr: "",
             expectedCloseDate: "",
+            currency: "USD",
             priority: "medium",
           });
         },
@@ -107,14 +149,14 @@ export function DealForm({
             <Label>Contact *</Label>
             <Select
               value={form.contactId}
-              onValueChange={(v) => setForm({ ...form, contactId: v })}
+              onValueChange={(v) => setForm({ ...form, contactId: v, companyId: defaultCompanyId ?? "" })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select contact" />
               </SelectTrigger>
               <SelectContent>
-                {contactsData?.data?.map(
-                  (c: { id: string; firstName: string; lastName: string | null }) => (
+                {contactsList.map(
+                  (c) => (
                     <SelectItem key={c.id} value={c.id}>
                       {c.firstName} {c.lastName}
                     </SelectItem>
@@ -122,6 +164,37 @@ export function DealForm({
                 )}
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Company</Label>
+            {defaultCompanyId ? (
+              <CompanyPicker
+                value={defaultCompanyId}
+                onChange={() => {}}
+                disabled
+              />
+            ) : (
+              <CompanyPicker
+                value={form.companyId || null}
+                onChange={(id) => setForm({ ...form, companyId: id ?? "" })}
+              />
+            )}
+            {!defaultCompanyId && contactCompanies && contactCompanies.length > 1 && (
+              <p className="text-xs text-muted-foreground">
+                Contact has {contactCompanies.length} companies. Please select one.
+              </p>
+            )}
+          </div>
+
+          {/* Owner */}
+          <div className="space-y-2">
+            <Label>Owner</Label>
+            <UserPicker
+              value={form.ownerId || null}
+              onChange={(userId) => setForm({ ...form, ownerId: userId ?? "" })}
+              placeholder="Auto-assign to me"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -162,9 +235,9 @@ export function DealForm({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label>Value ($)</Label>
+              <Label>Value</Label>
               <Input
                 type="number"
                 value={form.value}
@@ -173,15 +246,43 @@ export function DealForm({
               />
             </div>
             <div className="space-y-2">
-              <Label>Expected Close</Label>
+              <Label>Expected MRR</Label>
               <Input
-                type="date"
-                value={form.expectedCloseDate}
-                onChange={(e) =>
-                  setForm({ ...form, expectedCloseDate: e.target.value })
-                }
+                type="number"
+                value={form.expectedMrr}
+                onChange={(e) => setForm({ ...form, expectedMrr: e.target.value })}
+                placeholder="0.00"
               />
             </div>
+            <div className="space-y-2">
+              <Label>Currency</Label>
+              <Select
+                value={form.currency}
+                onValueChange={(v) => setForm({ ...form, currency: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="USD">USD</SelectItem>
+                  <SelectItem value="EUR">EUR</SelectItem>
+                  <SelectItem value="GBP">GBP</SelectItem>
+                  <SelectItem value="CAD">CAD</SelectItem>
+                  <SelectItem value="AUD">AUD</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Expected Close</Label>
+            <Input
+              type="date"
+              value={form.expectedCloseDate}
+              onChange={(e) =>
+                setForm({ ...form, expectedCloseDate: e.target.value })
+              }
+            />
           </div>
 
           <div className="space-y-2">

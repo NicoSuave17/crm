@@ -74,6 +74,8 @@ interface ActivityItemProps {
     userAvatarUrl: string | null;
     occurredAt: string;
     duration: number | null;
+    metadata: Record<string, unknown> | null;
+    nextFollowUpDate: string | null;
   };
   currentUserId?: string;
 }
@@ -139,6 +141,11 @@ export function ActivityItem({ activity, currentUserId }: ActivityItemProps) {
               · {activity.duration}min
             </span>
           )}
+          {activity.metadata?.outcome ? (
+            <span className="text-xs bg-muted rounded-full px-2 py-0.5 font-medium">
+              {String(activity.metadata.outcome).replace(/_/g, " ")}
+            </span>
+          ) : null}
           <span className="text-xs text-muted-foreground ml-auto">
             {formatDistanceToNow(new Date(activity.occurredAt), {
               addSuffix: true,
@@ -218,6 +225,11 @@ export function ActivityItem({ activity, currentUserId }: ActivityItemProps) {
             {activity.body && (
               <p className="text-sm text-muted-foreground mt-1 whitespace-pre-wrap">
                 {activity.body}
+              </p>
+            )}
+            {activity.nextFollowUpDate && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Follow-up: {new Date(activity.nextFollowUpDate).toLocaleDateString()}
               </p>
             )}
           </>

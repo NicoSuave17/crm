@@ -9,6 +9,8 @@ import { CompanyContactsTab } from "@/components/companies/company-contacts-tab"
 import { CompanyDealsTab } from "@/components/companies/company-deals-tab";
 import { EditCompanyDialog } from "@/components/companies/edit-company-dialog";
 import { CustomFieldsDisplay } from "@/components/contacts/custom-fields-display";
+import { ChangeHistoryTab } from "@/components/history/change-history-tab";
+import { CompanyTagSelector } from "@/components/companies/company-tag-selector";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -39,6 +41,7 @@ import {
   ExternalLink,
   Globe,
   Linkedin,
+  MapPin,
   Pencil,
   Trash2,
   Users,
@@ -154,6 +157,7 @@ export default function CompanyDetailPage({
                   <Building2 className="h-10 w-10 text-muted-foreground" />
                 </div>
                 <h2 className="text-xl font-semibold">{company.name}</h2>
+                <span className="text-xs font-mono text-muted-foreground">{company.crmId}</span>
                 {company.domain && (
                   <a
                     href={
@@ -169,15 +173,35 @@ export default function CompanyDetailPage({
                     <ExternalLink className="h-3 w-3" />
                   </a>
                 )}
-                <div className="flex gap-2 mt-3">
+                <div className="flex flex-wrap gap-2 mt-3">
                   {company.industry && (
                     <Badge variant="outline">{company.industry}</Badge>
                   )}
                   {company.size && (
                     <Badge variant="secondary">{company.size} employees</Badge>
                   )}
+                  {company.vertical && (
+                    <Badge variant="secondary">
+                      {company.vertical.replace(/_/g, " ")}
+                    </Badge>
+                  )}
                 </div>
               </div>
+
+              {/* Location */}
+              {(company.city || company.state || company.country || company.address) && (
+                <>
+                  <Separator className="my-4" />
+                  <div className="flex items-center gap-3 text-sm">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <span>
+                      {[company.address, [company.city, company.state].filter(Boolean).join(", "), company.country]
+                        .filter(Boolean)
+                        .join(", ")}
+                    </span>
+                  </div>
+                </>
+              )}
 
               {/* Description */}
               {company.description && (
@@ -259,6 +283,10 @@ export default function CompanyDetailPage({
                 </>
               )}
 
+              {/* Tags */}
+              <Separator className="my-4" />
+              <CompanyTagSelector companyId={id} />
+
               {/* Custom Fields */}
               <Separator className="my-4" />
               <CustomFieldsDisplay entityId={id} />
@@ -291,6 +319,17 @@ export default function CompanyDetailPage({
                   {format(new Date(company.createdAt), "MMM d, yyyy")}
                 </span>
               </div>
+              {company.updatedAt && (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">Updated</span>
+                  </div>
+                  <span className="text-sm">
+                    {format(new Date(company.updatedAt), "MMM d, yyyy")}
+                  </span>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -302,6 +341,7 @@ export default function CompanyDetailPage({
               <TabsTrigger value="timeline">Timeline</TabsTrigger>
               <TabsTrigger value="deals">Deals</TabsTrigger>
               <TabsTrigger value="contacts">Contacts</TabsTrigger>
+              <TabsTrigger value="history">History</TabsTrigger>
             </TabsList>
 
             <TabsContent value="timeline" className="mt-4">
@@ -335,6 +375,20 @@ export default function CompanyDetailPage({
 
             <TabsContent value="contacts" className="mt-4">
               <CompanyContactsTab companyId={id} />
+            </TabsContent>
+
+            <TabsContent value="history" className="mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Change History</CardTitle>
+                  <CardDescription>
+                    Field-level changes for this company
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChangeHistoryTab entityType="company" entityId={id} />
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>

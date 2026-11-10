@@ -20,8 +20,12 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { UserPicker } from "@/components/pickers/user-picker";
+import { CustomFieldsFormSection } from "@/components/custom-fields/custom-fields-form-section";
 import { useUpdateCompany } from "@/lib/hooks/use-companies";
+import { VERTICALS } from "@/lib/constants/verticals";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
+import { useFieldLabels } from "@/lib/hooks/use-field-labels";
 
 interface EditCompanyDialogProps {
   company: {
@@ -32,7 +36,12 @@ interface EditCompanyDialogProps {
     size: string | null;
     description: string | null;
     linkedinUrl: string | null;
+    vertical: string | null;
     websiteUrl: string | null;
+    address: string | null;
+    city: string | null;
+    state: string | null;
+    country: string | null;
     ownerId: string | null;
   };
   open: boolean;
@@ -44,9 +53,14 @@ interface FormState {
   domain: string;
   industry: string;
   size: string | undefined;
+  vertical: string | undefined;
   description: string;
   linkedinUrl: string;
   websiteUrl: string;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
   ownerId: string | undefined;
 }
 
@@ -56,15 +70,45 @@ export function EditCompanyDialog({
   onOpenChange,
 }: EditCompanyDialogProps) {
   const updateCompany = useUpdateCompany();
+  const { getLabel } = useFieldLabels();
+  const [customFieldValues, setCustomFieldValues] = useState<Record<string, string | boolean>>({});
+
+  const { data: existingCfValues } = useQuery({
+    queryKey: ["custom-field-values", company.id],
+    queryFn: async () => {
+      const res = await fetch(`/api/custom-fields?entityId=${company.id}`);
+      if (!res.ok) return [];
+      return res.json() as Promise<{ fieldDefinitionId: string; textValue: string | null; numberValue: string | null; booleanValue: boolean | null; dateValue: string | null; fieldType: string }[]>;
+    },
+    enabled: open,
+  });
+
+  useEffect(() => {
+    if (existingCfValues && open) {
+      const vals: Record<string, string | boolean> = {};
+      for (const v of existingCfValues) {
+        if (v.fieldType === "boolean") vals[v.fieldDefinitionId] = v.booleanValue ?? false;
+        else if (v.fieldType === "number" || v.fieldType === "currency") vals[v.fieldDefinitionId] = v.numberValue ?? "";
+        else if (v.fieldType === "date") vals[v.fieldDefinitionId] = v.dateValue ? new Date(v.dateValue).toISOString().slice(0, 10) : "";
+        else vals[v.fieldDefinitionId] = v.textValue ?? "";
+      }
+      setCustomFieldValues(vals);
+    }
+  }, [existingCfValues, open]);
 
   const [form, setForm] = useState<FormState>({
     name: company.name,
     domain: company.domain ?? "",
     industry: company.industry ?? "",
     size: company.size ?? undefined,
+    vertical: company.vertical ?? undefined,
     description: company.description ?? "",
     linkedinUrl: company.linkedinUrl ?? "",
     websiteUrl: company.websiteUrl ?? "",
+    address: company.address ?? "",
+    city: company.city ?? "",
+    state: company.state ?? "",
+    country: company.country ?? "",
     ownerId: company.ownerId ?? undefined,
   });
 
@@ -75,9 +119,14 @@ export function EditCompanyDialog({
         domain: company.domain ?? "",
         industry: company.industry ?? "",
         size: company.size ?? undefined,
+        vertical: company.vertical ?? undefined,
         description: company.description ?? "",
         linkedinUrl: company.linkedinUrl ?? "",
         websiteUrl: company.websiteUrl ?? "",
+        address: company.address ?? "",
+        city: company.city ?? "",
+        state: company.state ?? "",
+        country: company.country ?? "",
         ownerId: company.ownerId ?? undefined,
       });
     }
@@ -91,16 +140,28 @@ export function EditCompanyDialog({
       domain: form.domain || undefined,
       industry: form.industry || undefined,
       size: form.size || undefined,
+      vertical: form.vertical || undefined,
       description: form.description || undefined,
       linkedinUrl: form.linkedinUrl || undefined,
       websiteUrl: form.websiteUrl || undefined,
+      address: form.address || undefined,
+      city: form.city || undefined,
+      state: form.state || undefined,
+      country: form.country || undefined,
       ownerId: form.ownerId || null,
     };
 
     updateCompany.mutate(
       { id: company.id, data },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
+          for (const [fieldId, value] of Object.entries(customFieldValues)) {
+            const body: Record<string, unknown> = { fieldDefinitionId: fieldId, entityId: company.id };
+            if (typeof value === "boolean") body.booleanValue = value;
+            else if (!isNaN(Number(value)) && value !== "") body.numberValue = String(value);
+            else body.textValue = String(value);
+            await fetch("/api/custom-fields", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+          }
           toast.success("Company updated");
           onOpenChange(false);
         },
@@ -121,7 +182,7 @@ export function EditCompanyDialog({
           {/* Name + Domain row */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-company-name">Name *</Label>
+              <Label htmlFor="edit-company-name">{getLabel("name", "Name")} *</Label>
               <Input
                 id="edit-company-name"
                 value={form.name}
@@ -147,7 +208,7 @@ export function EditCompanyDialog({
           {/* Industry + Size row */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-company-industry">Industry</Label>
+              <Label htmlFor="edit-company-industry">{getLabel("industry", "Industry")}</Label>
               <Input
                 id="edit-company-industry"
                 value={form.industry}
@@ -158,7 +219,7 @@ export function EditCompanyDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label>Size</Label>
+              <Label>{getLabel("size", "Size")}</Label>
               <Select
                 value={form.size ?? "none"}
                 onValueChange={(v) =>
@@ -181,6 +242,25 @@ export function EditCompanyDialog({
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          {/* Vertical */}
+          <div className="space-y-2">
+            <Label>Vertical</Label>
+            <Select
+              value={form.vertical ?? "none"}
+              onValueChange={(v) => setForm((prev) => ({ ...prev, vertical: v === "none" ? undefined : v }))}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select vertical" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                {VERTICALS.map((v) => (
+                  <SelectItem key={v.value} value={v.value}>{v.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Description */}
@@ -222,9 +302,54 @@ export function EditCompanyDialog({
             />
           </div>
 
+          {/* Address */}
+          <div className="space-y-2">
+            <Label htmlFor="edit-company-address">Address</Label>
+            <Input
+              id="edit-company-address"
+              value={form.address}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, address: e.target.value }))
+              }
+              placeholder="Street address"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-company-city">City</Label>
+              <Input
+                id="edit-company-city"
+                value={form.city}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, city: e.target.value }))
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-company-state">State</Label>
+              <Input
+                id="edit-company-state"
+                value={form.state}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, state: e.target.value }))
+                }
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="edit-company-country">Country</Label>
+            <Input
+              id="edit-company-country"
+              value={form.country}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, country: e.target.value }))
+              }
+            />
+          </div>
+
           {/* Owner */}
           <div className="space-y-2">
-            <Label>Owner</Label>
+            <Label>{getLabel("owner", "Owner")}</Label>
             <UserPicker
               value={form.ownerId ?? null}
               onChange={(userId) =>
@@ -235,6 +360,14 @@ export function EditCompanyDialog({
               }
             />
           </div>
+
+          <CustomFieldsFormSection
+            entityType="company"
+            values={customFieldValues}
+            onChange={(fieldId, value) =>
+              setCustomFieldValues((prev) => ({ ...prev, [fieldId]: value }))
+            }
+          />
 
           <DialogFooter>
             <Button

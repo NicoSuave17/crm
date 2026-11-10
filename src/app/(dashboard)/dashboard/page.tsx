@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   Card,
   CardContent,
@@ -8,6 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { DashboardGrid } from "@/components/dashboard/dashboard-grid";
+import type { WidgetConfig } from "@/components/dashboard/widget-renderer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -139,9 +142,9 @@ function SortableCard({
 // ─── Alert Severity Colors ───────────────────────────────────────
 
 const severityColors: Record<string, string> = {
-  critical: "text-red-600 dark:text-red-400",
-  warning: "text-yellow-600 dark:text-yellow-400",
-  info: "text-blue-600 dark:text-blue-400",
+  critical: "text-[#E86644] dark:text-[#E86644]",
+  warning: "text-[#FA4616] dark:text-[#FA4616]",
+  info: "text-[#1754D8] dark:text-[#1754D8]",
 };
 
 // ─── Dashboard Page ──────────────────────────────────────────────
@@ -150,7 +153,7 @@ export default function DashboardPage() {
   // Filter state
   const [since, setSince] = useState("");
   const [until, setUntil] = useState("");
-  const [pipelineId, setPipelineId] = useState("");
+  const [pipelineId, setPipelineId] = useState("all");
 
   // Card configuration state (localStorage-persisted)
   const [cardConfig, setCardConfig] = useState<CardConfig[]>(loadCardConfig);
@@ -159,7 +162,7 @@ export default function DashboardPage() {
   const { data: kpis, isLoading } = useDashboard({
     since: since || undefined,
     until: until || undefined,
-    pipelineId: pipelineId || undefined,
+    pipelineId: pipelineId === "all" ? undefined : pipelineId,
   });
   const { data: recentAlerts } = useAlerts();
   const { data: pipelines } = usePipelines();
@@ -331,6 +334,18 @@ export default function DashboardPage() {
     }
   }
 
+  // Admin-configured dashboard widgets
+  const { data: roleConfig } = useQuery({
+    queryKey: ["admin", "role-config", "current"],
+    queryFn: async () => {
+      const res = await fetch("/api/admin/roles/current");
+      if (!res.ok) return null;
+      return res.json();
+    },
+  });
+
+  const adminWidgets = (roleConfig?.dashboardWidgets as WidgetConfig[] | null) ?? [];
+
   const visibleCards = cardConfig.filter((c) => c.visible);
 
   return (
@@ -410,7 +425,7 @@ export default function DashboardPage() {
               <SelectValue placeholder="All pipelines" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Pipelines</SelectItem>
+              <SelectItem value="all">All Pipelines</SelectItem>
               {pipelines?.map((p: { id: string; name: string }) => (
                 <SelectItem key={p.id} value={p.id}>
                   {p.name}
@@ -419,14 +434,14 @@ export default function DashboardPage() {
             </SelectContent>
           </Select>
         </div>
-        {(since || until || pipelineId) && (
+        {(since || until || pipelineId !== "all") && (
           <Button
             variant="ghost"
             size="sm"
             onClick={() => {
               setSince("");
               setUntil("");
-              setPipelineId("");
+              setPipelineId("all");
             }}
           >
             <X className="mr-1 h-3 w-3" />
@@ -454,6 +469,9 @@ export default function DashboardPage() {
           </div>
         </SortableContext>
       </DndContext>
+
+      {/* Admin-configured widgets */}
+      {adminWidgets.length > 0 && <DashboardGrid widgets={adminWidgets} />}
 
       {/* Recent Alerts */}
       <Card>

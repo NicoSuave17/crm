@@ -60,10 +60,13 @@ interface EditableDeal {
   expectedCloseDate: string | null;
   lostReason: string | null;
   priority: string | null;
+  currency: string | null;
+  actualCloseDate: string | null;
 }
 
 interface DealRow {
   id: string;
+  crmId: string;
   title: string;
   pipelineName: string;
   stageName: string;
@@ -71,12 +74,37 @@ interface DealRow {
   contactId: string;
   contactFirstName: string;
   contactLastName: string | null;
+  companyId: string | null;
+  companyName: string | null;
   ownerFirstName: string | null;
   ownerLastName: string | null;
   value: string | null;
+  expectedMrr: string | null;
   expectedCloseDate: string | null;
   priority: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
+
+function getDaysInStage(updatedAt?: string, createdAt?: string): number {
+  const ref = updatedAt || createdAt;
+  if (!ref) return 0;
+  return Math.floor(
+    (Date.now() - new Date(ref).getTime()) / (1000 * 60 * 60 * 24)
+  );
+}
+
+function getDaysInStageColor(days: number): string {
+  if (days <= 7) return "text-[#00876D]"; // green
+  if (days <= 14) return "text-[#DBF505]"; // yellow
+  if (days <= 30) return "text-[#FA4616]"; // orange
+  return "text-[#E86644]"; // red
+}
+
+const ALL_DEAL_COLUMNS = [
+  "pipeline", "stage", "contact", "company", "value",
+  "expectedMrr", "owner", "priority", "closeDate", "daysInStage", "createdAt",
+];
 
 export default function DealsPage() {
   const { data: deals, isLoading } = useDeals();
@@ -87,6 +115,8 @@ export default function DealsPage() {
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
   const [saveViewOpen, setSaveViewOpen] = useState(false);
   const [viewName, setViewName] = useState("");
+  const [visibleColumns, setVisibleColumns] = useState<string[] | null>(null);
+  const colVisible = (key: string) => !visibleColumns || visibleColumns.includes(key);
 
   const { data: savedViews } = useSavedViews("deal");
   const createView = useCreateSavedView();
@@ -119,8 +149,16 @@ export default function DealsPage() {
     if (search) filters.push({ field: "search", value: search });
     if (priorityFilter !== "all") filters.push({ field: "priority", value: priorityFilter });
 
+    // Compute hidden columns so new columns added later show by default
+    const hiddenCols = visibleColumns
+      ? ALL_DEAL_COLUMNS.filter((c) => !visibleColumns.includes(c))
+      : [];
+    if (hiddenCols.length > 0) {
+      filters.push({ field: "__hiddenColumns", value: hiddenCols });
+    }
+
     createView.mutate(
-      { name: viewName.trim(), entityType: "deal", filters },
+      { name: viewName.trim(), entityType: "deal", filters, columns: visibleColumns ?? undefined },
       {
         onSuccess: () => {
           toast.success("View saved");
@@ -132,9 +170,19 @@ export default function DealsPage() {
     );
   }
 
-  function handleLoadView(view: { filters: Record<string, unknown>[] }) {
+  function handleLoadView(view: { filters: Record<string, unknown>[]; columns?: string[] }) {
     setSearch("");
     setPriorityFilter("all");
+
+    // Check for hiddenColumns convention (new views) vs columns (legacy views)
+    const hiddenColsFilter = view.filters.find((f) => f.field === "__hiddenColumns");
+    if (hiddenColsFilter && Array.isArray(hiddenColsFilter.value)) {
+      const hidden = new Set(hiddenColsFilter.value as string[]);
+      setVisibleColumns(ALL_DEAL_COLUMNS.filter((c) => !hidden.has(c)));
+    } else {
+      setVisibleColumns(view.columns?.length ? view.columns : null);
+    }
+
     for (const f of view.filters) {
       if (f.field === "search") setSearch(f.value as string);
       if (f.field === "priority") setPriorityFilter(f.value as string);
@@ -213,6 +261,17 @@ export default function DealsPage() {
         >
           <Save className="h-4 w-4" />
         </Button>
+        {visibleColumns && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setVisibleColumns(null)}
+            title="Reset columns to default"
+          >
+            <X className="mr-1 h-3 w-3" />
+            Reset columns
+          </Button>
+        )}
       </div>
 
       <div className="rounded-md border">
@@ -233,12 +292,17 @@ export default function DealsPage() {
                 />
               </TableHead>
               <TableHead>Deal</TableHead>
-              <TableHead>Pipeline</TableHead>
-              <TableHead>Stage</TableHead>
-              <TableHead>Contact</TableHead>
-              <TableHead>Value</TableHead>
-              <TableHead>Owner</TableHead>
-              <TableHead>Close Date</TableHead>
+              {colVisible("pipeline") && <TableHead>Pipeline</TableHead>}
+              {colVisible("stage") && <TableHead>Stage</TableHead>}
+              {colVisible("contact") && <TableHead>Contact</TableHead>}
+              {colVisible("company") && <TableHead>Company</TableHead>}
+              {colVisible("value") && <TableHead>Value</TableHead>}
+              {colVisible("expectedMrr") && <TableHead>Expected MRR</TableHead>}
+              {colVisible("owner") && <TableHead>Owner</TableHead>}
+              {colVisible("priority") && <TableHead>Priority</TableHead>}
+              {colVisible("closeDate") && <TableHead>Close Date</TableHead>}
+              {colVisible("daysInStage") && <TableHead>Days in Stage</TableHead>}
+              {colVisible("createdAt") && <TableHead>Created</TableHead>}
               <TableHead className="w-10" />
             </TableRow>
           </TableHeader>
@@ -271,42 +335,101 @@ export default function DealsPage() {
                       aria-label={`Select ${deal.title}`}
                     />
                   </TableCell>
-                  <TableCell className="font-medium">{deal.title}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {deal.pipelineName}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      style={{
-                        borderColor: deal.stageColor ?? undefined,
-                        color: deal.stageColor ?? undefined,
-                      }}
-                    >
-                      {deal.stageName}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Link
-                      href={`/contacts/${deal.contactId}`}
-                      className="text-sm hover:underline"
-                    >
-                      {deal.contactFirstName} {deal.contactLastName}
-                    </Link>
-                  </TableCell>
                   <TableCell className="font-medium">
-                    {formatCurrency(deal.value)}
+                    <Link href={`/deals/${deal.id}`} className="hover:underline">
+                      {deal.title}
+                    </Link>
+                    <span className="ml-2 text-[10px] font-normal text-muted-foreground">{deal.crmId}</span>
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {deal.ownerFirstName
-                      ? `${deal.ownerFirstName} ${deal.ownerLastName ?? ""}`
-                      : "\u2014"}
-                  </TableCell>
-                  <TableCell className="text-sm">
-                    {deal.expectedCloseDate
-                      ? new Date(deal.expectedCloseDate).toLocaleDateString()
-                      : "\u2014"}
-                  </TableCell>
+                  {colVisible("pipeline") && (
+                    <TableCell className="text-sm text-muted-foreground">
+                      {deal.pipelineName}
+                    </TableCell>
+                  )}
+                  {colVisible("stage") && (
+                    <TableCell>
+                      <Badge
+                        variant="outline"
+                        style={{
+                          borderColor: deal.stageColor ?? undefined,
+                          color: deal.stageColor ?? undefined,
+                        }}
+                      >
+                        {deal.stageName}
+                      </Badge>
+                    </TableCell>
+                  )}
+                  {colVisible("contact") && (
+                    <TableCell>
+                      <Link
+                        href={`/contacts/${deal.contactId}`}
+                        className="text-sm hover:underline"
+                      >
+                        {deal.contactFirstName} {deal.contactLastName}
+                      </Link>
+                    </TableCell>
+                  )}
+                  {colVisible("company") && (
+                    <TableCell className="text-sm">
+                      {deal.companyId ? (
+                        <Link href={`/companies/${deal.companyId}`} className="hover:underline">
+                          {deal.companyName}
+                        </Link>
+                      ) : (
+                        <span className="text-muted-foreground">{"\u2014"}</span>
+                      )}
+                    </TableCell>
+                  )}
+                  {colVisible("value") && (
+                    <TableCell className="font-medium">
+                      {formatCurrency(deal.value)}
+                    </TableCell>
+                  )}
+                  {colVisible("expectedMrr") && (
+                    <TableCell className="font-medium">
+                      {formatCurrency(deal.expectedMrr)}
+                    </TableCell>
+                  )}
+                  {colVisible("owner") && (
+                    <TableCell className="text-sm text-muted-foreground">
+                      {deal.ownerFirstName
+                        ? `${deal.ownerFirstName} ${deal.ownerLastName ?? ""}`
+                        : "\u2014"}
+                    </TableCell>
+                  )}
+                  {colVisible("priority") && (
+                    <TableCell>
+                      {deal.priority ? (
+                        <Badge variant="outline">{deal.priority}</Badge>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">{"\u2014"}</span>
+                      )}
+                    </TableCell>
+                  )}
+                  {colVisible("closeDate") && (
+                    <TableCell className="text-sm">
+                      {deal.expectedCloseDate
+                        ? new Date(deal.expectedCloseDate).toLocaleDateString()
+                        : "\u2014"}
+                    </TableCell>
+                  )}
+                  {colVisible("daysInStage") && (
+                    <TableCell>
+                      {(() => {
+                        const days = getDaysInStage(deal.updatedAt, deal.createdAt);
+                        return (
+                          <span className={`text-sm font-medium ${getDaysInStageColor(days)}`}>
+                            {days}d
+                          </span>
+                        );
+                      })()}
+                    </TableCell>
+                  )}
+                  {colVisible("createdAt") && (
+                    <TableCell className="text-sm text-muted-foreground">
+                      {new Date(deal.createdAt).toLocaleDateString()}
+                    </TableCell>
+                  )}
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

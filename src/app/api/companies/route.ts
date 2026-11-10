@@ -1,48 +1,58 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser } from "@/lib/auth/helpers";
+import { withPermission } from "@/lib/auth/with-permission";
 import { listCompanies, createCompany } from "@/lib/api/companies";
 import { createCompanySchema } from "@/lib/validators/company";
+import { gatekeeperCheck } from "@/lib/ai/route-helper";
 
-export async function GET(request: NextRequest) {
+export const GET = withPermission("company", "read", async (request, { user, scope, teamMemberIds }) => {
   try {
-    const user = await requireUser();
     const { searchParams } = new URL(request.url);
 
-    // AMs and AEs only see their own companies unless explicitly filtered
     let ownerId = searchParams.get("ownerId") || undefined;
-    if (!ownerId && (user.role === "account_manager" || user.role === "ae")) {
+    if (!ownerId && scope === "own") {
       ownerId = user.id;
     }
+    let ownerIds: string[] | undefined;
+    if (!ownerId && scope === "team" && teamMemberIds) {
+      ownerIds = teamMemberIds;
+    }
+
+    const idsOnly = searchParams.get("idsOnly") === "true";
 
     const params = {
       page: Number(searchParams.get("page")) || 1,
-      limit: Number(searchParams.get("limit")) || 25,
+      limit: idsOnly ? 500 : (Number(searchParams.get("limit")) || 25),
       search: searchParams.get("search") || undefined,
       industry: searchParams.get("industry") || undefined,
       size: searchParams.get("size") || undefined,
+      vertical: searchParams.get("vertical") || undefined,
       ownerId,
+      ownerIds,
+      tagId: searchParams.get("tagId") || undefined,
       sortBy: searchParams.get("sortBy") || undefined,
       sortDir: (searchParams.get("sortDir") as "asc" | "desc") || undefined,
     };
 
+    if (idsOnly) {
+      params.page = 1;
+      const result = await listCompanies(params);
+      const ids = result.data.map((c: { id: string }) => c.id);
+      return NextResponse.json({ ids, total: result.pagination.total });
+    }
+
     const result = await listCompanies(params);
     return NextResponse.json(result);
   } catch (error) {
-    if (error instanceof Error && error.message === "Unauthorized") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
     console.error("GET /api/companies error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
   }
-}
+});
 
-export async function POST(request: NextRequest) {
+export const POST = withPermission("company", "create", async (request, { user }) => {
   try {
-    await requireUser();
-
     const body = await request.json();
     const parsed = createCompanySchema.safeParse(body);
 
@@ -53,16 +63,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const company = await createCompany(parsed.data);
+    // Run gatekeeper analysis
+    const gk = await gatekeeperCheck({
+      source: "form",
+      operation: "create",
+      entityType: "company",
+      data: parsed.data as Record<string, unknown>,
+      userId: user.id,
+    });
+    if (!gk.proceed) return gk.response;
+
+    const normalizedParsed = createCompanySchema.safeParse(gk.data);
+    const companyData = normalizedParsed.success ? normalizedParsed.data : parsed.data;
+
+    const company = await createCompany(companyData, user.id);
     return NextResponse.json(company, { status: 201 });
   } catch (error) {
-    if (error instanceof Error && error.message === "Unauthorized") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
     console.error("POST /api/companies error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
   }
-}
+});

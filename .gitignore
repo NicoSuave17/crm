@@ -30,6 +30,10 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+# local agent worktrees and browser captures
+/.claude/
+/.playwright-mcp/
+
 # env files (can opt-in for committing if needed)
 .env*
 

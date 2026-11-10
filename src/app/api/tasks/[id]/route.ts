@@ -1,72 +1,62 @@
-import { NextRequest, NextResponse } from "next/server";
-import { requireUser } from "@/lib/auth/helpers";
+import { NextResponse } from "next/server";
+import { withDetailPermission } from "@/lib/auth/with-permission";
 import { getTask, updateTask, deleteTask } from "@/lib/api/tasks";
-import { updateTaskSchema } from "@/lib/validators/task";
+import type { UpdateTaskInput } from "@/lib/validators/task";
+import { stripRestrictedFields } from "@/lib/auth/permissions";
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    await requireUser();
-    const { id } = await params;
-    const task = await getTask(id);
-
-    if (!task) {
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
-    }
-
-    return NextResponse.json(task);
-  } catch (error) {
-    if (error instanceof Error && error.message === "Unauthorized") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    console.error("GET /api/tasks/[id] error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+export const GET = withDetailPermission("task", "read", async (_request, { user, scope, params }) => {
+  const task = await getTask(params.id);
+  if (!task) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-}
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    await requireUser();
-    const { id } = await params;
-    const body = await request.json();
-    const parsed = updateTaskSchema.safeParse(body);
-
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Validation failed", details: parsed.error.flatten() },
-        { status: 400 }
-      );
-    }
-
-    const task = await updateTask(id, parsed.data);
-    if (!task) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    return NextResponse.json(task);
-  } catch (error) {
-    if (error instanceof Error && error.message === "Unauthorized") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  if (scope === "own" && task.assigneeId !== user.id) {
+    return NextResponse.json({ error: "You don't have permission to view this task" }, { status: 403 });
   }
-}
 
-export async function DELETE(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    await requireUser();
-    const { id } = await params;
-    await deleteTask(id);
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    if (error instanceof Error && error.message === "Unauthorized") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  return NextResponse.json(task);
+});
+
+export const PATCH = withDetailPermission("task", "update", async (request, { user, scope, params }) => {
+  const existing = await getTask(params.id);
+  if (!existing) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-}
+
+  if (scope === "own" && existing.assigneeId !== user.id) {
+    return NextResponse.json({ error: "You don't have permission to update this task" }, { status: 403 });
+  }
+
+  const body = await request.json();
+
+  // Enforce field-level permissions — strip readonly/hidden fields
+  const { cleaned, rejected } = await stripRestrictedFields(
+    user.role,
+    "task",
+    body as Record<string, unknown>
+  );
+
+  if (Object.keys(cleaned).length === 0) {
+    return NextResponse.json(
+      { error: "No editable fields in request", rejectedFields: rejected },
+      { status: 403 }
+    );
+  }
+
+  const task = await updateTask(params.id, cleaned as UpdateTaskInput, user.id);
+  return NextResponse.json({ ...task, _rejectedFields: rejected.length > 0 ? rejected : undefined });
+});
+
+export const DELETE = withDetailPermission("task", "delete", async (_request, { user, scope, params }) => {
+  const existing = await getTask(params.id);
+  if (!existing) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  if (scope === "own" && existing.assigneeId !== user.id) {
+    return NextResponse.json({ error: "You don't have permission to delete this task" }, { status: 403 });
+  }
+
+  await deleteTask(params.id, user.id);
+  return NextResponse.json({ success: true });
+});

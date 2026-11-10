@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Tag, Trash2, Loader2 } from "lucide-react";
+import { ArrowRight, Tag, Trash2, Loader2, UserPlus, Shuffle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
@@ -18,9 +18,12 @@ import {
   useBulkStageDeal,
   useBulkTagDeals,
   useBulkDeleteDeals,
+  useBulkReassignDeals,
 } from "@/lib/hooks/use-bulk-actions";
 import { usePipelines } from "@/lib/hooks/use-pipeline";
 import { useTags } from "@/lib/hooks/use-tags";
+import { UserPicker } from "@/components/pickers/user-picker";
+import { RoundRobinDialog } from "@/components/bulk/round-robin-dialog";
 import { toast } from "sonner";
 
 interface DealsBulkActionsProps {
@@ -42,10 +45,13 @@ interface Pipeline {
 }
 
 export function DealsBulkActions({ selectedIds, onComplete }: DealsBulkActionsProps) {
+  const [reassignOpen, setReassignOpen] = useState(false);
   const [stageOpen, setStageOpen] = useState(false);
   const [tagOpen, setTagOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [roundRobinOpen, setRoundRobinOpen] = useState(false);
 
+  const reassign = useBulkReassignDeals();
   const moveStage = useBulkStageDeal();
   const addTag = useBulkTagDeals();
   const deleteBulk = useBulkDeleteDeals();
@@ -53,9 +59,24 @@ export function DealsBulkActions({ selectedIds, onComplete }: DealsBulkActionsPr
   const { data: pipelinesData } = usePipelines();
   const { data: tagsList } = useTags();
 
-  const isPending = moveStage.isPending || addTag.isPending || deleteBulk.isPending;
+  const isPending = reassign.isPending || moveStage.isPending || addTag.isPending || deleteBulk.isPending;
 
   const pipelines = (pipelinesData as Pipeline[] | undefined) ?? [];
+
+  function handleReassign(userId: string | null) {
+    if (!userId) return;
+    reassign.mutate(
+      { dealIds: selectedIds, newOwnerId: userId },
+      {
+        onSuccess: (data) => {
+          toast.success(`Reassigned ${data.count} deals`);
+          setReassignOpen(false);
+          onComplete();
+        },
+        onError: (err) => toast.error(err.message),
+      }
+    );
+  }
 
   function handleMoveToStage(stageId: string, stageName: string) {
     moveStage.mutate(
@@ -101,6 +122,22 @@ export function DealsBulkActions({ selectedIds, onComplete }: DealsBulkActionsPr
 
   return (
     <>
+      {/* Reassign */}
+      <Popover open={reassignOpen} onOpenChange={setReassignOpen}>
+        <PopoverTrigger asChild>
+          <Button variant="outline" size="sm" disabled={isPending}>
+            {reassign.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UserPlus className="mr-2 h-4 w-4" />}
+            Reassign
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[300px] p-2" align="start">
+          <p className="text-xs text-muted-foreground mb-2 px-1">
+            Reassign {selectedIds.length} deals to:
+          </p>
+          <UserPicker value={null} onChange={handleReassign} placeholder="Select new owner..." />
+        </PopoverContent>
+      </Popover>
+
       {/* Move to Stage */}
       <Popover open={stageOpen} onOpenChange={setStageOpen}>
         <PopoverTrigger asChild>
@@ -130,7 +167,7 @@ export function DealsBulkActions({ selectedIds, onComplete }: DealsBulkActionsPr
                       >
                         <span
                           className="h-2.5 w-2.5 rounded-full shrink-0"
-                          style={{ backgroundColor: stage.color ?? "#6B7280" }}
+                          style={{ backgroundColor: stage.color ?? "#8A7E7D" }}
                         />
                         {stage.name}
                       </button>
@@ -208,6 +245,19 @@ export function DealsBulkActions({ selectedIds, onComplete }: DealsBulkActionsPr
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Round Robin */}
+      <Button variant="outline" size="sm" disabled={isPending} onClick={() => setRoundRobinOpen(true)}>
+        <Shuffle className="mr-2 h-4 w-4" />
+        Round Robin
+      </Button>
+      <RoundRobinDialog
+        open={roundRobinOpen}
+        onOpenChange={setRoundRobinOpen}
+        entityIds={selectedIds}
+        entityType="deal"
+        onComplete={onComplete}
+      />
     </>
   );
 }

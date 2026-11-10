@@ -34,5 +34,6 @@ export function useAlerts(unreadOnly = false) {
       if (!res.ok) throw new Error("Failed to fetch alerts");
       return res.json();
     },
+    refetchInterval: 30000, // Poll every 30s for new notifications
   });
 }

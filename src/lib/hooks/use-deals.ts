@@ -40,8 +40,10 @@ export function useCreateDeal() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (!res.ok) throw new Error("Failed to create deal");
-      return res.json();
+      const json = await res.json();
+      if (res.status === 202) return { ...json, _pendingReview: true };
+      if (!res.ok) throw new Error(json.error || "Failed to create deal");
+      return json;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["deals"] });
@@ -59,9 +61,23 @@ export function useUpdateDeal() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
+      if (res.status === 202) {
+        const json = await res.json();
+        return { ...json, _pendingReview: true };
+      }
       if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error || "Failed to update deal");
+        let body: Record<string, unknown> | null = null;
+        try { body = await res.json(); } catch { /* non-JSON response */ }
+        if (body?.code === "CHECKLIST_INCOMPLETE") {
+          const err = new Error((body.error as string) || "Checklist items incomplete") as Error & {
+            code: string;
+            items: { id: string; title: string }[];
+          };
+          err.code = "CHECKLIST_INCOMPLETE";
+          err.items = (body.items as { id: string; title: string }[]) ?? [];
+          throw err;
+        }
+        throw new Error((body?.error as string) || "Failed to update deal");
       }
       return res.json();
     },

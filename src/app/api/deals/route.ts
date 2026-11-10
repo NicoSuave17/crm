@@ -1,37 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser } from "@/lib/auth/helpers";
+import { withPermission } from "@/lib/auth/with-permission";
 import { listDeals, createDeal } from "@/lib/api/deals";
 import { createDealSchema } from "@/lib/validators/deal";
+import { gatekeeperCheck } from "@/lib/ai/route-helper";
 
-export async function GET(request: NextRequest) {
+export const GET = withPermission("deal", "read", async (request, { user, scope, teamMemberIds }) => {
   try {
-    const user = await requireUser();
     const { searchParams } = new URL(request.url);
 
-    // AMs and AEs only see their own deals
     let ownerId = searchParams.get("ownerId") || undefined;
-    if (!ownerId && (user.role === "account_manager" || user.role === "ae")) {
+    if (!ownerId && scope === "own") {
       ownerId = user.id;
+    }
+    let ownerIds: string[] | undefined;
+    if (!ownerId && scope === "team" && teamMemberIds) {
+      ownerIds = teamMemberIds;
     }
 
     const data = await listDeals({
       ownerId,
+      ownerIds,
       contactId: searchParams.get("contactId") || undefined,
       companyId: searchParams.get("companyId") || undefined,
     });
     return NextResponse.json(data);
   } catch (error) {
-    if (error instanceof Error && error.message === "Unauthorized") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
     console.error("GET /api/deals error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+});
 
-export async function POST(request: NextRequest) {
+export const POST = withPermission("deal", "create", async (request, { user }) => {
   try {
-    const user = await requireUser();
     const body = await request.json();
     const parsed = createDealSchema.safeParse(body);
 
@@ -42,13 +42,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const deal = await createDeal(parsed.data, user.id);
+    // Run gatekeeper analysis
+    const gk = await gatekeeperCheck({
+      source: "form",
+      operation: "create",
+      entityType: "deal",
+      data: parsed.data as Record<string, unknown>,
+      userId: user.id,
+    });
+    if (!gk.proceed) return gk.response;
+
+    const normalizedParsed = createDealSchema.safeParse(gk.data);
+    const dealData = normalizedParsed.success ? normalizedParsed.data : parsed.data;
+
+    const deal = await createDeal(dealData, user.id);
     return NextResponse.json(deal, { status: 201 });
   } catch (error) {
-    if (error instanceof Error && error.message === "Unauthorized") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
     console.error("POST /api/deals error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+});

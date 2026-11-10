@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Whop CRM — Variation C: Dark Mode Premium</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    :root {
+      --bg-base: oklch(0.14 0.02 270);
+      --bg-surface: oklch(0.18 0.015 270);
+      --bg-sidebar: oklch(0.11 0.02 270);
+      --bg-muted: oklch(0.22 0.01 270);
+      --fg: oklch(0.93 0.01 265);
+      --fg-muted: oklch(0.55 0.015 265);
+      --fg-sidebar: oklch(0.65 0.01 265);
+      --primary: oklch(0.72 0.15 195);
+      --primary-hover: oklch(0.78 0.17 195);
+      --accent-gold: oklch(0.75 0.15 55);
+      --destructive: oklch(0.65 0.22 20);
+      --success: oklch(0.70 0.18 155);
+      --warning: oklch(0.78 0.16 75);
+      --border: oklch(1 0 0 / 10%);
+      --border-card: oklch(1 0 0 / 8%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg-base);
+      color: var(--fg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Noise overlay for premium texture */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* Card glass effect */
+    .glass-card {
+      background: oklch(0.18 0.015 270 / 70%);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid oklch(1 0 0 / 8%);
+      border-radius: 12px;
+    }
+
+    .glass-card-elevated {
+      background: oklch(0.20 0.015 270 / 60%);
+      backdrop-filter: blur(32px);
+      -webkit-backdrop-filter: blur(32px);
+      border: 1px solid oklch(1 0 0 / 10%);
+      border-radius: 12px;
+    }
+
+    /* Glow effects */
+    .glow-cyan { filter: drop-shadow(0 0 8px oklch(0.72 0.15 195 / 40%)); }
+    .glow-gold { filter: drop-shadow(0 0 8px oklch(0.75 0.15 55 / 40%)); }
+    .glow-red { filter: drop-shadow(0 0 8px oklch(0.65 0.22 20 / 40%)); }
+    .glow-green { filter: drop-shadow(0 0 8px oklch(0.70 0.18 155 / 40%)); }
+    .glow-purple { filter: drop-shadow(0 0 8px oklch(0.65 0.15 300 / 40%)); }
+
+    .text-primary { color: var(--primary); }
+    .text-fg { color: var(--fg); }
+    .text-fg-muted { color: var(--fg-muted); }
+    .text-sidebar-fg { color: var(--fg-sidebar); }
+    .text-gold { color: var(--accent-gold); }
+    .text-success { color: var(--success); }
+    .text-warning { color: var(--warning); }
+    .text-destructive { color: var(--destructive); }
+
+    .bg-base { background: var(--bg-base); }
+    .bg-surface { background: var(--bg-surface); }
+    .bg-sidebar { background: var(--bg-sidebar); }
+    .bg-muted { background: var(--bg-muted); }
+
+    .border-subtle { border-color: var(--border); }
+    .border-card { border-color: var(--border-card); }
+
+    /* Gradient mesh for hero areas */
+    .gradient-mesh {
+      background:
+        radial-gradient(ellipse at 20% 50%, oklch(0.72 0.15 195 / 6%) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, oklch(0.65 0.15 300 / 4%) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, oklch(0.75 0.15 55 / 3%) 0%, transparent 50%);
+    }
+
+    /* Stat card gradients */
+    .stat-cyan {
+      background: linear-gradient(135deg, oklch(0.72 0.15 195 / 8%) 0%, oklch(0.18 0.015 270 / 80%) 100%);
+    }
+    .stat-gold {
+      background: linear-gradient(135deg, oklch(0.75 0.15 55 / 8%) 0%, oklch(0.18 0.015 270 / 80%) 100%);
+    }
+    .stat-red {
+      background: linear-gradient(135deg, oklch(0.65 0.22 20 / 8%) 0%, oklch(0.18 0.015 270 / 80%) 100%);
+    }
+    .stat-green {
+      background: linear-gradient(135deg, oklch(0.70 0.18 155 / 8%) 0%, oklch(0.18 0.015 270 / 80%) 100%);
+    }
+    .stat-purple {
+      background: linear-gradient(135deg, oklch(0.65 0.15 300 / 8%) 0%, oklch(0.18 0.015 270 / 80%) 100%);
+    }
+    .stat-blue {
+      background: linear-gradient(135deg, oklch(0.60 0.18 250 / 8%) 0%, oklch(0.18 0.015 270 / 80%) 100%);
+    }
+
+    /* Badge styles */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      border: 1px solid transparent;
+    }
+    .badge-cyan {
+      background: oklch(0.72 0.15 195 / 12%);
+      color: oklch(0.80 0.12 195);
+      border-color: oklch(0.72 0.15 195 / 20%);
+    }
+    .badge-green {
+      background: oklch(0.70 0.18 155 / 12%);
+      color: oklch(0.78 0.14 155);
+      border-color: oklch(0.70 0.18 155 / 20%);
+    }
+    .badge-gold {
+      background: oklch(0.75 0.15 55 / 12%);
+      color: oklch(0.82 0.12 55);
+      border-color: oklch(0.75 0.15 55 / 20%);
+    }
+    .badge-red {
+      background: oklch(0.65 0.22 20 / 12%);
+      color: oklch(0.75 0.18 20);
+      border-color: oklch(0.65 0.22 20 / 20%);
+    }
+    .badge-purple {
+      background: oklch(0.65 0.15 300 / 12%);
+      color: oklch(0.75 0.12 300);
+      border-color: oklch(0.65 0.15 300 / 20%);
+    }
+    .badge-muted {
+      background: oklch(0.22 0.01 270);
+      color: oklch(0.60 0.015 265);
+      border-color: oklch(1 0 0 / 8%);
+    }
+
+    /* CRM ID style */
+    .crm-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 400;
+      color: oklch(0.72 0.15 195 / 50%);
+      letter-spacing: 0.04em;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: oklch(1 0 0 / 10%);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: oklch(1 0 0 / 16%);
+    }
+
+    /* Table row hover */
+    .table-row-hover {
+      transition: background 0.15s ease;
+    }
+    .table-row-hover:hover {
+      background: oklch(1 0 0 / 3%);
+    }
+
+    /* Sidebar nav item */
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 450;
+      color: var(--fg-sidebar);
+      transition: all 0.15s ease;
+      cursor: pointer;
+      position: relative;
+    }
+    .nav-item:hover {
+      color: oklch(0.80 0.01 265);
+      background: oklch(1 0 0 / 4%);
+    }
+    .nav-item.active {
+      color: var(--primary);
+      background: oklch(0.72 0.15 195 / 8%);
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 20px;
+      background: var(--primary);
+      border-radius: 0 3px 3px 0;
+      box-shadow: 0 0 12px oklch(0.72 0.15 195 / 50%);
+    }
+
+    /* Avatar */
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .avatar-lg {
+      width: 72px;
+      height: 72px;
+      font-size: 24px;
+    }
+
+    /* Health score bar */
+    .health-bar {
+      width: 48px;
+      height: 5px;
+      border-radius: 3px;
+      background: oklch(0.22 0.01 270);
+      overflow: hidden;
+    }
+    .health-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    /* Kanban column */
+    .kanban-column {
+      min-width: 280px;
+      max-width: 280px;
+    }
+    .kanban-card {
+      background: oklch(0.18 0.015 270 / 80%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid oklch(1 0 0 / 6%);
+      border-radius: 10px;
+      padding: 14px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .kanban-card:hover {
+      border-color: oklch(1 0 0 / 12%);
+      background: oklch(0.20 0.015 270 / 80%);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px oklch(0 0 0 / 40%);
+    }
+
+    /* Section label */
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: oklch(0.72 0.15 195 / 8%);
+      border: 1px solid oklch(0.72 0.15 195 / 15%);
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+
+    /* Profile card glow ring */
+    .profile-ring {
+      box-shadow:
+        0 0 0 3px oklch(0.14 0.02 270),
+        0 0 0 5px oklch(0.72 0.15 195 / 30%),
+        0 0 20px oklch(0.72 0.15 195 / 15%);
+    }
+
+    /* Tab styles */
+    .tab {
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--fg-muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .tab:hover { color: var(--fg); }
+    .tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    /* Count badge in kanban header */
+    .count-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      background: oklch(1 0 0 / 6%);
+      color: var(--fg-muted);
+    }
+
+    /* Luminous input */
+    .search-input {
+      background: oklch(0.16 0.015 270);
+      border: 1px solid oklch(1 0 0 / 8%);
+      border-radius: 8px;
+      padding: 8px 12px 8px 36px;
+      font-size: 13px;
+      color: var(--fg);
+      outline: none;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+    .search-input::placeholder {
+      color: oklch(0.45 0.01 265);
+    }
+    .search-input:focus {
+      border-color: oklch(0.72 0.15 195 / 40%);
+      box-shadow: 0 0 0 3px oklch(0.72 0.15 195 / 8%);
+    }
+  </style>
+</head>
+<body class="gradient-mesh">
+
+  <div style="max-width: 1440px; margin: 0 auto; padding: 40px 24px;">
+
+    <!-- Page Title -->
+    <div style="text-align: center; margin-bottom: 56px;">
+      <h1 style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px;">
+        Whop CRM — <span class="text-primary">Dark Mode Premium</span>
+      </h1>
+      <p class="text-fg-muted" style="font-size: 14px; font-weight: 400;">
+        Variation C: Arc / Raycast / Linear Dark Aesthetic
+      </p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 1: SIDEBAR + DASHBOARD LAYOUT -->
+    <!-- ============================================================ -->
+    <div style="margin-bottom: 64px;">
+      <div class="section-label" style="margin-bottom: 20px;">
+        <i data-lucide="layout-dashboard" style="width: 14px; height: 14px;"></i>
+        Sidebar + Dashboard
+      </div>
+
+      <div style="display: flex; gap: 0; border-radius: 16px; overflow: hidden; border: 1px solid oklch(1 0 0 / 6%);">
+
+        <!-- Sidebar -->
+        <aside style="width: 240px; background: var(--bg-sidebar); padding: 20px 12px; flex-shrink: 0; border-right: 1px solid oklch(1 0 0 / 6%);">
+
+          <!-- Logo -->
+          <div style="display: flex; align-items: center; gap: 10px; padding: 4px 12px; margin-bottom: 24px;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, oklch(0.72 0.15 195), oklch(0.60 0.18 210)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: oklch(0.12 0.02 270); box-shadow: 0 0 16px oklch(0.72 0.15 195 / 25%);">W</div>
+            <div>
+              <div style="font-size: 14px; font-weight: 600; color: var(--fg);">Whop CRM</div>
+              <div style="font-size: 10px; font-weight: 500; color: var(--fg-muted); letter-spacing: 0.04em;">COMMAND CENTER</div>
+            </div>
+          </div>
+
+          <!-- Search -->
+          <div style="position: relative; margin: 0 4px 20px 4px;">
+            <i data-lucide="search" style="width: 14px; height: 14px; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: oklch(0.40 0.01 265);"></i>
+            <input type="text" placeholder="Search... ⌘K" class="search-input" />
+          </div>
+
+          <!-- Nav Section: Main -->
+          <div style="margin-bottom: 24px;">
+            <div style="padding: 0 12px; margin-bottom: 8px; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: oklch(0.40 0.01 265);">Main</div>
+            <nav style="display: flex; flex-direction: column; gap: 2px;">
+              <div class="nav-item active">
+                <i data-lucide="layout-dashboard" style="width: 16px; height: 16px;"></i>
+                Dashboard
+              </div>
+              <div class="nav-item">
+                <i data-lucide="users" style="width: 16px; height: 16px;"></i>
+                Contacts
+                <span style="margin-left: auto; font-size: 11px; font-weight: 500; color: oklch(0.45 0.01 265);">201</span>
+              </div>
+              <div class="nav-item">
+                <i data-lucide="building-2" style="width: 16px; height: 16px;"></i>
+                Companies
+                <span style="margin-left: auto; font-size: 11px; font-weight: 500; color: oklch(0.45 0.01 265);">48</span>
+              </div>
+              <div class="nav-item">
+                <i data-lucide="handshake" style="width: 16px; height: 16px;"></i>
+                Deals
+                <span style="margin-left: auto; font-size: 11px; font-weight: 500; color: oklch(0.45 0.01 265);">34</span>
+              </div>
+              <div class="nav-item">
+                <i data-lucide="kanban" style="width: 16px; height: 16px;"></i>
+                Pipeline
+              </div>
+            </nav>
+          </div>
+
+          <!-- Nav Section: Workflow -->
+          <div style="margin-bottom: 24px;">
+            <div style="padding: 0 12px; margin-bottom: 8px; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: oklch(0.40 0.01 265);">Workflow</div>
+            <nav style="display: flex; flex-direction: column; gap: 2px;">
+              <div class="nav-item">
+                <i data-lucide="check-square" style="width: 16px; height: 16px;"></i>
+                Tasks
+                <span style="margin-left: auto; font-size: 11px; font-weight: 500; background: oklch(0.65 0.22 20 / 15%); color: oklch(0.75 0.18 20); padding: 1px 6px; border-radius: 4px;">8</span>
+              </div>
+              <div class="nav-item">
+                <i data-lucide="bell" style="width: 16px; height: 16px;"></i>
+                Alerts
+                <span style="margin-left: auto; font-size: 11px; font-weight: 500; background: oklch(0.75 0.15 55 / 15%); color: oklch(0.82 0.12 55); padding: 1px 6px; border-radius: 4px;">3</span>
+              </div>
+              <div class="nav-item">
+                <i data-lucide="bar-chart-3" style="width: 16px; height: 16px;"></i>
+                Reports
+              </div>
+              <div class="nav-item">
+                <i data-lucide="briefcase" style="width: 16px; height: 16px;"></i>
+                Portfolio
+              </div>
+            </nav>
+          </div>
+
+          <!-- Nav Section: Admin -->
+          <div>
+            <div style="padding: 0 12px; margin-bottom: 8px; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: oklch(0.40 0.01 265);">Admin</div>
+            <nav style="display: flex; flex-direction: column; gap: 2px;">
+              <div class="nav-item">
+                <i data-lucide="settings" style="width: 16px; height: 16px;"></i>
+                Settings
+              </div>
+            </nav>
+          </div>
+
+          <!-- User -->
+          <div style="margin-top: auto; padding-top: 24px; border-top: 1px solid oklch(1 0 0 / 6%); margin-top: 32px;">
+            <div style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; cursor: pointer;" onmouseover="this.style.background='oklch(1 0 0 / 4%)'" onmouseout="this.style.background='transparent'">
+              <div class="avatar" style="background: linear-gradient(135deg, oklch(0.65 0.15 300), oklch(0.55 0.18 280)); color: white; width: 28px; height: 28px; font-size: 10px;">NM</div>
+              <div>
+                <div style="font-size: 13px; font-weight: 500; color: var(--fg);">Nico Marino</div>
+                <div style="font-size: 10px; color: var(--fg-muted);">Admin</div>
+              </div>
+              <i data-lucide="chevron-down" style="width: 14px; height: 14px; margin-left: auto; color: oklch(0.40 0.01 265);"></i>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Content: Dashboard -->
+        <main style="flex: 1; padding: 28px 32px; background: var(--bg-base);">
+
+          <!-- Top Bar -->
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px;">
+            <div>
+              <h2 style="font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 2px;">Dashboard</h2>
+              <p class="text-fg-muted" style="font-size: 13px;">Wednesday, March 5, 2026</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <button style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; border: 1px solid oklch(1 0 0 / 10%); background: transparent; color: var(--fg-muted); font-size: 13px; cursor: pointer; font-family: inherit;">
+                <i data-lucide="download" style="width: 14px; height: 14px;"></i>
+                Export
+              </button>
+              <button style="display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; border: none; background: linear-gradient(135deg, oklch(0.72 0.15 195), oklch(0.62 0.17 200)); color: oklch(0.12 0.02 270); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; box-shadow: 0 0 20px oklch(0.72 0.15 195 / 20%);">
+                <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+                New Contact
+              </button>
+            </div>
+          </div>
+
+          <!-- Stat Cards Grid -->
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px;">
+
+            <!-- Total Contacts -->
+            <div class="glass-card stat-cyan" style="padding: 20px;">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px;">
+                <div style="width: 36px; height: 36px; border-radius: 10px; background: oklch(0.72 0.15 195 / 12%); display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="users" style="width: 18px; height: 18px; color: var(--primary);" class="glow-cyan"></i>
+                </div>
+                <span class="badge badge-cyan" style="font-size: 10px;">+12 this week</span>
+              </div>
+              <div style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 2px;">201</div>
+              <div class="text-fg-muted" style="font-size: 12px; font-weight: 500;">Total Contacts</div>
+            </div>
+
+            <!-- GMV -->
+            <div class="glass-card stat-gold" style="padding: 20px;">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px;">
+                <div style="width: 36px; height: 36px; border-radius: 10px; background: oklch(0.75 0.15 55 / 12%); display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="trending-up" style="width: 18px; height: 18px; color: var(--accent-gold);" class="glow-gold"></i>
+                </div>
+                <span class="badge badge-green" style="font-size: 10px;">+8.3%</span>
+              </div>
+              <div style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 2px;">$2.4M</div>
+              <div class="text-fg-muted" style="font-size: 12px; font-weight: 500;">Total GMV</div>
+            </div>
+
+            <!-- At Risk -->
+            <div class="glass-card stat-red" style="padding: 20px;">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px;">
+                <div style="width: 36px; height: 36px; border-radius: 10px; background: oklch(0.65 0.22 20 / 12%); display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="alert-triangle" style="width: 18px; height: 18px; color: var(--destructive);" class="glow-red"></i>
+                </div>
+                <span class="badge badge-red" style="font-size: 10px;">-2 from last week</span>
+              </div>
+              <div style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 2px;">12</div>
+              <div class="text-fg-muted" style="font-size: 12px; font-weight: 500;">At Risk Accounts</div>
+            </div>
+
+            <!-- Tasks Due -->
+            <div class="glass-card stat-purple" style="padding: 20px;">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px;">
+                <div style="width: 36px; height: 36px; border-radius: 10px; background: oklch(0.65 0.15 300 / 12%); display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="check-square" style="width: 18px; height: 18px; color: oklch(0.65 0.15 300);" class="glow-purple"></i>
+                </div>
+                <span class="badge badge-purple" style="font-size: 10px;">3 overdue</span>
+              </div>
+              <div style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 2px;">8</div>
+              <div class="text-fg-muted" style="font-size: 12px; font-weight: 500;">Tasks Due Today</div>
+            </div>
+
+            <!-- Pipeline Value -->
+            <div class="glass-card stat-green" style="padding: 20px;">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px;">
+                <div style="width: 36px; height: 36px; border-radius: 10px; background: oklch(0.70 0.18 155 / 12%); display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="line-chart" style="width: 18px; height: 18px; color: var(--success);" class="glow-green"></i>
+                </div>
+                <span class="badge badge-green" style="font-size: 10px;">6 active</span>
+              </div>
+              <div style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 2px;">$890K</div>
+              <div class="text-fg-muted" style="font-size: 12px; font-weight: 500;">Pipeline Value</div>
+            </div>
+
+            <!-- Alerts -->
+            <div class="glass-card stat-blue" style="padding: 20px;">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px;">
+                <div style="width: 36px; height: 36px; border-radius: 10px; background: oklch(0.60 0.18 250 / 12%); display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="bell" style="width: 18px; height: 18px; color: oklch(0.65 0.18 250);" class="glow-cyan"></i>
+                </div>
+                <span class="badge badge-gold" style="font-size: 10px;">1 urgent</span>
+              </div>
+              <div style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 2px;">3</div>
+              <div class="text-fg-muted" style="font-size: 12px; font-weight: 500;">Active Alerts</div>
+            </div>
+
+          </div>
+
+          <!-- Quick Activity Row -->
+          <div class="glass-card" style="padding: 16px 20px;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <div style="font-size: 12px; font-weight: 600; color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap;">Recent</div>
+              <div style="width: 1px; height: 20px; background: oklch(1 0 0 / 8%);"></div>
+              <div style="display: flex; gap: 24px; overflow: hidden;">
+                <div style="display: flex; align-items: center; gap: 8px; white-space: nowrap;">
+                  <div style="width: 6px; height: 6px; border-radius: 50%; background: var(--success);"></div>
+                  <span style="font-size: 13px;">Call with <span style="font-weight: 600;">Marcus Chen</span></span>
+                  <span class="text-fg-muted" style="font-size: 11px;">2m ago</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; white-space: nowrap;">
+                  <div style="width: 6px; height: 6px; border-radius: 50%; background: var(--primary);"></div>
+                  <span style="font-size: 13px;">Email sent to <span style="font-weight: 600;">Sarah Kim</span></span>
+                  <span class="text-fg-muted" style="font-size: 11px;">18m ago</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; white-space: nowrap;">
+                  <div style="width: 6px; height: 6px; border-radius: 50%; background: var(--accent-gold);"></div>
+                  <span style="font-size: 13px;">Deal updated: <span style="font-weight: 600;">Acme Corp</span></span>
+                  <span class="text-fg-muted" style="font-size: 11px;">1h ago</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </main>
+      </div>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 2: CONTACTS LIST TABLE -->
+    <!-- ============================================================ -->
+    <div style="margin-bottom: 64px;">
+      <div class="section-label" style="margin-bottom: 20px;">
+        <i data-lucide="users" style="width: 14px; height: 14px;"></i>
+        Contacts List Table
+      </div>
+
+      <div class="glass-card" style="overflow: hidden;">
+        <!-- Table Header Bar -->
+        <div style="padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid oklch(1 0 0 / 6%);">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <h3 style="font-size: 15px; font-weight: 600;">All Contacts</h3>
+            <span class="count-badge">201</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="position: relative;">
+              <i data-lucide="search" style="width: 14px; height: 14px; position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: oklch(0.40 0.01 265);"></i>
+              <input type="text" placeholder="Filter contacts..." class="search-input" style="width: 200px; padding-left: 32px; font-size: 12px; padding-top: 6px; padding-bottom: 6px;" />
+            </div>
+            <button style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; border: 1px solid oklch(1 0 0 / 10%); background: transparent; color: var(--fg-muted); font-size: 12px; cursor: pointer; font-family: inherit;">
+              <i data-lucide="filter" style="width: 13px; height: 13px;"></i>
+              Filters
+            </button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="border-bottom: 1px solid oklch(1 0 0 / 6%);">
+              <th style="padding: 10px 24px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--fg-muted);">Contact</th>
+              <th style="padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--fg-muted);">Type</th>
+              <th style="padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--fg-muted);">Status</th>
+              <th style="padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--fg-muted);">Health</th>
+              <th style="padding: 10px 16px; text-align: right; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--fg-muted);">GMV</th>
+              <th style="padding: 10px 24px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--fg-muted);">Company</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Row 1 -->
+            <tr class="table-row-hover" style="border-bottom: 1px solid oklch(1 0 0 / 4%);">
+              <td style="padding: 14px 24px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div class="avatar" style="background: linear-gradient(135deg, oklch(0.65 0.18 250), oklch(0.55 0.20 280));">MC</div>
+                  <div>
+                    <div style="font-size: 13px; font-weight: 600;">Marcus Chen</div>
+                    <div class="crm-id">CON-0001</div>
+                  </div>
+                </div>
+              </td>
+              <td style="padding: 14px 16px;"><span class="badge badge-cyan">Creator</span></td>
+              <td style="padding: 14px 16px;"><span class="badge badge-green">Active</span></td>
+              <td style="padding: 14px 16px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div class="health-bar"><div class="health-bar-fill" style="width: 92%; background: var(--success);"></div></div>
+                  <span style="font-size: 12px; font-weight: 500; color: var(--success);">92</span>
+                </div>
+              </td>
+              <td style="padding: 14px 16px; text-align: right; font-size: 13px; font-weight: 600;">$142,500</td>
+              <td style="padding: 14px 24px; font-size: 13px; color: var(--fg-muted);">ChenFitness Pro</td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr class="table-row-hover" style="border-bottom: 1px solid oklch(1 0 0 / 4%);">
+              <td style="padding: 14px 24px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div class="avatar" style="background: linear-gradient(135deg, oklch(0.70 0.16 350), oklch(0.58 0.20 330));">SK</div>
+                  <div>
+                    <div style="font-size: 13px; font-weight: 600;">Sarah Kim</div>
+                    <div class="crm-id">CON-0002</div>
+                  </div>
+                </div>
+              </td>
+              <td style="padding: 14px 16px;"><span class="badge badge-purple">Enterprise</span></td>
+              <td style="padding: 14px 16px;"><span class="badge badge-green">Active</span></td>
+              <td style="padding: 14px 16px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div class="health-bar"><div class="health-bar-fill" style="width: 85%; background: var(--success);"></div></div>
+                  <span style="font-size: 12px; font-weight: 500; color: var(--success);">85</span>
+                </div>
+              </td>
+              <td style="padding: 14px 16px; text-align: right; font-size: 13px; font-weight: 600;">$380,000</td>
+              <td style="padding: 14px 24px; font-size: 13px; color: var(--fg-muted);">Kim Digital Academy</td>
+            </tr>
+
+            <!-- Row 3 -->
+            <tr class="table-row-hover" style="border-bottom: 1px solid oklch(1 0 0 / 4%);">
+              <td style="padding: 14px 24px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div class="avatar" style="background: linear-gradient(135deg, oklch(0.72 0.15 195), oklch(0.60 0.18 210));">JR</div>
+                  <div>
+                    <div style="font-size: 13px; font-weight: 600;">Jake Rivera</div>
+                    <div class="crm-id">CON-0003</div>
+                  </div>
+                </div>
+              </td>
+              <td style="padding: 14px 16px;"><span class="badge badge-cyan">Creator</span></td>
+              <td style="padding: 14px 16px;"><span class="badge badge-gold">At Risk</span></td>
+              <td style="padding: 14px 16px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div class="health-bar"><div class="health-bar-fill" style="width: 38%; background: var(--destructive);"></div></div>
+                  <span style="font-size: 12px; font-weight: 500; color: var(--destructive);">38</span>
+                </div>
+              </td>
+              <td style="padding: 14px 16px; text-align: right; font-size: 13px; font-weight: 600;">$24,800</td>
+              <td style="padding: 14px 24px; font-size: 13px; color: var(--fg-muted);">Rivera Gaming</td>
+            </tr>
+
+            <!-- Row 4 -->
+            <tr class="table-row-hover" style="border-bottom: 1px solid oklch(1 0 0 / 4%);">
+              <td style="padding: 14px 24px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div class="avatar" style="background: linear-gradient(135deg, oklch(0.75 0.15 55), oklch(0.65 0.18 40));">AW</div>
+                  <div>
+                    <div style="font-size: 13px; font-weight: 600;">Amanda Walsh</div>
+                    <div class="crm-id">CON-0004</div>
+                  </div>
+                </div>
+              </td>
+              <td style="padding: 14px 16px;"><span class="badge badge-cyan">Creator</span></td>
+              <td style="padding: 14px 16px;"><span class="badge badge-green">Active</span></td>
+              <td style="padding: 14px 16px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div class="health-bar"><div class="health-bar-fill" style="width: 71%; background: var(--warning);"></div></div>
+                  <span style="font-size: 12px; font-weight: 500; color: var(--warning);">71</span>
+                </div>
+              </td>
+              <td style="padding: 14px 16px; text-align: right; font-size: 13px; font-weight: 600;">$89,200</td>
+              <td style="padding: 14px 24px; font-size: 13px; color: var(--fg-muted);">Walsh Beauty Co</td>
+            </tr>
+
+            <!-- Row 5 -->
+            <tr class="table-row-hover">
+              <td style="padding: 14px 24px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div class="avatar" style="background: linear-gradient(135deg, oklch(0.70 0.18 155), oklch(0.58 0.20 140));">DT</div>
+                  <div>
+                    <div style="font-size: 13px; font-weight: 600;">David Torres</div>
+                    <div class="crm-id">CON-0005</div>
+                  </div>
+                </div>
+              </td>
+              <td style="padding: 14px 16px;"><span class="badge badge-muted">Lead</span></td>
+              <td style="padding: 14px 16px;"><span class="badge badge-muted">New</span></td>
+              <td style="padding: 14px 16px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div class="health-bar"><div class="health-bar-fill" style="width: 0%; background: var(--fg-muted);"></div></div>
+                  <span style="font-size: 12px; font-weight: 500; color: var(--fg-muted);">--</span>
+                </div>
+              </td>
+              <td style="padding: 14px 16px; text-align: right; font-size: 13px; font-weight: 600; color: var(--fg-muted);">--</td>
+              <td style="padding: 14px 24px; font-size: 13px; color: var(--fg-muted);">Torres Media Group</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Table Footer -->
+        <div style="padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid oklch(1 0 0 / 6%);">
+          <span class="text-fg-muted" style="font-size: 12px;">Showing 1-5 of 201 contacts</span>
+          <div style="display: flex; gap: 4px;">
+            <button style="padding: 4px 10px; border-radius: 6px; border: 1px solid oklch(1 0 0 / 8%); background: oklch(0.72 0.15 195 / 10%); color: var(--primary); font-size: 12px; cursor: pointer; font-family: inherit; font-weight: 500;">1</button>
+            <button style="padding: 4px 10px; border-radius: 6px; border: 1px solid oklch(1 0 0 / 6%); background: transparent; color: var(--fg-muted); font-size: 12px; cursor: pointer; font-family: inherit;">2</button>
+            <button style="padding: 4px 10px; border-radius: 6px; border: 1px solid oklch(1 0 0 / 6%); background: transparent; color: var(--fg-muted); font-size: 12px; cursor: pointer; font-family: inherit;">3</button>
+            <button style="padding: 4px 10px; border-radius: 6px; border: 1px solid oklch(1 0 0 / 6%); background: transparent; color: var(--fg-muted); font-size: 12px; cursor: pointer; font-family: inherit;">...</button>
+            <button style="padding: 4px 10px; border-radius: 6px; border: 1px solid oklch(1 0 0 / 6%); background: transparent; color: var(--fg-muted); font-size: 12px; cursor: pointer; font-family: inherit;">41</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 3: PIPELINE KANBAN BOARD -->
+    <!-- ============================================================ -->
+    <div style="margin-bottom: 64px;">
+      <div class="section-label" style="margin-bottom: 20px;">
+        <i data-lucide="kanban" style="width: 14px; height: 14px;"></i>
+        Pipeline Kanban Board
+      </div>
+
+      <div class="glass-card" style="padding: 20px 24px; overflow-x: auto;">
+        <!-- Pipeline Header -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <h3 style="font-size: 15px; font-weight: 600;">Sales Pipeline</h3>
+            <span class="text-fg-muted" style="font-size: 13px; font-weight: 500;">$890K total</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button style="display: flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 6px; border: 1px solid oklch(1 0 0 / 10%); background: transparent; color: var(--fg-muted); font-size: 12px; cursor: pointer; font-family: inherit;">
+              <i data-lucide="list" style="width: 13px; height: 13px;"></i>
+              List
+            </button>
+            <button style="display: flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 6px; border: 1px solid oklch(0.72 0.15 195 / 20%); background: oklch(0.72 0.15 195 / 8%); color: var(--primary); font-size: 12px; cursor: pointer; font-family: inherit; font-weight: 500;">
+              <i data-lucide="kanban" style="width: 13px; height: 13px;"></i>
+              Board
+            </button>
+          </div>
+        </div>
+
+        <!-- Kanban Columns -->
+        <div style="display: flex; gap: 16px;">
+
+          <!-- Prospecting -->
+          <div class="kanban-column">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding: 0 4px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: oklch(0.60 0.18 250);"></div>
+                <span style="font-size: 13px; font-weight: 600;">Prospecting</span>
+                <span class="count-badge">3</span>
+              </div>
+              <span class="text-fg-muted" style="font-size: 12px; font-weight: 500;">$145K</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div class="kanban-card">
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px;">
+                  <div style="font-size: 13px; font-weight: 600;">Torres Media Onboarding</div>
+                </div>
+                <div class="crm-id" style="margin-bottom: 8px;">DEAL-0009</div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+                  <div class="avatar" style="width: 20px; height: 20px; font-size: 8px; background: linear-gradient(135deg, oklch(0.70 0.18 155), oklch(0.58 0.20 140));">DT</div>
+                  <span class="text-fg-muted" style="font-size: 12px;">David Torres</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-size: 14px; font-weight: 700;">$65,000</span>
+                  <span class="badge badge-muted" style="font-size: 10px;">30%</span>
+                </div>
+              </div>
+              <div class="kanban-card">
+                <div style="font-size: 13px; font-weight: 600; margin-bottom: 4px;">NovaTech Partnership</div>
+                <div class="crm-id" style="margin-bottom: 8px;">DEAL-0010</div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+                  <div class="avatar" style="width: 20px; height: 20px; font-size: 8px; background: linear-gradient(135deg, oklch(0.65 0.15 300), oklch(0.55 0.18 280));">LP</div>
+                  <span class="text-fg-muted" style="font-size: 12px;">Lisa Park</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-size: 14px; font-weight: 700;">$45,000</span>
+                  <span class="badge badge-muted" style="font-size: 10px;">20%</span>
+                </div>
+              </div>
+              <div class="kanban-card">
+                <div style="font-size: 13px; font-weight: 600; margin-bottom: 4px;">Fitness Hub Expansion</div>
+                <div class="crm-id" style="margin-bottom: 8px;">DEAL-0011</div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+                  <div class="avatar" style="width: 20px; height: 20px; font-size: 8px; background: linear-gradient(135deg, oklch(0.72 0.15 195), oklch(0.60 0.18 210));">RH</div>
+                  <span class="text-fg-muted" style="font-size: 12px;">Ryan Hughes</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-size: 14px; font-weight: 700;">$35,000</span>
+                  <span class="badge badge-muted" style="font-size: 10px;">15%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Qualified -->
+          <div class="kanban-column">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding: 0 4px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--primary);"></div>
+                <span style="font-size: 13px; font-weight: 600;">Qualified</span>
+                <span class="count-badge">2</span>
+              </div>
+              <span class="text-fg-muted" style="font-size: 12px; font-weight: 500;">$195K</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div class="kanban-card">
+                <div style="font-size: 13px; font-weight: 600; margin-bottom: 4px;">Kim Academy Enterprise</div>
+                <div class="crm-id" style="margin-bottom: 8px;">DEAL-0006</div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+                  <div class="avatar" style="width: 20px; height: 20px; font-size: 8px; background: linear-gradient(135deg, oklch(0.70 0.16 350), oklch(0.58 0.20 330));">SK</div>
+                  <span class="text-fg-muted" style="font-size: 12px;">Sarah Kim</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-size: 14px; font-weight: 700;">$120,000</span>
+                  <span class="badge badge-cyan" style="font-size: 10px;">60%</span>
+                </div>
+              </div>
+              <div class="kanban-card">
+                <div style="font-size: 13px; font-weight: 600; margin-bottom: 4px;">Walsh Beauty Tier Upgrade</div>
+                <div class="crm-id" style="margin-bottom: 8px;">DEAL-0007</div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+                  <div class="avatar" style="width: 20px; height: 20px; font-size: 8px; background: linear-gradient(135deg, oklch(0.75 0.15 55), oklch(0.65 0.18 40));">AW</div>
+                  <span class="text-fg-muted" style="font-size: 12px;">Amanda Walsh</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-size: 14px; font-weight: 700;">$75,000</span>
+                  <span class="badge badge-cyan" style="font-size: 10px;">55%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Proposal -->
+          <div class="kanban-column">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding: 0 4px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent-gold);"></div>
+                <span style="font-size: 13px; font-weight: 600;">Proposal</span>
+                <span class="count-badge">2</span>
+              </div>
+              <span class="text-fg-muted" style="font-size: 12px; font-weight: 500;">$300K</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div class="kanban-card" style="border-color: oklch(0.75 0.15 55 / 15%);">
+                <div style="font-size: 13px; font-weight: 600; margin-bottom: 4px;">ChenFitness Platform Deal</div>
+                <div class="crm-id" style="margin-bottom: 8px;">DEAL-0003</div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+                  <div class="avatar" style="width: 20px; height: 20px; font-size: 8px; background: linear-gradient(135deg, oklch(0.65 0.18 250), oklch(0.55 0.20 280));">MC</div>
+                  <span class="text-fg-muted" style="font-size: 12px;">Marcus Chen</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-size: 14px; font-weight: 700;">$200,000</span>
+                  <span class="badge badge-gold" style="font-size: 10px;">75%</span>
+                </div>
+              </div>
+              <div class="kanban-card">
+                <div style="font-size: 13px; font-weight: 600; margin-bottom: 4px;">Apex Learning Bundle</div>
+                <div class="crm-id" style="margin-bottom: 8px;">DEAL-0004</div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+                  <div class="avatar" style="width: 20px; height: 20px; font-size: 8px; background: linear-gradient(135deg, oklch(0.65 0.18 250), oklch(0.55 0.20 230));">MJ</div>
+                  <span class="text-fg-muted" style="font-size: 12px;">Mike Jensen</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-size: 14px; font-weight: 700;">$100,000</span>
+                  <span class="badge badge-gold" style="font-size: 10px;">70%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Closed Won -->
+          <div class="kanban-column">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding: 0 4px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--success);"></div>
+                <span style="font-size: 13px; font-weight: 600;">Closed Won</span>
+                <span class="count-badge">3</span>
+              </div>
+              <span class="text-fg-muted" style="font-size: 12px; font-weight: 500;">$250K</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div class="kanban-card" style="border-color: oklch(0.70 0.18 155 / 15%); opacity: 0.85;">
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                  <i data-lucide="check-circle-2" style="width: 14px; height: 14px; color: var(--success);"></i>
+                  <span style="font-size: 13px; font-weight: 600;">GrowthMind Pro Plan</span>
+                </div>
+                <div class="crm-id" style="margin-bottom: 8px;">DEAL-0001</div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+                  <div class="avatar" style="width: 20px; height: 20px; font-size: 8px; background: linear-gradient(135deg, oklch(0.70 0.18 155), oklch(0.58 0.20 140));">EB</div>
+                  <span class="text-fg-muted" style="font-size: 12px;">Emily Brooks</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-size: 14px; font-weight: 700;">$95,000</span>
+                  <span class="badge badge-green" style="font-size: 10px;">Won</span>
+                </div>
+              </div>
+              <div class="kanban-card" style="border-color: oklch(0.70 0.18 155 / 15%); opacity: 0.85;">
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                  <i data-lucide="check-circle-2" style="width: 14px; height: 14px; color: var(--success);"></i>
+                  <span style="font-size: 13px; font-weight: 600;">CodeCraft Workshop</span>
+                </div>
+                <div class="crm-id" style="margin-bottom: 8px;">DEAL-0002</div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+                  <div class="avatar" style="width: 20px; height: 20px; font-size: 8px; background: linear-gradient(135deg, oklch(0.72 0.15 195), oklch(0.60 0.18 210));">TN</div>
+                  <span class="text-fg-muted" style="font-size: 12px;">Tom Nguyen</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-size: 14px; font-weight: 700;">$85,000</span>
+                  <span class="badge badge-green" style="font-size: 10px;">Won</span>
+                </div>
+              </div>
+              <div class="kanban-card" style="border-color: oklch(0.70 0.18 155 / 15%); opacity: 0.85;">
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                  <i data-lucide="check-circle-2" style="width: 14px; height: 14px; color: var(--success);"></i>
+                  <span style="font-size: 13px; font-weight: 600;">PixelForge Studio</span>
+                </div>
+                <div class="crm-id" style="margin-bottom: 8px;">DEAL-0005</div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+                  <div class="avatar" style="width: 20px; height: 20px; font-size: 8px; background: linear-gradient(135deg, oklch(0.75 0.15 55), oklch(0.65 0.18 40));">KL</div>
+                  <span class="text-fg-muted" style="font-size: 12px;">Karen Lee</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-size: 14px; font-weight: 700;">$70,000</span>
+                  <span class="badge badge-green" style="font-size: 10px;">Won</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 4: CONTACT DETAIL VIEW -->
+    <!-- ============================================================ -->
+    <div style="margin-bottom: 64px;">
+      <div class="section-label" style="margin-bottom: 20px;">
+        <i data-lucide="user" style="width: 14px; height: 14px;"></i>
+        Contact Detail View
+      </div>
+
+      <div style="display: grid; grid-template-columns: 340px 1fr; gap: 20px;">
+
+        <!-- Left: Profile Card -->
+        <div class="glass-card-elevated" style="padding: 28px 24px;">
+          <!-- Avatar + Name -->
+          <div style="text-align: center; margin-bottom: 24px;">
+            <div class="avatar avatar-lg profile-ring" style="background: linear-gradient(135deg, oklch(0.65 0.18 250), oklch(0.55 0.20 280)); margin: 0 auto 16px auto;">MC</div>
+            <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">Marcus Chen</h3>
+            <div class="crm-id" style="font-size: 12px; margin-bottom: 12px;">CON-0001</div>
+            <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+              <span class="badge badge-cyan">Creator</span>
+              <span class="badge badge-green">Active</span>
+              <span class="badge badge-gold">VIP</span>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div style="height: 1px; background: oklch(1 0 0 / 6%); margin-bottom: 20px;"></div>
+
+          <!-- Health Score -->
+          <div style="margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+              <span class="text-fg-muted" style="font-size: 12px; font-weight: 500;">Health Score</span>
+              <span style="font-size: 18px; font-weight: 700; color: var(--success);">92</span>
+            </div>
+            <div style="height: 6px; border-radius: 3px; background: oklch(0.22 0.01 270); overflow: hidden;">
+              <div style="width: 92%; height: 100%; border-radius: 3px; background: linear-gradient(90deg, oklch(0.70 0.18 155), oklch(0.72 0.15 195)); box-shadow: 0 0 12px oklch(0.70 0.18 155 / 30%);"></div>
+            </div>
+          </div>
+
+          <!-- Info Fields -->
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div>
+              <div class="text-fg-muted" style="font-size: 11px; font-weight: 500; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.04em;">Email</div>
+              <div style="font-size: 13px; color: var(--primary);">marcus@chenfitness.com</div>
+            </div>
+            <div>
+              <div class="text-fg-muted" style="font-size: 11px; font-weight: 500; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.04em;">Phone</div>
+              <div style="font-size: 13px;">+1 (415) 555-0192</div>
+            </div>
+            <div>
+              <div class="text-fg-muted" style="font-size: 11px; font-weight: 500; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.04em;">Company</div>
+              <div style="font-size: 13px;">ChenFitness Pro</div>
+            </div>
+            <div>
+              <div class="text-fg-muted" style="font-size: 11px; font-weight: 500; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.04em;">GMV (Lifetime)</div>
+              <div style="font-size: 13px; font-weight: 600;">$142,500</div>
+            </div>
+            <div>
+              <div class="text-fg-muted" style="font-size: 11px; font-weight: 500; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.04em;">Account Manager</div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                <div class="avatar" style="width: 22px; height: 22px; font-size: 8px; background: linear-gradient(135deg, oklch(0.65 0.15 300), oklch(0.55 0.18 280));">NM</div>
+                <span style="font-size: 13px;">Nico Marino</span>
+              </div>
+            </div>
+            <div>
+              <div class="text-fg-muted" style="font-size: 11px; font-weight: 500; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.04em;">Last Activity</div>
+              <div style="font-size: 13px;">Mar 5, 2026 &mdash; Call (32 min)</div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div style="margin-top: 24px; display: flex; gap: 8px;">
+            <button style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 0; border-radius: 8px; border: none; background: linear-gradient(135deg, oklch(0.72 0.15 195), oklch(0.62 0.17 200)); color: oklch(0.12 0.02 270); font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; box-shadow: 0 0 16px oklch(0.72 0.15 195 / 20%);">
+              <i data-lucide="phone" style="width: 13px; height: 13px;"></i>
+              Call
+            </button>
+            <button style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 0; border-radius: 8px; border: 1px solid oklch(1 0 0 / 10%); background: transparent; color: var(--fg); font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit;">
+              <i data-lucide="mail" style="width: 13px; height: 13px;"></i>
+              Email
+            </button>
+            <button style="display: flex; align-items: center; justify-content: center; padding: 9px 12px; border-radius: 8px; border: 1px solid oklch(1 0 0 / 10%); background: transparent; color: var(--fg-muted); cursor: pointer;">
+              <i data-lucide="more-horizontal" style="width: 16px; height: 16px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Tabbed Content Area -->
+        <div class="glass-card" style="display: flex; flex-direction: column;">
+          <!-- Tabs -->
+          <div style="display: flex; gap: 0; border-bottom: 1px solid oklch(1 0 0 / 6%); padding: 0 24px;">
+            <div class="tab active">Activity</div>
+            <div class="tab">Deals</div>
+            <div class="tab">Notes</div>
+            <div class="tab">Files</div>
+            <div class="tab">History</div>
+          </div>
+
+          <!-- Activity Content -->
+          <div style="padding: 24px; flex: 1;">
+            <!-- Activity Item 1 -->
+            <div style="display: flex; gap: 14px; margin-bottom: 24px;">
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: oklch(0.70 0.18 155 / 12%); display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="phone" style="width: 14px; height: 14px; color: var(--success);"></i>
+                </div>
+                <div style="width: 1px; flex: 1; background: oklch(1 0 0 / 6%); margin-top: 8px;"></div>
+              </div>
+              <div style="flex: 1; padding-bottom: 4px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                  <span style="font-size: 13px; font-weight: 600;">Call &mdash; Monthly Check-in</span>
+                  <span class="badge badge-green" style="font-size: 10px;">Completed</span>
+                </div>
+                <p class="text-fg-muted" style="font-size: 12px; margin-bottom: 6px;">Mar 5, 2026 at 2:15 PM &bull; 32 min &bull; Nico Marino</p>
+                <div style="padding: 12px 14px; border-radius: 8px; background: oklch(0.16 0.015 270); border: 1px solid oklch(1 0 0 / 5%); font-size: 13px; line-height: 1.6; color: oklch(0.75 0.01 265);">
+                  Marcus is very happy with the new dashboard features. Wants to explore the API integration for his custom fitness tracking tool. Mentioned interest in the enterprise tier for his growing team of 15 coaches. Follow up next week with pricing.
+                </div>
+              </div>
+            </div>
+
+            <!-- Activity Item 2 -->
+            <div style="display: flex; gap: 14px; margin-bottom: 24px;">
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: oklch(0.72 0.15 195 / 12%); display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="mail" style="width: 14px; height: 14px; color: var(--primary);"></i>
+                </div>
+                <div style="width: 1px; flex: 1; background: oklch(1 0 0 / 6%); margin-top: 8px;"></div>
+              </div>
+              <div style="flex: 1; padding-bottom: 4px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                  <span style="font-size: 13px; font-weight: 600;">Email &mdash; Feature Request Follow-up</span>
+                  <span class="badge badge-cyan" style="font-size: 10px;">Sent</span>
+                </div>
+                <p class="text-fg-muted" style="font-size: 12px;">Mar 3, 2026 at 10:42 AM &bull; Nico Marino</p>
+              </div>
+            </div>
+
+            <!-- Activity Item 3 -->
+            <div style="display: flex; gap: 14px;">
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: oklch(0.75 0.15 55 / 12%); display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="calendar" style="width: 14px; height: 14px; color: var(--accent-gold);"></i>
+                </div>
+              </div>
+              <div style="flex: 1;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                  <span style="font-size: 13px; font-weight: 600;">Meeting &mdash; Q1 Review</span>
+                  <span class="badge badge-green" style="font-size: 10px;">Completed</span>
+                </div>
+                <p class="text-fg-muted" style="font-size: 12px;">Feb 28, 2026 at 3:00 PM &bull; 45 min &bull; Nico Marino, Sarah Kim</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 32px 0; border-top: 1px solid oklch(1 0 0 / 4%);">
+      <p class="text-fg-muted" style="font-size: 12px;">Whop CRM &mdash; Variation C: Dark Mode Premium &mdash; Built with Tailwind CSS + Lucide Icons</p>
+    </div>
+
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser } from "@/lib/auth/helpers";
+import { requireRole } from "@/lib/auth/helpers";
 import { reorderStages } from "@/lib/api/pipelines";
 import { reorderStagesSchema } from "@/lib/validators/pipeline";
 
@@ -8,7 +8,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireUser();
+    await requireRole(["admin", "manager"]);
     const { id } = await params;
     const body = await request.json();
     const parsed = reorderStagesSchema.safeParse(body);
@@ -23,6 +23,9 @@ export async function PUT(
   } catch (error) {
     if (error instanceof Error && error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error instanceof Error && error.message === "Forbidden") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
     if (error instanceof Error && error.message.includes("mismatch")) {
       return NextResponse.json({ error: error.message }, { status: 400 });

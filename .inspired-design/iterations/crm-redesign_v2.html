@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Whop CRM — Bold & Modern Redesign (V2)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['DM Sans', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            bg: 'oklch(0.99 0.005 300)',
+            fg: 'oklch(0.15 0.025 290)',
+            primary: {
+              DEFAULT: 'oklch(0.55 0.22 295)',
+              hover: 'oklch(0.48 0.24 295)',
+              light: 'oklch(0.55 0.22 295 / 12%)',
+              muted: 'oklch(0.55 0.22 295 / 8%)',
+            },
+            accent: {
+              DEFAULT: 'oklch(0.72 0.17 55)',
+              light: 'oklch(0.72 0.17 55 / 12%)',
+            },
+            surface: 'oklch(1 0.003 300)',
+            muted: {
+              DEFAULT: 'oklch(0.96 0.008 300)',
+              fg: 'oklch(0.50 0.02 290)',
+            },
+            border: 'oklch(0.90 0.01 300)',
+            sidebar: {
+              bg: 'oklch(0.16 0.03 295)',
+              fg: 'oklch(0.78 0.02 295)',
+              active: 'oklch(0.55 0.22 295 / 15%)',
+              hover: 'oklch(1 0 0 / 6%)',
+            },
+            destructive: 'oklch(0.58 0.22 25)',
+            success: 'oklch(0.65 0.20 155)',
+            warning: 'oklch(0.75 0.18 75)',
+            con: 'oklch(0.58 0.20 250)',
+            com: 'oklch(0.55 0.22 295)',
+            deal: 'oklch(0.60 0.20 155)',
+          },
+          borderRadius: {
+            'xl': '12px',
+            '2xl': '16px',
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: oklch(0.97 0.006 300);
+      color: oklch(0.15 0.025 290);
+    }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* Gradient accent line */
+    .gradient-line {
+      background: linear-gradient(90deg, oklch(0.55 0.22 295), oklch(0.72 0.17 55));
+      height: 3px;
+      border-radius: 2px;
+    }
+
+    /* Gradient border effect */
+    .gradient-border {
+      position: relative;
+    }
+    .gradient-border::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1.5px;
+      background: linear-gradient(135deg, oklch(0.55 0.22 295 / 40%), oklch(0.72 0.17 55 / 30%), oklch(0.55 0.22 295 / 10%));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    /* Health score ring */
+    .health-ring {
+      --size: 36px;
+      --stroke: 3.5px;
+      width: var(--size);
+      height: var(--size);
+    }
+    .health-ring circle {
+      fill: none;
+      stroke-width: var(--stroke);
+      stroke-linecap: round;
+    }
+    .health-ring .track { stroke: oklch(0.92 0.008 300); }
+    .health-ring .fill { transform: rotate(-90deg); transform-origin: center; transition: stroke-dashoffset 0.6s ease; }
+
+    /* Deal card left bar */
+    .deal-bar { width: 4px; border-radius: 2px; min-height: 100%; }
+
+    /* Kanban column */
+    .kanban-col { min-width: 280px; }
+
+    /* Stat card icon container */
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Avatar */
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 13px;
+      color: white;
+      flex-shrink: 0;
+    }
+    .avatar-lg {
+      width: 72px;
+      height: 72px;
+      font-size: 24px;
+    }
+
+    /* Section labels */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: oklch(0.50 0.02 290);
+      margin-bottom: 12px;
+    }
+
+    /* Sidebar nav item */
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: oklch(0.65 0.02 295);
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+    }
+    .nav-item:hover {
+      background: oklch(1 0 0 / 6%);
+      color: oklch(0.85 0.02 295);
+    }
+    .nav-item.active {
+      background: oklch(0.55 0.22 295 / 15%);
+      color: white;
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 20px;
+      border-radius: 0 3px 3px 0;
+      background: oklch(0.55 0.22 295);
+    }
+
+    /* Badge pills */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .pill-con { background: oklch(0.58 0.20 250 / 12%); color: oklch(0.48 0.20 250); }
+    .pill-com { background: oklch(0.55 0.22 295 / 12%); color: oklch(0.45 0.22 295); }
+    .pill-deal { background: oklch(0.60 0.20 155 / 12%); color: oklch(0.45 0.20 155); }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* Table */
+    .crm-table th {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: oklch(0.50 0.02 290);
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid oklch(0.90 0.01 300);
+    }
+    .crm-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid oklch(0.94 0.005 300);
+      vertical-align: middle;
+    }
+    .crm-table tr:hover td {
+      background: oklch(0.55 0.22 295 / 3%);
+    }
+    .crm-table tr:last-child td { border-bottom: none; }
+
+    /* Smooth scrollbar for kanban */
+    .kanban-scroll::-webkit-scrollbar { height: 6px; }
+    .kanban-scroll::-webkit-scrollbar-track { background: transparent; }
+    .kanban-scroll::-webkit-scrollbar-thumb { background: oklch(0.80 0.01 300); border-radius: 3px; }
+
+    /* Card shadow */
+    .card-shadow {
+      box-shadow: 0 1px 3px oklch(0.15 0.025 290 / 5%), 0 1px 2px oklch(0.15 0.025 290 / 3%);
+    }
+    .card-shadow-lg {
+      box-shadow: 0 4px 12px oklch(0.15 0.025 290 / 8%), 0 1px 3px oklch(0.15 0.025 290 / 4%);
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- ============================================================= -->
+  <!-- SHOWCASE WRAPPER -->
+  <!-- ============================================================= -->
+  <div class="max-w-[1400px] mx-auto py-12 px-6 space-y-16">
+
+    <!-- Header -->
+    <div class="text-center space-y-3">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase" style="background: oklch(0.55 0.22 295 / 8%); color: oklch(0.55 0.22 295);">
+        Variation B
+      </div>
+      <h1 class="text-4xl font-bold tracking-tight" style="color: oklch(0.15 0.025 290);">Bold & Modern</h1>
+      <p class="text-base" style="color: oklch(0.50 0.02 290);">Notion meets Raycast — warm purple primary, amber accents, deep dark sidebar</p>
+    </div>
+
+
+    <!-- ============================================================= -->
+    <!-- 1. SIDEBAR -->
+    <!-- ============================================================= -->
+    <section>
+      <div class="section-label">1. Sidebar Navigation</div>
+      <div class="flex gap-8">
+        <!-- Sidebar -->
+        <div class="w-[240px] rounded-2xl overflow-hidden card-shadow-lg flex-shrink-0" style="background: oklch(0.16 0.03 295);">
+          <div class="p-5">
+            <!-- Logo -->
+            <div class="flex items-center gap-3 mb-8">
+              <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-white text-lg" style="background: linear-gradient(135deg, oklch(0.55 0.22 295), oklch(0.65 0.20 310));">W</div>
+              <div>
+                <div class="text-sm font-bold text-white tracking-tight">Whop CRM</div>
+                <div class="text-[11px] font-medium" style="color: oklch(0.50 0.03 295);">Creator Success</div>
+              </div>
+            </div>
+
+            <!-- Nav items -->
+            <nav class="space-y-1">
+              <div class="nav-item active">
+                <i data-lucide="layout-dashboard" class="w-[18px] h-[18px]" style="color: oklch(0.72 0.17 55);"></i>
+                <span>Dashboard</span>
+              </div>
+              <div class="nav-item">
+                <i data-lucide="users" class="w-[18px] h-[18px]"></i>
+                <span>Contacts</span>
+              </div>
+              <div class="nav-item">
+                <i data-lucide="building-2" class="w-[18px] h-[18px]"></i>
+                <span>Companies</span>
+              </div>
+              <div class="nav-item">
+                <i data-lucide="git-branch" class="w-[18px] h-[18px]"></i>
+                <span>Pipeline</span>
+                <span class="ml-auto text-[11px] font-semibold px-1.5 py-0.5 rounded-md" style="background: oklch(0.55 0.22 295 / 25%); color: oklch(0.80 0.12 295);">14</span>
+              </div>
+              <div class="nav-item">
+                <i data-lucide="handshake" class="w-[18px] h-[18px]"></i>
+                <span>Deals</span>
+              </div>
+              <div class="nav-item">
+                <i data-lucide="check-square" class="w-[18px] h-[18px]"></i>
+                <span>Tasks</span>
+                <span class="ml-auto text-[11px] font-semibold px-1.5 py-0.5 rounded-md" style="background: oklch(0.72 0.17 55 / 20%); color: oklch(0.72 0.17 55);">8</span>
+              </div>
+              <div class="nav-item">
+                <i data-lucide="bar-chart-3" class="w-[18px] h-[18px]"></i>
+                <span>Reports</span>
+              </div>
+              <div class="nav-item">
+                <i data-lucide="briefcase" class="w-[18px] h-[18px]"></i>
+                <span>Portfolio</span>
+              </div>
+            </nav>
+
+            <!-- Divider -->
+            <div class="my-5 border-t" style="border-color: oklch(1 0 0 / 8%);"></div>
+
+            <!-- Secondary nav -->
+            <nav class="space-y-1">
+              <div class="nav-item">
+                <i data-lucide="bell" class="w-[18px] h-[18px]"></i>
+                <span>Alerts</span>
+                <span class="ml-auto w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style="background: oklch(0.58 0.22 25);">3</span>
+              </div>
+              <div class="nav-item">
+                <i data-lucide="settings" class="w-[18px] h-[18px]"></i>
+                <span>Settings</span>
+              </div>
+            </nav>
+          </div>
+
+          <!-- User -->
+          <div class="px-5 py-4 flex items-center gap-3 border-t" style="border-color: oklch(1 0 0 / 8%);">
+            <div class="avatar" style="background: linear-gradient(135deg, oklch(0.55 0.22 295), oklch(0.72 0.17 55)); width: 32px; height: 32px; font-size: 12px;">NM</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-xs font-semibold text-white truncate">Nico Marino</div>
+              <div class="text-[11px] truncate" style="color: oklch(0.50 0.03 295);">Admin</div>
+            </div>
+            <i data-lucide="chevrons-up-down" class="w-4 h-4 flex-shrink-0" style="color: oklch(0.40 0.02 295);"></i>
+          </div>
+        </div>
+
+        <!-- Sidebar description -->
+        <div class="flex-1 flex items-center">
+          <div class="space-y-4 max-w-md">
+            <h3 class="text-lg font-semibold">Deep purple-black sidebar</h3>
+            <ul class="space-y-2 text-sm" style="color: oklch(0.50 0.02 290);">
+              <li class="flex items-start gap-2"><span style="color: oklch(0.55 0.22 295);">&#9679;</span> Active state: purple translucent bg + left border indicator</li>
+              <li class="flex items-start gap-2"><span style="color: oklch(0.72 0.17 55);">&#9679;</span> Amber accent on Dashboard icon for warmth</li>
+              <li class="flex items-start gap-2"><span style="color: oklch(0.55 0.22 295);">&#9679;</span> Gradient W logo (purple to violet)</li>
+              <li class="flex items-start gap-2"><span style="color: oklch(0.58 0.22 25);">&#9679;</span> Alert badge in destructive red for urgency</li>
+              <li class="flex items-start gap-2"><span style="color: oklch(0.50 0.02 290);">&#9679;</span> Count badges on Pipeline (purple) and Tasks (amber)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============================================================= -->
+    <!-- 2. DASHBOARD -->
+    <!-- ============================================================= -->
+    <section>
+      <div class="section-label">2. Dashboard — Stat Cards</div>
+      <div class="rounded-2xl p-6 card-shadow" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.90 0.01 300);">
+        <!-- Dashboard header -->
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-2xl font-bold tracking-tight">Dashboard</h2>
+            <p class="text-sm mt-0.5" style="color: oklch(0.50 0.02 290);">Wednesday, March 5, 2026</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="badge" style="background: oklch(0.96 0.008 300); color: oklch(0.50 0.02 290); border: 1px solid oklch(0.90 0.01 300);">
+              <i data-lucide="calendar" class="w-3.5 h-3.5 mr-1.5"></i> Last 30 days
+            </button>
+            <button class="px-4 py-2 rounded-xl text-sm font-semibold text-white" style="background: oklch(0.55 0.22 295);">
+              <i data-lucide="plus" class="w-3.5 h-3.5 inline mr-1" style="vertical-align: -2px;"></i> New Contact
+            </button>
+          </div>
+        </div>
+
+        <!-- Stat cards grid -->
+        <div class="grid grid-cols-3 gap-4">
+          <!-- Total Contacts -->
+          <div class="rounded-2xl p-5 gradient-border" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.92 0.008 300);">
+            <div class="flex items-start justify-between mb-3">
+              <div class="stat-icon" style="background: oklch(0.55 0.22 295 / 10%);">
+                <i data-lucide="users" class="w-5 h-5" style="color: oklch(0.55 0.22 295);"></i>
+              </div>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-full" style="background: oklch(0.65 0.20 155 / 10%); color: oklch(0.55 0.20 155);">+12%</span>
+            </div>
+            <div class="text-3xl font-bold tracking-tight">201</div>
+            <div class="text-xs font-medium mt-1" style="color: oklch(0.50 0.02 290);">Total Contacts</div>
+          </div>
+
+          <!-- GMV -->
+          <div class="rounded-2xl p-5 gradient-border" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.92 0.008 300);">
+            <div class="flex items-start justify-between mb-3">
+              <div class="stat-icon" style="background: oklch(0.65 0.20 155 / 10%);">
+                <i data-lucide="dollar-sign" class="w-5 h-5" style="color: oklch(0.60 0.20 155);"></i>
+              </div>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-full" style="background: oklch(0.65 0.20 155 / 10%); color: oklch(0.55 0.20 155);">+8.3%</span>
+            </div>
+            <div class="text-3xl font-bold tracking-tight">$2.4M</div>
+            <div class="text-xs font-medium mt-1" style="color: oklch(0.50 0.02 290);">Total GMV</div>
+          </div>
+
+          <!-- At Risk -->
+          <div class="rounded-2xl p-5 gradient-border" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.92 0.008 300);">
+            <div class="flex items-start justify-between mb-3">
+              <div class="stat-icon" style="background: oklch(0.58 0.22 25 / 10%);">
+                <i data-lucide="alert-triangle" class="w-5 h-5" style="color: oklch(0.58 0.22 25);"></i>
+              </div>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-full" style="background: oklch(0.58 0.22 25 / 10%); color: oklch(0.52 0.20 25);">+2</span>
+            </div>
+            <div class="text-3xl font-bold tracking-tight">12</div>
+            <div class="text-xs font-medium mt-1" style="color: oklch(0.50 0.02 290);">At Risk Contacts</div>
+          </div>
+
+          <!-- Tasks Due -->
+          <div class="rounded-2xl p-5 gradient-border" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.92 0.008 300);">
+            <div class="flex items-start justify-between mb-3">
+              <div class="stat-icon" style="background: oklch(0.72 0.17 55 / 12%);">
+                <i data-lucide="check-square" class="w-5 h-5" style="color: oklch(0.68 0.17 55);"></i>
+              </div>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-full" style="background: oklch(0.75 0.18 75 / 12%); color: oklch(0.60 0.16 75);">Today</span>
+            </div>
+            <div class="text-3xl font-bold tracking-tight">8</div>
+            <div class="text-xs font-medium mt-1" style="color: oklch(0.50 0.02 290);">Tasks Due</div>
+          </div>
+
+          <!-- Pipeline Value -->
+          <div class="rounded-2xl p-5 gradient-border" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.92 0.008 300);">
+            <div class="flex items-start justify-between mb-3">
+              <div class="stat-icon" style="background: oklch(0.58 0.20 250 / 10%);">
+                <i data-lucide="git-branch" class="w-5 h-5" style="color: oklch(0.55 0.20 250);"></i>
+              </div>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-full" style="background: oklch(0.65 0.20 155 / 10%); color: oklch(0.55 0.20 155);">14 deals</span>
+            </div>
+            <div class="text-3xl font-bold tracking-tight">$890K</div>
+            <div class="text-xs font-medium mt-1" style="color: oklch(0.50 0.02 290);">Pipeline Value</div>
+          </div>
+
+          <!-- Alerts -->
+          <div class="rounded-2xl p-5 gradient-border" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.92 0.008 300);">
+            <div class="flex items-start justify-between mb-3">
+              <div class="stat-icon" style="background: oklch(0.75 0.18 75 / 12%);">
+                <i data-lucide="bell-ring" class="w-5 h-5" style="color: oklch(0.68 0.18 75);"></i>
+              </div>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-full" style="background: oklch(0.58 0.22 25 / 10%); color: oklch(0.52 0.20 25);">Urgent</span>
+            </div>
+            <div class="text-3xl font-bold tracking-tight">3</div>
+            <div class="text-xs font-medium mt-1" style="color: oklch(0.50 0.02 290);">Active Alerts</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============================================================= -->
+    <!-- 3. CONTACTS LIST TABLE -->
+    <!-- ============================================================= -->
+    <section>
+      <div class="section-label">3. Contacts List Table</div>
+      <div class="rounded-2xl card-shadow overflow-hidden" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.90 0.01 300);">
+        <!-- Table header bar -->
+        <div class="flex items-center justify-between px-6 py-4 border-b" style="border-color: oklch(0.90 0.01 300);">
+          <div class="flex items-center gap-3">
+            <h3 class="text-lg font-bold">Contacts</h3>
+            <span class="badge font-mono text-xs" style="background: oklch(0.96 0.008 300); color: oklch(0.50 0.02 290);">201 total</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="relative">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2" style="color: oklch(0.50 0.02 290);"></i>
+              <input type="text" placeholder="Search contacts..." class="pl-9 pr-4 py-2 rounded-xl text-sm border focus:outline-none focus:ring-2 w-56" style="border-color: oklch(0.90 0.01 300); background: oklch(0.98 0.005 300); --tw-ring-color: oklch(0.55 0.22 295 / 30%);" />
+            </div>
+            <button class="badge" style="background: oklch(0.96 0.008 300); color: oklch(0.50 0.02 290); border: 1px solid oklch(0.90 0.01 300);">
+              <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5 mr-1.5"></i> Filters
+            </button>
+          </div>
+        </div>
+
+        <table class="crm-table w-full">
+          <thead>
+            <tr>
+              <th style="width: 32px; padding-left: 20px; padding-right: 4px;">
+                <input type="checkbox" class="w-4 h-4 rounded" style="accent-color: oklch(0.55 0.22 295);" />
+              </th>
+              <th>Contact</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Health</th>
+              <th>GMV</th>
+              <th>Company</th>
+              <th>Owner</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Row 1 -->
+            <tr>
+              <td style="padding-left: 20px; padding-right: 4px;"><input type="checkbox" class="w-4 h-4 rounded" style="accent-color: oklch(0.55 0.22 295);" /></td>
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="avatar" style="background: linear-gradient(135deg, oklch(0.60 0.18 250), oklch(0.50 0.20 270));">SK</div>
+                  <div>
+                    <div class="text-sm font-semibold">Sarah Kim</div>
+                    <span class="pill pill-con font-mono text-[10px]">CON-0001</span>
+                  </div>
+                </div>
+              </td>
+              <td><span class="badge text-xs" style="background: oklch(0.55 0.22 295 / 8%); color: oklch(0.50 0.22 295);">Creator</span></td>
+              <td><span class="badge text-xs" style="background: oklch(0.65 0.20 155 / 10%); color: oklch(0.52 0.20 155);">Active</span></td>
+              <td>
+                <div class="flex items-center gap-2">
+                  <svg class="health-ring" viewBox="0 0 36 36">
+                    <circle class="track" cx="18" cy="18" r="14"></circle>
+                    <circle class="fill" cx="18" cy="18" r="14" stroke="oklch(0.65 0.20 155)" stroke-dasharray="88" stroke-dashoffset="9"></circle>
+                  </svg>
+                  <span class="text-xs font-semibold" style="color: oklch(0.55 0.20 155);">92</span>
+                </div>
+              </td>
+              <td><span class="text-sm font-semibold">$142,500</span></td>
+              <td><span class="text-sm" style="color: oklch(0.50 0.02 290);">Whop Studios</span></td>
+              <td>
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style="background: oklch(0.55 0.22 295);">NM</div>
+                  <span class="text-sm">Nico M.</span>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr>
+              <td style="padding-left: 20px; padding-right: 4px;"><input type="checkbox" class="w-4 h-4 rounded" style="accent-color: oklch(0.55 0.22 295);" /></td>
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="avatar" style="background: linear-gradient(135deg, oklch(0.65 0.18 155), oklch(0.55 0.20 170));">JW</div>
+                  <div>
+                    <div class="text-sm font-semibold">James Wilson</div>
+                    <span class="pill pill-con font-mono text-[10px]">CON-0002</span>
+                  </div>
+                </div>
+              </td>
+              <td><span class="badge text-xs" style="background: oklch(0.72 0.17 55 / 10%); color: oklch(0.58 0.15 55);">Enterprise</span></td>
+              <td><span class="badge text-xs" style="background: oklch(0.65 0.20 155 / 10%); color: oklch(0.52 0.20 155);">Active</span></td>
+              <td>
+                <div class="flex items-center gap-2">
+                  <svg class="health-ring" viewBox="0 0 36 36">
+                    <circle class="track" cx="18" cy="18" r="14"></circle>
+                    <circle class="fill" cx="18" cy="18" r="14" stroke="oklch(0.65 0.20 155)" stroke-dasharray="88" stroke-dashoffset="18"></circle>
+                  </svg>
+                  <span class="text-xs font-semibold" style="color: oklch(0.55 0.20 155);">80</span>
+                </div>
+              </td>
+              <td><span class="text-sm font-semibold">$310,000</span></td>
+              <td><span class="text-sm" style="color: oklch(0.50 0.02 290);">TechFlow Inc</span></td>
+              <td>
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style="background: oklch(0.60 0.18 250);">AL</div>
+                  <span class="text-sm">Alex L.</span>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 3 -->
+            <tr>
+              <td style="padding-left: 20px; padding-right: 4px;"><input type="checkbox" class="w-4 h-4 rounded" style="accent-color: oklch(0.55 0.22 295);" /></td>
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="avatar" style="background: linear-gradient(135deg, oklch(0.58 0.22 25), oklch(0.52 0.20 15));">MP</div>
+                  <div>
+                    <div class="text-sm font-semibold">Maria Perez</div>
+                    <span class="pill pill-con font-mono text-[10px]">CON-0003</span>
+                  </div>
+                </div>
+              </td>
+              <td><span class="badge text-xs" style="background: oklch(0.55 0.22 295 / 8%); color: oklch(0.50 0.22 295);">Creator</span></td>
+              <td><span class="badge text-xs" style="background: oklch(0.75 0.18 75 / 12%); color: oklch(0.58 0.16 75);">At Risk</span></td>
+              <td>
+                <div class="flex items-center gap-2">
+                  <svg class="health-ring" viewBox="0 0 36 36">
+                    <circle class="track" cx="18" cy="18" r="14"></circle>
+                    <circle class="fill" cx="18" cy="18" r="14" stroke="oklch(0.75 0.18 75)" stroke-dasharray="88" stroke-dashoffset="53"></circle>
+                  </svg>
+                  <span class="text-xs font-semibold" style="color: oklch(0.60 0.16 75);">40</span>
+                </div>
+              </td>
+              <td><span class="text-sm font-semibold">$28,750</span></td>
+              <td><span class="text-sm" style="color: oklch(0.50 0.02 290);">DigitalNomad Co</span></td>
+              <td>
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style="background: oklch(0.55 0.22 295);">NM</div>
+                  <span class="text-sm">Nico M.</span>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 4 -->
+            <tr>
+              <td style="padding-left: 20px; padding-right: 4px;"><input type="checkbox" class="w-4 h-4 rounded" style="accent-color: oklch(0.55 0.22 295);" /></td>
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="avatar" style="background: linear-gradient(135deg, oklch(0.72 0.17 55), oklch(0.62 0.18 40));">DT</div>
+                  <div>
+                    <div class="text-sm font-semibold">David Thompson</div>
+                    <span class="pill pill-con font-mono text-[10px]">CON-0004</span>
+                  </div>
+                </div>
+              </td>
+              <td><span class="badge text-xs" style="background: oklch(0.58 0.20 250 / 10%); color: oklch(0.50 0.18 250);">Seller</span></td>
+              <td><span class="badge text-xs" style="background: oklch(0.65 0.20 155 / 10%); color: oklch(0.52 0.20 155);">Active</span></td>
+              <td>
+                <div class="flex items-center gap-2">
+                  <svg class="health-ring" viewBox="0 0 36 36">
+                    <circle class="track" cx="18" cy="18" r="14"></circle>
+                    <circle class="fill" cx="18" cy="18" r="14" stroke="oklch(0.65 0.20 155)" stroke-dasharray="88" stroke-dashoffset="26"></circle>
+                  </svg>
+                  <span class="text-xs font-semibold" style="color: oklch(0.55 0.20 155);">70</span>
+                </div>
+              </td>
+              <td><span class="text-sm font-semibold">$87,200</span></td>
+              <td><span class="text-sm" style="color: oklch(0.50 0.02 290);">Apex Digital</span></td>
+              <td>
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style="background: oklch(0.65 0.18 155);">RJ</div>
+                  <span class="text-sm">Ryan J.</span>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 5 -->
+            <tr>
+              <td style="padding-left: 20px; padding-right: 4px;"><input type="checkbox" class="w-4 h-4 rounded" style="accent-color: oklch(0.55 0.22 295);" /></td>
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="avatar" style="background: linear-gradient(135deg, oklch(0.55 0.22 295), oklch(0.48 0.24 310));">EL</div>
+                  <div>
+                    <div class="text-sm font-semibold">Emily Lin</div>
+                    <span class="pill pill-con font-mono text-[10px]">CON-0005</span>
+                  </div>
+                </div>
+              </td>
+              <td><span class="badge text-xs" style="background: oklch(0.55 0.22 295 / 8%); color: oklch(0.50 0.22 295);">Creator</span></td>
+              <td><span class="badge text-xs" style="background: oklch(0.58 0.22 25 / 10%); color: oklch(0.52 0.20 25);">Churned</span></td>
+              <td>
+                <div class="flex items-center gap-2">
+                  <svg class="health-ring" viewBox="0 0 36 36">
+                    <circle class="track" cx="18" cy="18" r="14"></circle>
+                    <circle class="fill" cx="18" cy="18" r="14" stroke="oklch(0.58 0.22 25)" stroke-dasharray="88" stroke-dashoffset="70"></circle>
+                  </svg>
+                  <span class="text-xs font-semibold" style="color: oklch(0.55 0.20 25);">20</span>
+                </div>
+              </td>
+              <td><span class="text-sm font-semibold">$12,300</span></td>
+              <td><span class="text-sm" style="color: oklch(0.50 0.02 290);">Indie Makers</span></td>
+              <td>
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style="background: oklch(0.60 0.18 250);">AL</div>
+                  <span class="text-sm">Alex L.</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+
+    <!-- ============================================================= -->
+    <!-- 4. PIPELINE KANBAN -->
+    <!-- ============================================================= -->
+    <section>
+      <div class="section-label">4. Pipeline Kanban Board</div>
+      <div class="rounded-2xl p-6 card-shadow" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.90 0.01 300);">
+        <!-- Pipeline header -->
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-3">
+            <h3 class="text-lg font-bold">Pipeline</h3>
+            <span class="badge font-mono text-xs" style="background: oklch(0.55 0.22 295 / 8%); color: oklch(0.50 0.22 295);">$890K total</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="badge" style="background: oklch(0.96 0.008 300); color: oklch(0.50 0.02 290); border: 1px solid oklch(0.90 0.01 300);">
+              <i data-lucide="list" class="w-3.5 h-3.5 mr-1.5"></i> List View
+            </button>
+            <button class="px-4 py-2 rounded-xl text-sm font-semibold text-white" style="background: oklch(0.55 0.22 295);">
+              <i data-lucide="plus" class="w-3.5 h-3.5 inline mr-1" style="vertical-align: -2px;"></i> New Deal
+            </button>
+          </div>
+        </div>
+
+        <!-- Kanban columns -->
+        <div class="flex gap-4 kanban-scroll overflow-x-auto pb-2">
+
+          <!-- Prospecting -->
+          <div class="kanban-col flex-1 min-w-[280px]">
+            <div class="flex items-center justify-between mb-3 px-1">
+              <div class="flex items-center gap-2">
+                <div class="w-2.5 h-2.5 rounded-full" style="background: oklch(0.58 0.20 250);"></div>
+                <span class="text-sm font-semibold">Prospecting</span>
+                <span class="text-xs font-mono px-1.5 py-0.5 rounded-md" style="background: oklch(0.96 0.008 300); color: oklch(0.50 0.02 290);">3</span>
+              </div>
+              <span class="text-xs font-semibold" style="color: oklch(0.50 0.02 290);">$145K</span>
+            </div>
+            <div class="space-y-3">
+              <!-- Deal Card 1 -->
+              <div class="rounded-xl card-shadow flex overflow-hidden" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.92 0.008 300);">
+                <div class="deal-bar" style="background: oklch(0.58 0.22 25);"></div>
+                <div class="p-3.5 flex-1">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="text-sm font-semibold leading-tight">Apex Digital Partnership</div>
+                    <span class="pill pill-deal font-mono text-[10px] ml-2 flex-shrink-0">DEAL-0001</span>
+                  </div>
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold text-white" style="background: oklch(0.72 0.17 55);">DT</div>
+                    <span class="text-xs" style="color: oklch(0.50 0.02 290);">David Thompson</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold">$65,000</span>
+                    <span class="text-[11px]" style="color: oklch(0.50 0.02 290);">Mar 20</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Deal Card 2 -->
+              <div class="rounded-xl card-shadow flex overflow-hidden" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.92 0.008 300);">
+                <div class="deal-bar" style="background: oklch(0.75 0.18 75);"></div>
+                <div class="p-3.5 flex-1">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="text-sm font-semibold leading-tight">Creator Fund Expansion</div>
+                    <span class="pill pill-deal font-mono text-[10px] ml-2 flex-shrink-0">DEAL-0005</span>
+                  </div>
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold text-white" style="background: oklch(0.60 0.18 250);">SK</div>
+                    <span class="text-xs" style="color: oklch(0.50 0.02 290);">Sarah Kim</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold">$45,000</span>
+                    <span class="text-[11px]" style="color: oklch(0.50 0.02 290);">Apr 5</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Deal Card 3 -->
+              <div class="rounded-xl card-shadow flex overflow-hidden" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.92 0.008 300);">
+                <div class="deal-bar" style="background: oklch(0.65 0.20 155);"></div>
+                <div class="p-3.5 flex-1">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="text-sm font-semibold leading-tight">FitPro Onboarding</div>
+                    <span class="pill pill-deal font-mono text-[10px] ml-2 flex-shrink-0">DEAL-0009</span>
+                  </div>
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold text-white" style="background: oklch(0.65 0.18 155);">RJ</div>
+                    <span class="text-xs" style="color: oklch(0.50 0.02 290);">Ryan Jensen</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold">$35,000</span>
+                    <span class="text-[11px]" style="color: oklch(0.50 0.02 290);">Mar 28</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Qualified -->
+          <div class="kanban-col flex-1 min-w-[280px]">
+            <div class="flex items-center justify-between mb-3 px-1">
+              <div class="flex items-center gap-2">
+                <div class="w-2.5 h-2.5 rounded-full" style="background: oklch(0.55 0.22 295);"></div>
+                <span class="text-sm font-semibold">Qualified</span>
+                <span class="text-xs font-mono px-1.5 py-0.5 rounded-md" style="background: oklch(0.96 0.008 300); color: oklch(0.50 0.02 290);">3</span>
+              </div>
+              <span class="text-xs font-semibold" style="color: oklch(0.50 0.02 290);">$280K</span>
+            </div>
+            <div class="space-y-3">
+              <!-- Deal Card -->
+              <div class="rounded-xl card-shadow flex overflow-hidden" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.92 0.008 300);">
+                <div class="deal-bar" style="background: oklch(0.58 0.22 25);"></div>
+                <div class="p-3.5 flex-1">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="text-sm font-semibold leading-tight">TechFlow Enterprise Suite</div>
+                    <span class="pill pill-deal font-mono text-[10px] ml-2 flex-shrink-0">DEAL-0002</span>
+                  </div>
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold text-white" style="background: oklch(0.65 0.18 155);">JW</div>
+                    <span class="text-xs" style="color: oklch(0.50 0.02 290);">James Wilson</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold">$120,000</span>
+                    <span class="text-[11px]" style="color: oklch(0.50 0.02 290);">Apr 15</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-xl card-shadow flex overflow-hidden" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.92 0.008 300);">
+                <div class="deal-bar" style="background: oklch(0.75 0.18 75);"></div>
+                <div class="p-3.5 flex-1">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="text-sm font-semibold leading-tight">EduVerse Platform Migration</div>
+                    <span class="pill pill-deal font-mono text-[10px] ml-2 flex-shrink-0">DEAL-0006</span>
+                  </div>
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold text-white" style="background: oklch(0.55 0.22 295);">LK</div>
+                    <span class="text-xs" style="color: oklch(0.50 0.02 290);">Lisa Kowalski</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold">$85,000</span>
+                    <span class="text-[11px]" style="color: oklch(0.50 0.02 290);">Apr 22</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-xl card-shadow flex overflow-hidden" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.92 0.008 300);">
+                <div class="deal-bar" style="background: oklch(0.65 0.20 155);"></div>
+                <div class="p-3.5 flex-1">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="text-sm font-semibold leading-tight">Gaming Hub License</div>
+                    <span class="pill pill-deal font-mono text-[10px] ml-2 flex-shrink-0">DEAL-0010</span>
+                  </div>
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold text-white" style="background: oklch(0.72 0.17 55);">MC</div>
+                    <span class="text-xs" style="color: oklch(0.50 0.02 290);">Mike Chen</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold">$75,000</span>
+                    <span class="text-[11px]" style="color: oklch(0.50 0.02 290);">Mar 30</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Proposal -->
+          <div class="kanban-col flex-1 min-w-[280px]">
+            <div class="flex items-center justify-between mb-3 px-1">
+              <div class="flex items-center gap-2">
+                <div class="w-2.5 h-2.5 rounded-full" style="background: oklch(0.72 0.17 55);"></div>
+                <span class="text-sm font-semibold">Proposal</span>
+                <span class="text-xs font-mono px-1.5 py-0.5 rounded-md" style="background: oklch(0.96 0.008 300); color: oklch(0.50 0.02 290);">2</span>
+              </div>
+              <span class="text-xs font-semibold" style="color: oklch(0.50 0.02 290);">$215K</span>
+            </div>
+            <div class="space-y-3">
+              <div class="rounded-xl card-shadow flex overflow-hidden" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.92 0.008 300);">
+                <div class="deal-bar" style="background: oklch(0.58 0.22 25);"></div>
+                <div class="p-3.5 flex-1">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="text-sm font-semibold leading-tight">StreamVault Annual Contract</div>
+                    <span class="pill pill-deal font-mono text-[10px] ml-2 flex-shrink-0">DEAL-0003</span>
+                  </div>
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold text-white" style="background: oklch(0.58 0.22 25);">MP</div>
+                    <span class="text-xs" style="color: oklch(0.50 0.02 290);">Maria Perez</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold">$95,000</span>
+                    <span class="text-[11px]" style="color: oklch(0.50 0.02 290);">Mar 12</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-xl card-shadow flex overflow-hidden" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.92 0.008 300);">
+                <div class="deal-bar" style="background: oklch(0.75 0.18 75);"></div>
+                <div class="p-3.5 flex-1">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="text-sm font-semibold leading-tight">NoCode Agency Bundle</div>
+                    <span class="pill pill-deal font-mono text-[10px] ml-2 flex-shrink-0">DEAL-0007</span>
+                  </div>
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold text-white" style="background: oklch(0.55 0.22 295);">EL</div>
+                    <span class="text-xs" style="color: oklch(0.50 0.02 290);">Emily Lin</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold">$120,000</span>
+                    <span class="text-[11px]" style="color: oklch(0.50 0.02 290);">Apr 1</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Closed Won -->
+          <div class="kanban-col flex-1 min-w-[280px]">
+            <div class="flex items-center justify-between mb-3 px-1">
+              <div class="flex items-center gap-2">
+                <div class="w-2.5 h-2.5 rounded-full" style="background: oklch(0.65 0.20 155);"></div>
+                <span class="text-sm font-semibold">Closed Won</span>
+                <span class="text-xs font-mono px-1.5 py-0.5 rounded-md" style="background: oklch(0.96 0.008 300); color: oklch(0.50 0.02 290);">2</span>
+              </div>
+              <span class="text-xs font-semibold" style="color: oklch(0.50 0.02 290);">$250K</span>
+            </div>
+            <div class="space-y-3">
+              <div class="rounded-xl card-shadow flex overflow-hidden" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.92 0.008 300);">
+                <div class="deal-bar" style="background: oklch(0.65 0.20 155);"></div>
+                <div class="p-3.5 flex-1">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="text-sm font-semibold leading-tight">DesignPro Whitelabel</div>
+                    <span class="pill pill-deal font-mono text-[10px] ml-2 flex-shrink-0">DEAL-0004</span>
+                  </div>
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold text-white" style="background: oklch(0.60 0.18 250);">SK</div>
+                    <span class="text-xs" style="color: oklch(0.50 0.02 290);">Sarah Kim</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold">$150,000</span>
+                    <div class="flex items-center gap-1">
+                      <i data-lucide="check-circle-2" class="w-3.5 h-3.5" style="color: oklch(0.65 0.20 155);"></i>
+                      <span class="text-[11px] font-medium" style="color: oklch(0.55 0.20 155);">Won</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-xl card-shadow flex overflow-hidden" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.92 0.008 300);">
+                <div class="deal-bar" style="background: oklch(0.65 0.20 155);"></div>
+                <div class="p-3.5 flex-1">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="text-sm font-semibold leading-tight">CryptoLearn Integration</div>
+                    <span class="pill pill-deal font-mono text-[10px] ml-2 flex-shrink-0">DEAL-0008</span>
+                  </div>
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold text-white" style="background: oklch(0.72 0.17 55);">AK</div>
+                    <span class="text-xs" style="color: oklch(0.50 0.02 290);">Amir Khan</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold">$100,000</span>
+                    <div class="flex items-center gap-1">
+                      <i data-lucide="check-circle-2" class="w-3.5 h-3.5" style="color: oklch(0.65 0.20 155);"></i>
+                      <span class="text-[11px] font-medium" style="color: oklch(0.55 0.20 155);">Won</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============================================================= -->
+    <!-- 5. CONTACT DETAIL -->
+    <!-- ============================================================= -->
+    <section>
+      <div class="section-label">5. Contact Detail Page</div>
+      <div class="flex gap-6">
+        <!-- Left: Profile Card -->
+        <div class="w-[340px] flex-shrink-0">
+          <div class="rounded-2xl card-shadow-lg overflow-hidden" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.90 0.01 300);">
+            <!-- Gradient accent line -->
+            <div class="gradient-line"></div>
+
+            <div class="p-6">
+              <!-- Avatar + Name -->
+              <div class="flex flex-col items-center text-center mb-6">
+                <div class="avatar avatar-lg mb-4" style="background: linear-gradient(135deg, oklch(0.60 0.18 250), oklch(0.50 0.20 270));">SK</div>
+                <h2 class="text-xl font-bold tracking-tight">Sarah Kim</h2>
+                <span class="pill pill-con font-mono text-[11px] mt-2">CON-0001</span>
+                <div class="flex items-center gap-2 mt-3">
+                  <span class="badge text-xs" style="background: oklch(0.55 0.22 295 / 8%); color: oklch(0.50 0.22 295);">Creator</span>
+                  <span class="badge text-xs" style="background: oklch(0.65 0.20 155 / 10%); color: oklch(0.52 0.20 155);">Active</span>
+                </div>
+              </div>
+
+              <!-- Health Score -->
+              <div class="flex items-center justify-center gap-3 mb-6 py-3 rounded-xl" style="background: oklch(0.96 0.008 300);">
+                <svg class="health-ring" viewBox="0 0 36 36" style="--size: 42px;">
+                  <circle class="track" cx="18" cy="18" r="14"></circle>
+                  <circle class="fill" cx="18" cy="18" r="14" stroke="oklch(0.65 0.20 155)" stroke-dasharray="88" stroke-dashoffset="9"></circle>
+                </svg>
+                <div>
+                  <div class="text-sm font-bold" style="color: oklch(0.55 0.20 155);">92 / 100</div>
+                  <div class="text-[11px]" style="color: oklch(0.50 0.02 290);">Health Score</div>
+                </div>
+              </div>
+
+              <!-- Details -->
+              <div class="space-y-4">
+                <div>
+                  <div class="text-[11px] font-semibold uppercase tracking-wide mb-1" style="color: oklch(0.50 0.02 290);">Email</div>
+                  <div class="text-sm font-medium" style="color: oklch(0.55 0.22 295);">sarah.kim@whopstudios.com</div>
+                </div>
+                <div>
+                  <div class="text-[11px] font-semibold uppercase tracking-wide mb-1" style="color: oklch(0.50 0.02 290);">Phone</div>
+                  <div class="text-sm">+1 (415) 555-0142</div>
+                </div>
+                <div>
+                  <div class="text-[11px] font-semibold uppercase tracking-wide mb-1" style="color: oklch(0.50 0.02 290);">Company</div>
+                  <div class="flex items-center gap-2">
+                    <span class="pill pill-com font-mono text-[10px]">COM-0001</span>
+                    <span class="text-sm font-medium">Whop Studios</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="text-[11px] font-semibold uppercase tracking-wide mb-1" style="color: oklch(0.50 0.02 290);">GMV (Lifetime)</div>
+                  <div class="text-sm font-bold">$142,500</div>
+                </div>
+                <div>
+                  <div class="text-[11px] font-semibold uppercase tracking-wide mb-1" style="color: oklch(0.50 0.02 290);">Owner</div>
+                  <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style="background: oklch(0.55 0.22 295);">NM</div>
+                    <span class="text-sm">Nico Marino</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="text-[11px] font-semibold uppercase tracking-wide mb-1" style="color: oklch(0.50 0.02 290);">Tags</div>
+                  <div class="flex flex-wrap gap-1.5">
+                    <span class="pill text-[10px]" style="background: oklch(0.55 0.22 295 / 8%); color: oklch(0.50 0.22 295);">top-creator</span>
+                    <span class="pill text-[10px]" style="background: oklch(0.72 0.17 55 / 10%); color: oklch(0.58 0.15 55);">vip</span>
+                    <span class="pill text-[10px]" style="background: oklch(0.65 0.20 155 / 10%); color: oklch(0.52 0.20 155);">design</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="mt-6 pt-5 border-t flex gap-2" style="border-color: oklch(0.92 0.008 300);">
+                <button class="flex-1 py-2 rounded-xl text-sm font-semibold text-white text-center" style="background: oklch(0.55 0.22 295);">
+                  <i data-lucide="mail" class="w-3.5 h-3.5 inline mr-1" style="vertical-align: -2px;"></i> Email
+                </button>
+                <button class="flex-1 py-2 rounded-xl text-sm font-semibold text-center" style="background: oklch(0.96 0.008 300); color: oklch(0.35 0.02 290); border: 1px solid oklch(0.90 0.01 300);">
+                  <i data-lucide="phone" class="w-3.5 h-3.5 inline mr-1" style="vertical-align: -2px;"></i> Call
+                </button>
+                <button class="py-2 px-3 rounded-xl" style="background: oklch(0.96 0.008 300); border: 1px solid oklch(0.90 0.01 300);">
+                  <i data-lucide="more-horizontal" class="w-4 h-4" style="color: oklch(0.50 0.02 290);"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Tabs area -->
+        <div class="flex-1">
+          <div class="rounded-2xl card-shadow overflow-hidden" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.90 0.01 300);">
+            <!-- Tabs -->
+            <div class="flex border-b" style="border-color: oklch(0.90 0.01 300);">
+              <button class="px-5 py-3.5 text-sm font-semibold relative" style="color: oklch(0.55 0.22 295);">
+                Activity
+                <div class="absolute bottom-0 left-0 right-0 h-0.5 rounded-t" style="background: oklch(0.55 0.22 295);"></div>
+              </button>
+              <button class="px-5 py-3.5 text-sm font-medium" style="color: oklch(0.50 0.02 290);">Deals</button>
+              <button class="px-5 py-3.5 text-sm font-medium" style="color: oklch(0.50 0.02 290);">Tasks</button>
+              <button class="px-5 py-3.5 text-sm font-medium" style="color: oklch(0.50 0.02 290);">Emails</button>
+              <button class="px-5 py-3.5 text-sm font-medium" style="color: oklch(0.50 0.02 290);">Notes</button>
+              <button class="px-5 py-3.5 text-sm font-medium" style="color: oklch(0.50 0.02 290);">Files</button>
+            </div>
+
+            <!-- Activity Timeline Content -->
+            <div class="p-6">
+              <!-- Activity entries -->
+              <div class="space-y-5">
+                <!-- Entry 1 -->
+                <div class="flex gap-4">
+                  <div class="flex flex-col items-center">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: oklch(0.55 0.22 295 / 10%);">
+                      <i data-lucide="mail" class="w-4 h-4" style="color: oklch(0.55 0.22 295);"></i>
+                    </div>
+                    <div class="w-px flex-1 mt-2" style="background: oklch(0.92 0.008 300);"></div>
+                  </div>
+                  <div class="flex-1 pb-5">
+                    <div class="flex items-center justify-between">
+                      <div class="text-sm font-semibold">Email sent: Q1 Review Summary</div>
+                      <span class="text-[11px]" style="color: oklch(0.50 0.02 290);">2 hours ago</span>
+                    </div>
+                    <p class="text-xs mt-1" style="color: oklch(0.50 0.02 290);">Sent quarterly performance review with GMV breakdown and growth recommendations.</p>
+                    <div class="flex items-center gap-2 mt-2">
+                      <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold text-white" style="background: oklch(0.55 0.22 295);">NM</div>
+                      <span class="text-[11px]" style="color: oklch(0.50 0.02 290);">Nico Marino</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Entry 2 -->
+                <div class="flex gap-4">
+                  <div class="flex flex-col items-center">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: oklch(0.65 0.20 155 / 10%);">
+                      <i data-lucide="phone" class="w-4 h-4" style="color: oklch(0.60 0.20 155);"></i>
+                    </div>
+                    <div class="w-px flex-1 mt-2" style="background: oklch(0.92 0.008 300);"></div>
+                  </div>
+                  <div class="flex-1 pb-5">
+                    <div class="flex items-center justify-between">
+                      <div class="text-sm font-semibold">Call: Product feedback session</div>
+                      <span class="text-[11px]" style="color: oklch(0.50 0.02 290);">Yesterday</span>
+                    </div>
+                    <p class="text-xs mt-1" style="color: oklch(0.50 0.02 290);">30-minute call discussing new course builder features. Sarah wants bulk upload and analytics dashboard.</p>
+                    <div class="flex items-center gap-2 mt-2">
+                      <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold text-white" style="background: oklch(0.55 0.22 295);">NM</div>
+                      <span class="text-[11px]" style="color: oklch(0.50 0.02 290);">Nico Marino</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Entry 3 -->
+                <div class="flex gap-4">
+                  <div class="flex flex-col items-center">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: oklch(0.72 0.17 55 / 10%);">
+                      <i data-lucide="handshake" class="w-4 h-4" style="color: oklch(0.68 0.17 55);"></i>
+                    </div>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <div class="text-sm font-semibold">Deal created: DesignPro Whitelabel</div>
+                      <span class="text-[11px]" style="color: oklch(0.50 0.02 290);">Mar 1</span>
+                    </div>
+                    <p class="text-xs mt-1" style="color: oklch(0.50 0.02 290);">New $150,000 deal created in Prospecting stage. Whitelabel license for DesignPro course platform.</p>
+                    <div class="flex items-center gap-2 mt-2">
+                      <span class="pill pill-deal font-mono text-[10px]">DEAL-0004</span>
+                      <span class="text-[11px] font-medium" style="color: oklch(0.55 0.20 155);">$150,000</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============================================================= -->
+    <!-- DESIGN TOKENS REFERENCE -->
+    <!-- ============================================================= -->
+    <section>
+      <div class="section-label">Design Token Palette</div>
+      <div class="rounded-2xl p-6 card-shadow" style="background: oklch(1 0.003 300); border: 1px solid oklch(0.90 0.01 300);">
+        <div class="grid grid-cols-6 gap-3">
+          <div class="text-center">
+            <div class="w-full h-12 rounded-xl mb-2" style="background: oklch(0.55 0.22 295);"></div>
+            <div class="text-[10px] font-semibold" style="color: oklch(0.50 0.02 290);">Primary</div>
+          </div>
+          <div class="text-center">
+            <div class="w-full h-12 rounded-xl mb-2" style="background: oklch(0.48 0.24 295);"></div>
+            <div class="text-[10px] font-semibold" style="color: oklch(0.50 0.02 290);">Primary Hover</div>
+          </div>
+          <div class="text-center">
+            <div class="w-full h-12 rounded-xl mb-2" style="background: oklch(0.72 0.17 55);"></div>
+            <div class="text-[10px] font-semibold" style="color: oklch(0.50 0.02 290);">Accent / Amber</div>
+          </div>
+          <div class="text-center">
+            <div class="w-full h-12 rounded-xl mb-2" style="background: oklch(0.65 0.20 155);"></div>
+            <div class="text-[10px] font-semibold" style="color: oklch(0.50 0.02 290);">Success</div>
+          </div>
+          <div class="text-center">
+            <div class="w-full h-12 rounded-xl mb-2" style="background: oklch(0.75 0.18 75);"></div>
+            <div class="text-[10px] font-semibold" style="color: oklch(0.50 0.02 290);">Warning</div>
+          </div>
+          <div class="text-center">
+            <div class="w-full h-12 rounded-xl mb-2" style="background: oklch(0.58 0.22 25);"></div>
+            <div class="text-[10px] font-semibold" style="color: oklch(0.50 0.02 290);">Destructive</div>
+          </div>
+          <div class="text-center">
+            <div class="w-full h-12 rounded-xl mb-2" style="background: oklch(0.16 0.03 295);"></div>
+            <div class="text-[10px] font-semibold" style="color: oklch(0.50 0.02 290);">Sidebar BG</div>
+          </div>
+          <div class="text-center">
+            <div class="w-full h-12 rounded-xl mb-2" style="background: oklch(0.58 0.20 250);"></div>
+            <div class="text-[10px] font-semibold" style="color: oklch(0.50 0.02 290);">CON Blue</div>
+          </div>
+          <div class="text-center">
+            <div class="w-full h-12 rounded-xl mb-2 border" style="background: oklch(0.99 0.005 300); border-color: oklch(0.90 0.01 300);"></div>
+            <div class="text-[10px] font-semibold" style="color: oklch(0.50 0.02 290);">Background</div>
+          </div>
+          <div class="text-center">
+            <div class="w-full h-12 rounded-xl mb-2 border" style="background: oklch(0.96 0.008 300); border-color: oklch(0.90 0.01 300);"></div>
+            <div class="text-[10px] font-semibold" style="color: oklch(0.50 0.02 290);">Muted</div>
+          </div>
+          <div class="text-center">
+            <div class="w-full h-12 rounded-xl mb-2" style="background: oklch(0.90 0.01 300);"></div>
+            <div class="text-[10px] font-semibold" style="color: oklch(0.50 0.02 290);">Border</div>
+          </div>
+          <div class="text-center">
+            <div class="w-full h-12 rounded-xl mb-2" style="background: oklch(0.15 0.025 290);"></div>
+            <div class="text-[10px] font-semibold" style="color: oklch(0.50 0.02 290);">Foreground</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Initialize Lucide Icons -->
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

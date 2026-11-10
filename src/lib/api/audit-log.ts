@@ -7,7 +7,21 @@ import { desc, eq, sql, and, gte, lte } from "drizzle-orm";
 
 export interface AuditEntry {
   action: string;
-  entityType: "contact" | "deal" | "task" | "pipeline" | "tag" | "custom_field" | "user";
+  entityType:
+    | "contact"
+    | "deal"
+    | "task"
+    | "pipeline"
+    | "tag"
+    | "custom_field"
+    | "user"
+    | "company"
+    | "nav_item"
+    | "permission"
+    | "role_config"
+    | "report"
+    | "field_definition"
+    | "admin_view";
   entityId: string;
   changes?: Record<string, { from: unknown; to: unknown }>;
   metadata?: Record<string, unknown>;
@@ -26,8 +40,8 @@ export async function logAuditEvent(userId: string, entry: AuditEntry) {
       changes: entry.changes,
       ...entry.metadata,
     },
-    contactId: entry.entityType === "contact" ? entry.entityId : undefined,
-    dealId: entry.entityType === "deal" ? entry.entityId : undefined,
+    contactId: entry.entityType === "contact" && entry.entityId !== "bulk" ? entry.entityId : undefined,
+    dealId: entry.entityType === "deal" && entry.entityId !== "bulk" ? entry.entityId : undefined,
   });
 }
 

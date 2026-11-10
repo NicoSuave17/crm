@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { CompanyPicker } from "@/components/pickers/company-picker";
 import { ContactPicker } from "@/components/pickers/contact-picker";
+import { UserPicker } from "@/components/pickers/user-picker";
 import { useUpdateDeal } from "@/lib/hooks/use-deals";
 import { usePipelineWithDeals } from "@/lib/hooks/use-pipeline";
 import { toast } from "sonner";
@@ -40,6 +41,8 @@ interface EditDealDialogProps {
     expectedCloseDate: string | null;
     lostReason: string | null;
     priority: string | null;
+    currency: string | null;
+    actualCloseDate: string | null;
   };
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -60,10 +63,13 @@ interface FormState {
   stageId: string;
   contactId: string;
   companyId: string | null;
+  ownerId: string;
   priority: string;
   value: string;
   expectedMrr: string;
   expectedCloseDate: string;
+  actualCloseDate: string;
+  currency: string;
   description: string;
   lostReason: string;
 }
@@ -83,10 +89,13 @@ export function EditDealDialog({
     stageId: deal.stageId,
     contactId: deal.contactId,
     companyId: deal.companyId,
+    ownerId: deal.ownerId,
     priority: deal.priority ?? "medium",
     value: deal.value ?? "",
     expectedMrr: deal.expectedMrr ?? "",
     expectedCloseDate: deal.expectedCloseDate ?? "",
+    actualCloseDate: deal.actualCloseDate ?? "",
+    currency: deal.currency ?? "USD",
     description: deal.description ?? "",
     lostReason: deal.lostReason ?? "",
   });
@@ -98,10 +107,13 @@ export function EditDealDialog({
         stageId: deal.stageId,
         contactId: deal.contactId,
         companyId: deal.companyId,
+        ownerId: deal.ownerId,
         priority: deal.priority ?? "medium",
         value: deal.value ?? "",
         expectedMrr: deal.expectedMrr ?? "",
         expectedCloseDate: deal.expectedCloseDate ?? "",
+        actualCloseDate: deal.actualCloseDate ?? "",
+        currency: deal.currency ?? "USD",
         description: deal.description ?? "",
         lostReason: deal.lostReason ?? "",
       });
@@ -127,10 +139,13 @@ export function EditDealDialog({
       stageId: form.stageId,
       contactId: form.contactId,
       companyId: form.companyId || null,
+      ownerId: form.ownerId,
       priority: form.priority,
       value: form.value || undefined,
       expectedMrr: form.expectedMrr || undefined,
       expectedCloseDate: form.expectedCloseDate || undefined,
+      actualCloseDate: form.actualCloseDate || null,
+      currency: form.currency || undefined,
       description: form.description || undefined,
       lostReason: isLostStage ? form.lostReason || null : null,
     };
@@ -143,7 +158,16 @@ export function EditDealDialog({
           onOpenChange(false);
         },
         onError: (error) => {
-          toast.error(error.message);
+          const err = error as Error & { code?: string; items?: { id: string; title: string }[] };
+          if (err.code === "CHECKLIST_INCOMPLETE" && err.items?.length) {
+            const itemNames = err.items.map((i) => i.title).join(", ");
+            toast.error(
+              `Cannot change stage: complete required checklist items first: ${itemNames}`,
+              { duration: 6000 }
+            );
+          } else {
+            toast.error(error.message);
+          }
         },
       }
     );
@@ -188,7 +212,7 @@ export function EditDealDialog({
                       <span className="flex items-center gap-2">
                         <span
                           className="inline-block h-2 w-2 rounded-full"
-                          style={{ backgroundColor: stage.color ?? "#6B7280" }}
+                          style={{ backgroundColor: stage.color ?? "#8A7E7D" }}
                         />
                         {stage.name}
                       </span>
@@ -243,6 +267,20 @@ export function EditDealDialog({
             </div>
           </div>
 
+          {/* Owner */}
+          <div className="space-y-2">
+            <Label>Owner</Label>
+            <UserPicker
+              value={form.ownerId || null}
+              onChange={(userId) =>
+                setForm((prev) => ({
+                  ...prev,
+                  ownerId: userId ?? prev.ownerId,
+                }))
+              }
+            />
+          </div>
+
           {/* Value + Expected MRR */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -269,20 +307,58 @@ export function EditDealDialog({
             </div>
           </div>
 
-          {/* Expected Close Date */}
+          {/* Currency */}
           <div className="space-y-2">
-            <Label htmlFor="edit-deal-closeDate">Expected Close Date</Label>
-            <Input
-              id="edit-deal-closeDate"
-              type="date"
-              value={form.expectedCloseDate}
-              onChange={(e) =>
-                setForm((prev) => ({
-                  ...prev,
-                  expectedCloseDate: e.target.value,
-                }))
+            <Label>Currency</Label>
+            <Select
+              value={form.currency}
+              onValueChange={(v) =>
+                setForm((prev) => ({ ...prev, currency: v }))
               }
-            />
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="USD">USD</SelectItem>
+                <SelectItem value="EUR">EUR</SelectItem>
+                <SelectItem value="GBP">GBP</SelectItem>
+                <SelectItem value="CAD">CAD</SelectItem>
+                <SelectItem value="AUD">AUD</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Close Dates */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-deal-closeDate">Expected Close</Label>
+              <Input
+                id="edit-deal-closeDate"
+                type="date"
+                value={form.expectedCloseDate}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    expectedCloseDate: e.target.value,
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-deal-actualClose">Actual Close</Label>
+              <Input
+                id="edit-deal-actualClose"
+                type="date"
+                value={form.actualCloseDate}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    actualCloseDate: e.target.value,
+                  }))
+                }
+              />
+            </div>
           </div>
 
           {/* Description */}

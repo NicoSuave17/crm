@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser } from "@/lib/auth/helpers";
+import { requireRole } from "@/lib/auth/helpers";
 import { getPipelineWithStages, createStage } from "@/lib/api/pipelines";
 import { createStageSchema } from "@/lib/validators/pipeline";
 
@@ -8,7 +8,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireUser();
+    await requireRole(["admin", "manager"]);
     const { id } = await params;
 
     const pipeline = await getPipelineWithStages(id);
@@ -33,6 +33,9 @@ export async function POST(
   } catch (error) {
     if (error instanceof Error && error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error instanceof Error && error.message === "Forbidden") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
     console.error("POST /api/pipeline/[id]/stages error:", error);
     return NextResponse.json(

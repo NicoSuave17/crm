@@ -1,8 +1,10 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTasks, useUpdateTask, useDeleteTask } from "@/lib/hooks/use-tasks";
+import { OwnerFilter, resolveOwnerFilter, type OwnerFilterValue } from "@/components/filters/owner-filter";
+import { useCurrentUser } from "@/lib/hooks/use-current-user";
 import { useSavedViews, useCreateSavedView, useDeleteSavedView } from "@/lib/hooks/use-saved-views";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,10 +72,31 @@ export default function TasksPageWrapper() {
   );
 }
 
+const ALL_TASK_COLUMNS = [
+  "priority", "contact", "company", "deal", "dueDate",
+  "assignee", "createdBy", "completedAt",
+];
+
 function TasksPage() {
   const searchParams = useSearchParams();
   const [statusFilter, setStatusFilter] = useState("pending");
+  const [priorityFilter, setPriorityFilter] = useState<string>("all");
+  const [dateFilter, setDateFilter] = useState<string>("all");
   const [createOpen, setCreateOpen] = useState(false);
+
+  const { user: currentUser, isAdminOrManager } = useCurrentUser();
+  const [ownerFilter, setOwnerFilter] = useState<OwnerFilterValue>("all");
+  const ownerFilterInitialized = useRef(false);
+  useEffect(() => {
+    if (currentUser && !ownerFilterInitialized.current) {
+      ownerFilterInitialized.current = true;
+      if (!isAdminOrManager) {
+        setOwnerFilter("my");
+      }
+    }
+  }, [currentUser, isAdminOrManager]);
+
+  const resolvedAssigneeId = resolveOwnerFilter(ownerFilter, currentUser?.id);
 
   // Handle ?create=true from command palette quick action
   useEffect(() => {
@@ -87,8 +110,15 @@ function TasksPage() {
   const [editingTask, setEditingTask] = useState<EditingTask | null>(null);
   const [saveViewOpen, setSaveViewOpen] = useState(false);
   const [viewName, setViewName] = useState("");
+  const [visibleColumns, setVisibleColumns] = useState<string[] | null>(null);
+  const colVisible = (key: string) => !visibleColumns || visibleColumns.includes(key);
 
-  const { data: tasks, isLoading } = useTasks({ status: statusFilter !== "all" ? statusFilter : undefined });
+  const { data: tasks, isLoading } = useTasks({
+    status: statusFilter !== "all" ? statusFilter : undefined,
+    assigneeId: resolvedAssigneeId,
+    priority: priorityFilter !== "all" ? priorityFilter : undefined,
+    dueFilter: dateFilter !== "all" ? dateFilter : undefined,
+  });
   const updateTask = useUpdateTask();
   const deleteTask = useDeleteTask();
 
@@ -128,8 +158,16 @@ function TasksPage() {
     const filters: Record<string, unknown>[] = [];
     if (statusFilter !== "all") filters.push({ field: "status", value: statusFilter });
 
+    // Compute hidden columns so new columns added later show by default
+    const hiddenCols = visibleColumns
+      ? ALL_TASK_COLUMNS.filter((c) => !visibleColumns.includes(c))
+      : [];
+    if (hiddenCols.length > 0) {
+      filters.push({ field: "__hiddenColumns", value: hiddenCols });
+    }
+
     createView.mutate(
-      { name: viewName.trim(), entityType: "task", filters },
+      { name: viewName.trim(), entityType: "task", filters, columns: visibleColumns ?? undefined },
       {
         onSuccess: () => {
           toast.success("View saved");
@@ -141,10 +179,24 @@ function TasksPage() {
     );
   }
 
-  function handleLoadView(view: { filters: Record<string, unknown>[] }) {
+  function handleLoadView(view: { filters: Record<string, unknown>[]; columns?: string[] }) {
     setStatusFilter("all");
+    setPriorityFilter("all");
+    setDateFilter("all");
+
+    // Check for hiddenColumns convention (new views) vs columns (legacy views)
+    const hiddenColsFilter = view.filters.find((f) => f.field === "__hiddenColumns");
+    if (hiddenColsFilter && Array.isArray(hiddenColsFilter.value)) {
+      const hidden = new Set(hiddenColsFilter.value as string[]);
+      setVisibleColumns(ALL_TASK_COLUMNS.filter((c) => !hidden.has(c)));
+    } else {
+      setVisibleColumns(view.columns?.length ? view.columns : null);
+    }
+
     for (const f of view.filters) {
       if (f.field === "status") setStatusFilter(f.value as string);
+      if (f.field === "priority") setPriorityFilter(f.value as string);
+      if (f.field === "dueFilter") setDateFilter(f.value as string);
     }
   }
 
@@ -197,15 +249,39 @@ function TasksPage() {
 
       {/* Filters */}
       <div className="flex items-center gap-3">
+        <OwnerFilter value={ownerFilter} onChange={setOwnerFilter} label="Assignee" />
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-[150px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="all">All Statuses</SelectItem>
             <SelectItem value="pending">Pending</SelectItem>
             <SelectItem value="in_progress">In Progress</SelectItem>
             <SelectItem value="completed">Completed</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+          <SelectTrigger className="w-[140px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Priorities</SelectItem>
+            <SelectItem value="urgent">Urgent</SelectItem>
+            <SelectItem value="high">High</SelectItem>
+            <SelectItem value="medium">Medium</SelectItem>
+            <SelectItem value="low">Low</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={dateFilter} onValueChange={setDateFilter}>
+          <SelectTrigger className="w-[140px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Dates</SelectItem>
+            <SelectItem value="overdue">Overdue</SelectItem>
+            <SelectItem value="today">Due Today</SelectItem>
+            <SelectItem value="week">Due This Week</SelectItem>
           </SelectContent>
         </Select>
         <Button
@@ -216,6 +292,17 @@ function TasksPage() {
         >
           <Save className="h-4 w-4" />
         </Button>
+        {visibleColumns && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setVisibleColumns(null)}
+            title="Reset columns to default"
+          >
+            <X className="mr-1 h-3 w-3" />
+            Reset columns
+          </Button>
+        )}
       </div>
 
       <div className="rounded-md border">
@@ -224,10 +311,14 @@ function TasksPage() {
             <TableRow>
               <TableHead className="w-10" />
               <TableHead>Task</TableHead>
-              <TableHead>Priority</TableHead>
-              <TableHead>Contact</TableHead>
-              <TableHead>Due Date</TableHead>
-              <TableHead>Assignee</TableHead>
+              {colVisible("priority") && <TableHead>Priority</TableHead>}
+              {colVisible("contact") && <TableHead>Contact</TableHead>}
+              {colVisible("company") && <TableHead>Company</TableHead>}
+              {colVisible("deal") && <TableHead>Deal</TableHead>}
+              {colVisible("dueDate") && <TableHead>Due Date</TableHead>}
+              {colVisible("assignee") && <TableHead>Assignee</TableHead>}
+              {colVisible("createdBy") && <TableHead>Created By</TableHead>}
+              {colVisible("completedAt") && <TableHead>Completed</TableHead>}
               <TableHead className="w-10" />
             </TableRow>
           </TableHeader>
@@ -261,10 +352,17 @@ function TasksPage() {
                 priority: string;
                 assigneeFirstName: string | null;
                 assigneeLastName: string | null;
+                creatorFirstName: string | null;
+                creatorLastName: string | null;
                 contactId: string | null;
                 contactFirstName: string | null;
                 contactLastName: string | null;
+                dealId: string | null;
+                dealTitle: string | null;
+                companyId: string | null;
+                companyName: string | null;
                 dueDate: string | null;
+                completedAt: string | null;
               }) => {
                 const overdue =
                   task.dueDate &&
@@ -292,44 +390,88 @@ function TasksPage() {
                         {task.title}
                       </span>
                     </TableCell>
-                    <TableCell>
-                      <Badge variant={priorityColors[task.priority] ?? "outline"}>
-                        {task.priority}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {task.contactId ? (
-                        <Link
-                          href={`/contacts/${task.contactId}`}
-                          className="text-sm hover:underline"
-                        >
-                          {task.contactFirstName} {task.contactLastName}
-                        </Link>
-                      ) : (
-                        <span className="text-sm text-muted-foreground">--</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {task.dueDate ? (
-                        <span
-                          className={
-                            overdue
-                              ? "text-sm text-destructive font-medium flex items-center gap-1"
-                              : "text-sm"
-                          }
-                        >
-                          {overdue && <AlertCircle className="h-3 w-3" />}
-                          {format(new Date(task.dueDate), "MMM d, yyyy")}
-                        </span>
-                      ) : (
-                        <span className="text-sm text-muted-foreground">--</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {task.assigneeFirstName
-                        ? `${task.assigneeFirstName} ${task.assigneeLastName ?? ""}`
-                        : "--"}
-                    </TableCell>
+                    {colVisible("priority") && (
+                      <TableCell>
+                        <Badge variant={priorityColors[task.priority] ?? "outline"}>
+                          {task.priority}
+                        </Badge>
+                      </TableCell>
+                    )}
+                    {colVisible("contact") && (
+                      <TableCell>
+                        {task.contactId ? (
+                          <Link
+                            href={`/contacts/${task.contactId}`}
+                            className="text-sm hover:underline"
+                          >
+                            {task.contactFirstName} {task.contactLastName}
+                          </Link>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">--</span>
+                        )}
+                      </TableCell>
+                    )}
+                    {colVisible("company") && (
+                      <TableCell className="text-sm">
+                        {task.companyId ? (
+                          <Link href={`/companies/${task.companyId}`} className="hover:underline">
+                            {task.companyName}
+                          </Link>
+                        ) : (
+                          <span className="text-muted-foreground">--</span>
+                        )}
+                      </TableCell>
+                    )}
+                    {colVisible("deal") && (
+                      <TableCell className="text-sm">
+                        {task.dealId ? (
+                          <Link href={`/deals/${task.dealId}`} className="hover:underline">
+                            {task.dealTitle}
+                          </Link>
+                        ) : (
+                          <span className="text-muted-foreground">--</span>
+                        )}
+                      </TableCell>
+                    )}
+                    {colVisible("dueDate") && (
+                      <TableCell>
+                        {task.dueDate ? (
+                          <span
+                            className={
+                              overdue
+                                ? "text-sm text-destructive font-medium flex items-center gap-1"
+                                : "text-sm"
+                            }
+                          >
+                            {overdue && <AlertCircle className="h-3 w-3" />}
+                            {format(new Date(task.dueDate), "MMM d, yyyy")}
+                          </span>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">--</span>
+                        )}
+                      </TableCell>
+                    )}
+                    {colVisible("assignee") && (
+                      <TableCell className="text-sm text-muted-foreground">
+                        {task.assigneeFirstName
+                          ? `${task.assigneeFirstName} ${task.assigneeLastName ?? ""}`
+                          : "--"}
+                      </TableCell>
+                    )}
+                    {colVisible("createdBy") && (
+                      <TableCell className="text-sm text-muted-foreground">
+                        {task.creatorFirstName
+                          ? `${task.creatorFirstName} ${task.creatorLastName ?? ""}`
+                          : "--"}
+                      </TableCell>
+                    )}
+                    {colVisible("completedAt") && (
+                      <TableCell className="text-sm text-muted-foreground">
+                        {task.completedAt
+                          ? format(new Date(task.completedAt), "MMM d, yyyy")
+                          : "--"}
+                      </TableCell>
+                    )}
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>

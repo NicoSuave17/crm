@@ -15,7 +15,7 @@ export function useTask(id: string) {
   });
 }
 
-export function useTasks(params: { assigneeId?: string; contactId?: string; status?: string } = {}) {
+export function useTasks(params: { assigneeId?: string; contactId?: string; status?: string; priority?: string; dueFilter?: string } = {}) {
   const searchParams = new URLSearchParams();
   Object.entries(params).forEach(([k, v]) => { if (v) searchParams.set(k, v); });
 

@@ -43,8 +43,8 @@ export async function POST(
       );
     }
 
-    const link = await linkContactCompany(id, parsed.data.companyId, parsed.data.role);
-    return NextResponse.json(link, { status: 201 });
+    const result = await linkContactCompany(id, parsed.data.companyId, parsed.data.role);
+    return NextResponse.json(result, { status: 201 });
   } catch (error) {
     if (error instanceof Error && error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

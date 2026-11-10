@@ -66,8 +66,8 @@ import { OptionsEditor } from "@/components/custom-fields/options-editor";
 import { toast } from "sonner";
 
 const TAG_COLORS = [
-  "#EF4444", "#F97316", "#EAB308", "#22C55E", "#06B6D4",
-  "#3B82F6", "#8B5CF6", "#EC4899", "#6B7280", "#1F2937",
+  "#E86644", "#FA4616", "#8160CE", "#00876D", "#1754D8",
+  "#E26394", "#8A7E7D", "#141212",
 ];
 
 export default function SettingsPageWrapper() {
@@ -275,7 +275,7 @@ function TeamSettings() {
                         variant={user.isActive ? "default" : "secondary"}
                         className={
                           user.isActive
-                            ? "bg-green-600 hover:bg-green-600"
+                            ? "bg-[#00876D] hover:bg-[#00876D]"
                             : ""
                         }
                       >
@@ -939,7 +939,7 @@ function EmailTemplatesSettings() {
                 id="template-shared"
                 checked={isShared}
                 onChange={(e) => setIsShared(e.target.checked)}
-                className="rounded border-gray-300"
+                className="rounded border-[#EDE7E6]"
               />
               <label htmlFor="template-shared" className="text-sm">
                 Share with team

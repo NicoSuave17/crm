@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { UserPlus, ArrowUpDown, Tag, Trash2, Loader2 } from "lucide-react";
+import { UserPlus, ArrowUpDown, Tag, Trash2, Loader2, Building2, Shuffle, Merge } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { UserPicker } from "@/components/pickers/user-picker";
+import { CompanyPicker } from "@/components/pickers/company-picker";
 import {
   Select,
   SelectContent,
@@ -27,9 +28,13 @@ import {
   useBulkStatusContacts,
   useBulkTagContacts,
   useBulkDeleteContacts,
+  useBulkLinkCompany,
 } from "@/lib/hooks/use-bulk-actions";
 import { useTags } from "@/lib/hooks/use-tags";
+import { RoundRobinDialog } from "@/components/bulk/round-robin-dialog";
+import { MergeContactsDialog } from "@/components/merge/merge-contacts-dialog";
 import { toast } from "sonner";
+import { ReassignConfirmDialog, type OwnershipConflict } from "@/components/contacts/reassign-confirm-dialog";
 
 interface ContactsBulkActionsProps {
   selectedIds: string[];
@@ -41,15 +46,21 @@ export function ContactsBulkActions({ selectedIds, onComplete }: ContactsBulkAct
   const [statusOpen, setStatusOpen] = useState(false);
   const [tagOpen, setTagOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [linkCompanyOpen, setLinkCompanyOpen] = useState(false);
+  const [roundRobinOpen, setRoundRobinOpen] = useState(false);
+  const [mergeOpen, setMergeOpen] = useState(false);
+  const [mergeContacts, setMergeContacts] = useState<[{ id: string; firstName: string; lastName: string | null; email: string | null; phone: string | null }, { id: string; firstName: string; lastName: string | null; email: string | null; phone: string | null }] | null>(null);
+  const [ownerConflicts, setOwnerConflicts] = useState<OwnershipConflict[]>([]);
 
   const reassign = useBulkReassignContacts();
   const changeStatus = useBulkStatusContacts();
   const addTag = useBulkTagContacts();
   const deleteBulk = useBulkDeleteContacts();
+  const linkCompany = useBulkLinkCompany();
 
   const { data: tagsList } = useTags();
 
-  const isPending = reassign.isPending || changeStatus.isPending || addTag.isPending || deleteBulk.isPending;
+  const isPending = reassign.isPending || changeStatus.isPending || addTag.isPending || deleteBulk.isPending || linkCompany.isPending;
 
   function handleReassign(userId: string | null) {
     if (!userId) return;
@@ -88,6 +99,25 @@ export function ContactsBulkActions({ selectedIds, onComplete }: ContactsBulkAct
           toast.success(`Tag added to ${data.count} contacts`);
           setTagOpen(false);
           onComplete();
+        },
+        onError: (err) => toast.error(err.message),
+      }
+    );
+  }
+
+  function handleLinkCompany(companyId: string | null) {
+    if (!companyId) return;
+    linkCompany.mutate(
+      { contactIds: selectedIds, companyId },
+      {
+        onSuccess: (data) => {
+          toast.success(`Linked ${data.count} contacts to company`);
+          setLinkCompanyOpen(false);
+          onComplete();
+
+          if (data.ownershipConflicts?.length > 0) {
+            setOwnerConflicts(data.ownershipConflicts);
+          }
         },
         onError: (err) => toast.error(err.message),
       }
@@ -188,6 +218,22 @@ export function ContactsBulkActions({ selectedIds, onComplete }: ContactsBulkAct
         </PopoverContent>
       </Popover>
 
+      {/* Link Company */}
+      <Popover open={linkCompanyOpen} onOpenChange={setLinkCompanyOpen}>
+        <PopoverTrigger asChild>
+          <Button variant="outline" size="sm" disabled={isPending}>
+            {linkCompany.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Building2 className="mr-2 h-4 w-4" />}
+            Link Company
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[300px] p-2" align="start">
+          <p className="text-xs text-muted-foreground mb-2 px-1">
+            Link {selectedIds.length} contacts to:
+          </p>
+          <CompanyPicker value={null} onChange={handleLinkCompany} placeholder="Select company..." />
+        </PopoverContent>
+      </Popover>
+
       {/* Delete */}
       <Button
         variant="destructive"
@@ -216,6 +262,66 @@ export function ContactsBulkActions({ selectedIds, onComplete }: ContactsBulkAct
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Merge (only when exactly 2 selected) */}
+      {selectedIds.length === 2 && (
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={isPending}
+          onClick={async () => {
+            try {
+              const [res1, res2] = await Promise.all([
+                fetch(`/api/contacts/${selectedIds[0]}`).then(r => r.json()),
+                fetch(`/api/contacts/${selectedIds[1]}`).then(r => r.json()),
+              ]);
+              setMergeContacts([res1, res2]);
+              setMergeOpen(true);
+            } catch {
+              toast.error("Failed to load contacts for merge");
+            }
+          }}
+        >
+          <Merge className="mr-2 h-4 w-4" />
+          Merge
+        </Button>
+      )}
+
+      {/* Round Robin */}
+      <Button variant="outline" size="sm" disabled={isPending} onClick={() => setRoundRobinOpen(true)}>
+        <Shuffle className="mr-2 h-4 w-4" />
+        Round Robin
+      </Button>
+      <RoundRobinDialog
+        open={roundRobinOpen}
+        onOpenChange={setRoundRobinOpen}
+        entityIds={selectedIds}
+        entityType="contact"
+        onComplete={onComplete}
+      />
+
+      {mergeContacts && (
+        <MergeContactsDialog
+          master={mergeContacts[0]}
+          duplicate={mergeContacts[1]}
+          open={mergeOpen}
+          onOpenChange={(open) => {
+            setMergeOpen(open);
+            if (!open) {
+              setMergeContacts(null);
+              onComplete();
+            }
+          }}
+        />
+      )}
+
+      <ReassignConfirmDialog
+        conflicts={ownerConflicts}
+        open={ownerConflicts.length > 0}
+        onOpenChange={(open) => {
+          if (!open) setOwnerConflicts([]);
+        }}
+      />
     </>
   );
 }

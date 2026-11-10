@@ -17,6 +17,13 @@ export const createActivitySchema = z.object({
   occurredAt: z.string().datetime().optional(),
   duration: z.number().int().positive().optional(),
   metadata: z.record(z.string(), z.unknown()).optional(),
+  outcome: z
+    .enum([
+      "connected", "no_answer", "left_voicemail", "rescheduled",
+      "positive", "negative", "neutral", "follow_up_needed",
+    ])
+    .optional(),
+  nextFollowUpDate: z.string().optional(),
 });
 
 export type CreateActivityInput = z.infer<typeof createActivitySchema>;

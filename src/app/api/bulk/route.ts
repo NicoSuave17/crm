@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth/helpers";
 import { db } from "@/lib/db";
-import { contacts, deals, contactTags, dealTags } from "@/lib/db/schema";
-import { eq, inArray } from "drizzle-orm";
-import { createContact } from "@/lib/api/contacts";
-import { createContactSchema } from "@/lib/validators/contact";
+import { contacts, companies, deals, contactTags, dealTags, contactCompanies, gatekeeperDecisionLog } from "@/lib/db/schema";
+import { inArray } from "drizzle-orm";
 import { logAuditEvent } from "@/lib/api/audit-log";
+import { randomUUID } from "crypto";
 
 const MAX_BULK_IDS = 500;
 
@@ -30,6 +29,25 @@ export async function PATCH(request: NextRequest) {
     const user = await requireUser();
     const body = await request.json();
 
+    // Log bulk operations through gatekeeper decision log for audit trail
+    const logBulkDecision = async (action: string, entityType: string, count: number) => {
+      try {
+        await db.insert(gatekeeperDecisionLog).values({
+          decisionId: randomUUID(),
+          source: "bulk",
+          operation: "bulk_update",
+          entityType: entityType as "contact" | "company" | "deal",
+          confidence: "100",
+          zone: "auto_apply",
+          analysis: { action, count },
+          modelUsed: "none",
+          tokensUsed: 0,
+          latencyMs: 0,
+          userId: user.id,
+        });
+      } catch { /* non-critical */ }
+    };
+
     if (body.action === "reassign_contacts" && body.contactIds && body.newOwnerId) {
       await db
         .update(contacts)
@@ -46,6 +64,7 @@ export async function PATCH(request: NextRequest) {
           count: body.contactIds.length,
         },
       });
+      await logBulkDecision("reassign_contacts", "contact", body.contactIds.length);
 
       return NextResponse.json({ success: true, count: body.contactIds.length });
     }
@@ -66,48 +85,9 @@ export async function PATCH(request: NextRequest) {
           count: body.dealIds.length,
         },
       });
+      await logBulkDecision("bulk_stage_change", "deal", body.dealIds.length);
 
       return NextResponse.json({ success: true, count: body.dealIds.length });
-    }
-
-    // CSV import contacts (with server-side validation)
-    if (body.action === "import_contacts" && body.contacts) {
-      const results = {
-        created: 0,
-        errors: 0,
-        errorDetails: [] as { index: number; message: string }[],
-      };
-
-      for (let i = 0; i < body.contacts.length; i++) {
-        try {
-          const parsed = createContactSchema.safeParse(body.contacts[i]);
-          if (!parsed.success) {
-            results.errors++;
-            results.errorDetails.push({
-              index: i,
-              message: parsed.error.issues.map((iss) => iss.message).join(", "),
-            });
-            continue;
-          }
-          await createContact(parsed.data);
-          results.created++;
-        } catch (e) {
-          results.errors++;
-          results.errorDetails.push({
-            index: i,
-            message: e instanceof Error ? e.message : "Unknown error",
-          });
-        }
-      }
-
-      await logAuditEvent(user.id, {
-        action: "csv_import",
-        entityType: "contact",
-        entityId: "bulk",
-        metadata: { created: results.created, errors: results.errors },
-      });
-
-      return NextResponse.json(results);
     }
 
     // Bulk change status for contacts
@@ -207,6 +187,115 @@ export async function PATCH(request: NextRequest) {
       });
 
       return NextResponse.json({ success: true, count: ids.length });
+    }
+
+    // Bulk reassign companies
+    if (body.action === "reassign_companies" && body.companyIds && body.newOwnerId) {
+      const ids = validateIds(body.companyIds, "companyIds");
+      if (ids instanceof NextResponse) return ids;
+
+      await db
+        .update(companies)
+        .set({ ownerId: body.newOwnerId, updatedAt: new Date() })
+        .where(inArray(companies.id, ids));
+
+      await logAuditEvent(user.id, {
+        action: "bulk_reassign",
+        entityType: "company",
+        entityId: "bulk",
+        metadata: { companyIds: ids, newOwnerId: body.newOwnerId, count: ids.length },
+      });
+      await logBulkDecision("reassign_companies", "company", ids.length);
+
+      return NextResponse.json({ success: true, count: ids.length });
+    }
+
+    // Bulk delete companies
+    if (body.action === "delete_companies") {
+      const ids = validateIds(body.companyIds, "companyIds");
+      if (ids instanceof NextResponse) return ids;
+
+      await db.delete(companies).where(inArray(companies.id, ids));
+
+      await logAuditEvent(user.id, {
+        action: "bulk_delete",
+        entityType: "company",
+        entityId: "bulk",
+        metadata: { companyIds: ids, count: ids.length },
+      });
+      await logBulkDecision("delete_companies", "company", ids.length);
+
+      return NextResponse.json({ success: true, count: ids.length });
+    }
+
+    // Bulk reassign deals
+    if (body.action === "reassign_deals" && body.dealIds && body.newOwnerId) {
+      const ids = validateIds(body.dealIds, "dealIds");
+      if (ids instanceof NextResponse) return ids;
+
+      await db
+        .update(deals)
+        .set({ ownerId: body.newOwnerId, updatedAt: new Date() })
+        .where(inArray(deals.id, ids));
+
+      await logAuditEvent(user.id, {
+        action: "bulk_reassign",
+        entityType: "deal",
+        entityId: "bulk",
+        metadata: { dealIds: ids, newOwnerId: body.newOwnerId, count: ids.length },
+      });
+      await logBulkDecision("reassign_deals", "deal", ids.length);
+
+      return NextResponse.json({ success: true, count: ids.length });
+    }
+
+    // Bulk link contacts to a company
+    if (body.action === "link_contacts_company" && body.contactIds && body.companyId) {
+      const ids = validateIds(body.contactIds, "contactIds");
+      if (ids instanceof NextResponse) return ids;
+
+      const rows = ids.map((contactId) => ({ contactId, companyId: body.companyId as string, isPrimary: false }));
+      await db.insert(contactCompanies).values(rows).onConflictDoNothing();
+
+      await logAuditEvent(user.id, {
+        action: "bulk_link_company",
+        entityType: "contact",
+        entityId: "bulk",
+        metadata: { contactIds: ids, companyId: body.companyId, count: ids.length },
+      });
+
+      return NextResponse.json({ success: true, count: ids.length });
+    }
+
+    // Round robin: distribute entities evenly across users
+    if (body.action === "round_robin" && body.entityIds && body.userIds && body.entityType) {
+      const entityIds = validateIds(body.entityIds, "entityIds");
+      if (entityIds instanceof NextResponse) return entityIds;
+      const userIds = body.userIds as string[];
+      if (!Array.isArray(userIds) || userIds.length === 0) {
+        return NextResponse.json({ error: "userIds must be a non-empty array" }, { status: 400 });
+      }
+
+      const table = body.entityType === "contact" ? contacts : body.entityType === "company" ? companies : deals;
+
+      // Assign round-robin
+      for (let i = 0; i < entityIds.length; i++) {
+        const assignedUserId = userIds[i % userIds.length];
+        await db
+          .update(table)
+          .set({ ownerId: assignedUserId, updatedAt: new Date() })
+          .where(inArray(table.id, [entityIds[i]]));
+      }
+
+      await logAuditEvent(user.id, {
+        action: "round_robin",
+        entityType: body.entityType,
+        entityId: "bulk",
+        metadata: { entityIds, userIds, count: entityIds.length },
+      });
+      await logBulkDecision("round_robin", body.entityType, entityIds.length);
+
+      return NextResponse.json({ success: true, count: entityIds.length });
     }
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });

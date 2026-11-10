@@ -7,6 +7,7 @@ export const createDealSchema = z.object({
   stageId: z.string().uuid(),
   contactId: z.string().uuid(),
   companyId: z.string().uuid().optional(),
+  ownerId: z.string().uuid().optional(),
   value: z.string().optional(),
   expectedMrr: z.string().optional(),
   expectedCloseDate: z.string().optional(),
@@ -16,6 +17,8 @@ export const createDealSchema = z.object({
 export const updateDealSchema = createDealSchema.partial().extend({
   lostReason: z.string().optional().nullable(),
   companyId: z.string().uuid().optional().nullable(),
+  currency: z.string().optional(),
+  actualCloseDate: z.string().optional().nullable(),
 });
 
 export const moveDealSchema = z.object({

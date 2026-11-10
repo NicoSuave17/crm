@@ -34,10 +34,57 @@ export function useMoveDeal() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ stageId }),
       });
-      if (!res.ok) throw new Error("Failed to move deal");
+      if (!res.ok) {
+        let body: Record<string, unknown> | null = null;
+        try { body = await res.json(); } catch { /* non-JSON response */ }
+        if (body?.code === "CHECKLIST_INCOMPLETE") {
+          const err = new Error((body.error as string) || "Checklist items incomplete") as Error & {
+            code: string;
+            items: { id: string; title: string }[];
+          };
+          err.code = "CHECKLIST_INCOMPLETE";
+          err.items = (body.items as { id: string; title: string }[]) ?? [];
+          throw err;
+        }
+        throw new Error((body?.error as string) || "Failed to move deal");
+      }
       return res.json();
     },
-    onSuccess: () => {
+    onMutate: async ({ dealId, stageId }) => {
+      // Cancel any outgoing refetches so they don't overwrite our optimistic update
+      await queryClient.cancelQueries({ queryKey: ["pipeline"] });
+      await queryClient.cancelQueries({ queryKey: ["deals"] });
+
+      // Snapshot the previous pipeline data for all cached pipelines
+      const previousData = queryClient.getQueriesData({ queryKey: ["pipeline"] });
+
+      // Optimistically update the deal's stageId in every matching pipeline cache entry
+      queryClient.setQueriesData(
+        { queryKey: ["pipeline"] },
+        (old: Record<string, unknown> | undefined) => {
+          if (!old || !Array.isArray((old as { deals?: unknown[] }).deals)) return old;
+          const typedOld = old as { deals: Array<{ id: string; stageId: string }> };
+          return {
+            ...typedOld,
+            deals: typedOld.deals.map((d) =>
+              d.id === dealId ? { ...d, stageId } : d
+            ),
+          };
+        }
+      );
+
+      return { previousData };
+    },
+    onError: (_err, _vars, context) => {
+      // Roll back to the previous state on error
+      if (context?.previousData) {
+        for (const [queryKey, data] of context.previousData) {
+          queryClient.setQueryData(queryKey, data);
+        }
+      }
+    },
+    onSettled: () => {
+      // Always refetch after error or success to ensure server state
       queryClient.invalidateQueries({ queryKey: ["pipeline"] });
       queryClient.invalidateQueries({ queryKey: ["deals"] });
     },

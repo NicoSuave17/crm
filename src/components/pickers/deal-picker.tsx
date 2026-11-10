@@ -109,7 +109,7 @@ export function DealPicker({
                   <span className="flex items-center ml-auto shrink-0">
                     <span
                       className="inline-block h-2 w-2 rounded-full mr-1"
-                      style={{ backgroundColor: deal.stageColor ?? "#6B7280" }}
+                      style={{ backgroundColor: deal.stageColor ?? "#8A7E7D" }}
                     />
                     <span className="text-xs text-muted-foreground">{deal.stageName}</span>
                   </span>

@@ -18,12 +18,20 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useCreateActivity } from "@/lib/hooks/use-activities";
 import { useEmailTemplates } from "@/lib/hooks/use-email-templates";
 import {
   interpolateTemplate,
   type TemplateContext,
 } from "@/lib/utils/template-interpolation";
+import type { CreateActivityInput } from "@/lib/validators/activity";
 import { toast } from "sonner";
 import { MessageSquare, Phone, Mail, Calendar, Linkedin, FileText } from "lucide-react";
 
@@ -34,6 +42,17 @@ const activityTypes = [
   { value: "meeting", label: "Meeting", icon: Calendar },
   { value: "linkedin_message", label: "LinkedIn", icon: Linkedin },
 ] as const;
+
+const OUTCOME_OPTIONS = [
+  { value: "connected", label: "Connected" },
+  { value: "no_answer", label: "No Answer" },
+  { value: "left_voicemail", label: "Left Voicemail" },
+  { value: "rescheduled", label: "Rescheduled" },
+  { value: "positive", label: "Positive" },
+  { value: "negative", label: "Negative" },
+  { value: "neutral", label: "Neutral" },
+  { value: "follow_up_needed", label: "Follow-up Needed" },
+];
 
 interface ActivityFormProps {
   contactId?: string;
@@ -54,6 +73,8 @@ export function ActivityForm({
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [duration, setDuration] = useState("");
+  const [outcome, setOutcome] = useState("");
+  const [nextFollowUpDate, setNextFollowUpDate] = useState("");
   const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
   const createActivity = useCreateActivity();
   const { data: templates } = useEmailTemplates();
@@ -71,6 +92,8 @@ export function ActivityForm({
         dealId,
         companyId,
         duration: duration ? parseInt(duration) : undefined,
+        outcome: outcome ? outcome as CreateActivityInput["outcome"] : undefined,
+        nextFollowUpDate: nextFollowUpDate || undefined,
       },
       {
         onSuccess: () => {
@@ -78,6 +101,8 @@ export function ActivityForm({
           setSubject("");
           setBody("");
           setDuration("");
+          setOutcome("");
+          setNextFollowUpDate("");
           onSuccess?.();
         },
         onError: () => toast.error("Failed to log activity"),
@@ -93,6 +118,7 @@ export function ActivityForm({
   }
 
   const showDuration = type === "call" || type === "meeting";
+  const showOutcome = type === "call" || type === "meeting";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
@@ -168,6 +194,28 @@ export function ActivityForm({
         onChange={(e) => setBody(e.target.value)}
         rows={3}
       />
+      {showOutcome && (
+        <div className="grid grid-cols-2 gap-2">
+          <div className="space-y-1">
+            <Select value={outcome} onValueChange={setOutcome}>
+              <SelectTrigger>
+                <SelectValue placeholder="Outcome" />
+              </SelectTrigger>
+              <SelectContent>
+                {OUTCOME_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Input
+            type="date"
+            placeholder="Follow-up date"
+            value={nextFollowUpDate}
+            onChange={(e) => setNextFollowUpDate(e.target.value)}
+          />
+        </div>
+      )}
       <div className="flex items-center gap-2">
         {showDuration && (
           <Input

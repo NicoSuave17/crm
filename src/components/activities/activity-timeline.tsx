@@ -57,6 +57,8 @@ export function ActivityTimeline({ contactId, dealId, companyId, templateContext
             userAvatarUrl: string | null;
             occurredAt: string;
             duration: number | null;
+            metadata: Record<string, unknown> | null;
+            nextFollowUpDate: string | null;
           }) => (
             <ActivityItem
               key={activity.id}

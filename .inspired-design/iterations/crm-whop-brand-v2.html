@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Whop CRM — Brand Prototype v2</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'dragon-fire': '#FA4616',
+            'midnight': '#141212',
+            'snow': '#FCF6F5',
+            'lemon-lime': '#DBF505',
+            'byzantine': '#1754D8',
+            'lavender': '#D7E1F7',
+            'misty-rose': '#F6DCD5',
+            'tea-green': '#D9F9CB',
+            'cream': '#F9FACE',
+            'burnt-sienna': '#E86644',
+            'viridian': '#00876D',
+            'true-purple': '#8160CE',
+            'electric-indigo': '#6318F8',
+            'thulian-pink': '#E26394',
+            'true-blue': '#52699A',
+            'oxford-blue': '#09142E',
+            'body': '#3D3534',
+            'muted': '#8A7E7D',
+            'border-warm': '#EDE7E6',
+            'hover-row': '#F9F3F2',
+          },
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif'],
+            'display': ['Inter', 'system-ui', 'sans-serif'],
+            'mono': ['JetBrains Mono', 'monospace'],
+          },
+          borderRadius: {
+            'card': '12px',
+            'btn': '8px',
+            'pill': '9999px',
+          },
+          boxShadow: {
+            'card': '0 1px 3px rgba(20,18,18,0.06), 0 1px 2px rgba(20,18,18,0.04)',
+            'card-hover': '0 4px 12px rgba(20,18,18,0.08), 0 2px 4px rgba(20,18,18,0.04)',
+            'sidebar': '1px 0 3px rgba(20,18,18,0.1)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #FCF6F5;
+      color: #3D3534;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    .heading {
+      font-family: 'Inter', system-ui, sans-serif;
+      letter-spacing: -0.02em;
+      color: #141212;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .transition-default {
+      transition: all 180ms ease;
+    }
+    .sidebar-item:hover {
+      background: rgba(255,255,255,0.06);
+    }
+    .sidebar-item.active {
+      background: rgba(250,70,22,0.08);
+      border-left: 3px solid #FA4616;
+    }
+    .sidebar-item.active .sidebar-icon,
+    .sidebar-item.active .sidebar-label {
+      color: #FFFFFF;
+    }
+    .btn-primary {
+      background: #FA4616;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 180ms ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary:hover {
+      background: #e0400f;
+      box-shadow: 0 2px 8px rgba(250,70,22,0.25);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: #141212;
+      border: 1px solid #141212;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 180ms ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-secondary:hover {
+      background: #141212;
+      color: #FFFFFF;
+    }
+    .btn-ghost {
+      background: transparent;
+      color: #3D3534;
+      border: 1px solid #EDE7E6;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 180ms ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-ghost:hover {
+      background: #F9F3F2;
+      border-color: #3D3534;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 20px;
+    }
+    .health-bar {
+      height: 6px;
+      border-radius: 3px;
+      background: #EDE7E6;
+      overflow: hidden;
+    }
+    .health-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 300ms ease;
+    }
+    table tr:hover td {
+      background: #F9F3F2;
+    }
+    .section-divider {
+      border: none;
+      border-top: 2px dashed #EDE7E6;
+      margin: 64px 0;
+    }
+    .section-label {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #8A7E7D;
+      margin-bottom: 32px;
+      padding: 8px 20px;
+      background: #FCF6F5;
+      display: inline-block;
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 9999px;
+      border: 1px solid #EDE7E6;
+    }
+    .kanban-card {
+      background: #FFFFFF;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 1px 3px rgba(20,18,18,0.06), 0 1px 2px rgba(20,18,18,0.04);
+      margin-bottom: 12px;
+      cursor: grab;
+      transition: all 180ms ease;
+    }
+    .kanban-card:hover {
+      box-shadow: 0 4px 12px rgba(20,18,18,0.08), 0 2px 4px rgba(20,18,18,0.04);
+      transform: translateY(-1px);
+    }
+    .tab-active {
+      color: #141212;
+      border-bottom: 2px solid #FA4616;
+      font-weight: 600;
+    }
+    .tab-inactive {
+      color: #8A7E7D;
+      border-bottom: 2px solid transparent;
+    }
+    .tab-inactive:hover {
+      color: #3D3534;
+    }
+    .avatar {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      font-weight: 600;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: SIDEBAR + DASHBOARD                                -->
+<!-- ============================================================ -->
+<div class="section-label" style="margin-top: 32px;">Section 1 — Sidebar + Dashboard</div>
+
+<div style="display: flex; width: 100%; min-height: 780px; border-radius: 12px; overflow: hidden; margin: 0 auto; max-width: 1440px; box-shadow: 0 4px 24px rgba(20,18,18,0.08);">
+
+  <!-- Sidebar -->
+  <aside style="width: 240px; background: #141212; display: flex; flex-direction: column; flex-shrink: 0;">
+    <!-- Logo -->
+    <div style="padding: 24px 20px 20px;">
+      <svg viewBox="0 0 1000 515" fill="none" xmlns="http://www.w3.org/2000/svg" style="height: 28px; color: #FA4616;">
+        <path d="M158.881 0C93.2 0 47.925 29 13.662 61.775C13.662 61.775-.173 74.965.002 75.367L143.897 220.129 287.766 75.367C260.521 37.631 209.152 0 158.881 0Z" fill="currentColor"/>
+        <path d="M514.191 0C448.513 0 403.236 29 368.971 61.775 368.971 61.775 356.336 74.613 355.763 75.367L177.903 254.322 321.574 398.857 643.077 75.367C615.831 37.631 564.488 0 514.191 0Z" fill="currentColor"/>
+        <path d="M870.479 0C804.798 0 759.524 29 725.259 61.775 725.259 61.775 712.098 74.714 711.6 75.367L355.806 433.351 393.466 471.237C451.73 529.852 547.101 529.852 605.365 471.237L998.914 75.367H999.365C972.119 37.631 920.773 0 870.479 0Z" fill="currentColor"/>
+      </svg>
+      <span style="color: #FFFFFF; font-weight: 700; font-size: 18px; letter-spacing: -0.02em; margin-left: 10px; vertical-align: middle;">CRM</span>
+    </div>
+
+    <!-- Main Nav -->
+    <nav style="flex: 1; padding: 0 8px;">
+      <div style="margin-bottom: 8px;">
+        <p style="font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #8A7E7D; padding: 8px 12px 4px;">Main</p>
+      </div>
+      <!-- Dashboard (active) -->
+      <a href="#" class="sidebar-item active transition-default" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 6px; text-decoration: none; margin-bottom: 2px; border-left: 3px solid #FA4616; background: rgba(250,70,22,0.08);">
+        <i data-lucide="layout-dashboard" style="width: 18px; height: 18px; color: #FFFFFF;" class="sidebar-icon"></i>
+        <span style="font-size: 14px; font-weight: 500; color: #FFFFFF;" class="sidebar-label">Dashboard</span>
+      </a>
+      <!-- Contacts -->
+      <a href="#" class="sidebar-item transition-default" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px 9px 15px; border-radius: 6px; text-decoration: none; margin-bottom: 2px;">
+        <i data-lucide="users" style="width: 18px; height: 18px; color: #8A7E7D;" class="sidebar-icon"></i>
+        <span style="font-size: 14px; font-weight: 400; color: #8A7E7D;" class="sidebar-label">Contacts</span>
+      </a>
+      <!-- Companies -->
+      <a href="#" class="sidebar-item transition-default" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px 9px 15px; border-radius: 6px; text-decoration: none; margin-bottom: 2px;">
+        <i data-lucide="building-2" style="width: 18px; height: 18px; color: #8A7E7D;" class="sidebar-icon"></i>
+        <span style="font-size: 14px; font-weight: 400; color: #8A7E7D;" class="sidebar-label">Companies</span>
+      </a>
+      <!-- Pipeline -->
+      <a href="#" class="sidebar-item transition-default" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px 9px 15px; border-radius: 6px; text-decoration: none; margin-bottom: 2px;">
+        <i data-lucide="kanban" style="width: 18px; height: 18px; color: #8A7E7D;" class="sidebar-icon"></i>
+        <span style="font-size: 14px; font-weight: 400; color: #8A7E7D;" class="sidebar-label">Pipeline</span>
+      </a>
+      <!-- Deals -->
+      <a href="#" class="sidebar-item transition-default" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px 9px 15px; border-radius: 6px; text-decoration: none; margin-bottom: 2px;">
+        <i data-lucide="handshake" style="width: 18px; height: 18px; color: #8A7E7D;" class="sidebar-icon"></i>
+        <span style="font-size: 14px; font-weight: 400; color: #8A7E7D;" class="sidebar-label">Deals</span>
+      </a>
+      <!-- Tasks -->
+      <a href="#" class="sidebar-item transition-default" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px 9px 15px; border-radius: 6px; text-decoration: none; margin-bottom: 2px;">
+        <i data-lucide="check-square" style="width: 18px; height: 18px; color: #8A7E7D;" class="sidebar-icon"></i>
+        <span style="font-size: 14px; font-weight: 400; color: #8A7E7D;" class="sidebar-label">Tasks</span>
+      </a>
+
+      <!-- Insights Section -->
+      <div style="margin-top: 24px; margin-bottom: 8px;">
+        <p style="font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #8A7E7D; padding: 8px 12px 4px;">Insights</p>
+      </div>
+      <a href="#" class="sidebar-item transition-default" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px 9px 15px; border-radius: 6px; text-decoration: none; margin-bottom: 2px;">
+        <i data-lucide="bar-chart-3" style="width: 18px; height: 18px; color: #8A7E7D;" class="sidebar-icon"></i>
+        <span style="font-size: 14px; font-weight: 400; color: #8A7E7D;" class="sidebar-label">Analytics</span>
+      </a>
+      <a href="#" class="sidebar-item transition-default" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px 9px 15px; border-radius: 6px; text-decoration: none; margin-bottom: 2px;">
+        <i data-lucide="file-bar-chart" style="width: 18px; height: 18px; color: #8A7E7D;" class="sidebar-icon"></i>
+        <span style="font-size: 14px; font-weight: 400; color: #8A7E7D;" class="sidebar-label">Reports</span>
+      </a>
+      <a href="#" class="sidebar-item transition-default" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px 9px 15px; border-radius: 6px; text-decoration: none; margin-bottom: 2px;">
+        <i data-lucide="briefcase" style="width: 18px; height: 18px; color: #8A7E7D;" class="sidebar-icon"></i>
+        <span style="font-size: 14px; font-weight: 400; color: #8A7E7D;" class="sidebar-label">Portfolio</span>
+      </a>
+    </nav>
+
+    <!-- Bottom Nav -->
+    <div style="padding: 0 8px 8px;">
+      <!-- Alerts with badge -->
+      <a href="#" class="sidebar-item transition-default" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px 9px 15px; border-radius: 6px; text-decoration: none; margin-bottom: 2px;">
+        <i data-lucide="bell" style="width: 18px; height: 18px; color: #8A7E7D;" class="sidebar-icon"></i>
+        <span style="font-size: 14px; font-weight: 400; color: #8A7E7D;" class="sidebar-label">Alerts</span>
+        <span style="margin-left: auto; background: #FA4616; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 9999px;">3</span>
+      </a>
+      <!-- Settings -->
+      <a href="#" class="sidebar-item transition-default" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px 9px 15px; border-radius: 6px; text-decoration: none; margin-bottom: 2px;">
+        <i data-lucide="settings" style="width: 18px; height: 18px; color: #8A7E7D;" class="sidebar-icon"></i>
+        <span style="font-size: 14px; font-weight: 400; color: #8A7E7D;" class="sidebar-label">Settings</span>
+      </a>
+    </div>
+
+    <!-- User -->
+    <div style="padding: 16px 16px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 10px;">
+      <div class="avatar" style="width: 36px; height: 36px; background: #FA4616; color: #FFFFFF; font-size: 13px;">NM</div>
+      <div>
+        <div style="color: #FFFFFF; font-size: 13px; font-weight: 600;">Nico Marino</div>
+        <div style="color: #8A7E7D; font-size: 11px;">Admin</div>
+      </div>
+      <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #8A7E7D; margin-left: auto;"></i>
+    </div>
+  </aside>
+
+  <!-- Dashboard Content -->
+  <main style="flex: 1; background: #FCF6F5; padding: 0;">
+    <!-- Top Bar -->
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 24px 32px 0;">
+      <h1 class="heading" style="font-size: 28px; font-weight: 800; margin: 0;">Dashboard</h1>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <!-- Search -->
+        <div style="position: relative;">
+          <i data-lucide="search" style="width: 16px; height: 16px; color: #8A7E7D; position: absolute; left: 12px; top: 50%; transform: translateY(-50%);"></i>
+          <input type="text" placeholder="Search..." style="width: 240px; padding: 8px 12px 8px 36px; border: 1px solid #EDE7E6; border-radius: 8px; font-size: 14px; background: #FFFFFF; color: #3D3534; outline: none; font-family: inherit;" />
+          <span style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 11px; color: #8A7E7D; background: #F9F3F2; padding: 2px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace;">&#8984;K</span>
+        </div>
+        <button class="btn-primary">
+          <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+          New Contact
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div style="padding: 24px 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+      <!-- Total Contacts -->
+      <div style="background: #FFFFFF; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(20,18,18,0.06), 0 1px 2px rgba(20,18,18,0.04);">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+          <div>
+            <p style="font-size: 13px; color: #8A7E7D; margin: 0 0 6px; font-weight: 500;">Total Contacts</p>
+            <p class="heading" style="font-size: 32px; font-weight: 800; margin: 0;">201</p>
+            <p style="font-size: 12px; margin: 6px 0 0; color: #00876D; font-weight: 500; display: flex; align-items: center; gap: 3px;">
+              <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i>
+              +12 this month
+            </p>
+          </div>
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(250,70,22,0.1); display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="users" style="width: 22px; height: 22px; color: #FA4616;"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- GMV Under Mgmt -->
+      <div style="background: #FFFFFF; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(20,18,18,0.06), 0 1px 2px rgba(20,18,18,0.04);">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+          <div>
+            <p style="font-size: 13px; color: #8A7E7D; margin: 0 0 6px; font-weight: 500;">GMV Under Mgmt</p>
+            <p class="heading" style="font-size: 32px; font-weight: 800; margin: 0;">$2.4M</p>
+            <p style="font-size: 12px; margin: 6px 0 0; color: #00876D; font-weight: 500; display: flex; align-items: center; gap: 3px;">
+              <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i>
+              +8.3% vs last month
+            </p>
+          </div>
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(0,135,109,0.1); display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="dollar-sign" style="width: 22px; height: 22px; color: #00876D;"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- At Risk Creators -->
+      <div style="background: #FFFFFF; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(20,18,18,0.06), 0 1px 2px rgba(20,18,18,0.04);">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+          <div>
+            <p style="font-size: 13px; color: #8A7E7D; margin: 0 0 6px; font-weight: 500;">At Risk Creators</p>
+            <p class="heading" style="font-size: 32px; font-weight: 800; margin: 0;">12</p>
+            <p style="font-size: 12px; margin: 6px 0 0; color: #E86644; font-weight: 500; display: flex; align-items: center; gap: 3px;">
+              <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i>
+              +3 this week
+            </p>
+          </div>
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(232,102,68,0.1); display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="alert-triangle" style="width: 22px; height: 22px; color: #E86644;"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tasks Due Today -->
+      <div style="background: #FFFFFF; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(20,18,18,0.06), 0 1px 2px rgba(20,18,18,0.04);">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+          <div>
+            <p style="font-size: 13px; color: #8A7E7D; margin: 0 0 6px; font-weight: 500;">Tasks Due Today</p>
+            <p class="heading" style="font-size: 32px; font-weight: 800; margin: 0;">8</p>
+            <p style="font-size: 12px; margin: 6px 0 0; color: #1754D8; font-weight: 500;">5 completed, 3 remaining</p>
+          </div>
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(23,84,216,0.1); display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="check-square" style="width: 22px; height: 22px; color: #1754D8;"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pipeline Value -->
+      <div style="background: #FFFFFF; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(20,18,18,0.06), 0 1px 2px rgba(20,18,18,0.04);">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+          <div>
+            <p style="font-size: 13px; color: #8A7E7D; margin: 0 0 6px; font-weight: 500;">Pipeline Value</p>
+            <p class="heading" style="font-size: 32px; font-weight: 800; margin: 0;">$890K</p>
+            <p style="font-size: 12px; margin: 6px 0 0; color: #00876D; font-weight: 500; display: flex; align-items: center; gap: 3px;">
+              <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i>
+              +$120K this month
+            </p>
+          </div>
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(129,96,206,0.1); display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="target" style="width: 22px; height: 22px; color: #8160CE;"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Alerts -->
+      <div style="background: #FFFFFF; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(20,18,18,0.06), 0 1px 2px rgba(20,18,18,0.04);">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+          <div>
+            <p style="font-size: 13px; color: #8A7E7D; margin: 0 0 6px; font-weight: 500;">Active Alerts</p>
+            <p class="heading" style="font-size: 32px; font-weight: 800; margin: 0;">3</p>
+            <p style="font-size: 12px; margin: 6px 0 0; color: #E86644; font-weight: 500;">1 critical alert</p>
+          </div>
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(250,70,22,0.1); display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="bell-ring" style="width: 22px; height: 22px; color: #FA4616;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 2: CONTACTS LIST                                      -->
+<!-- ============================================================ -->
+<hr class="section-divider" />
+<div class="section-label">Section 2 — Contacts List</div>
+
+<div style="max-width: 1440px; margin: 0 auto; padding: 0 32px;">
+  <div style="background: #FFFFFF; border-radius: 12px; box-shadow: 0 1px 3px rgba(20,18,18,0.06), 0 1px 2px rgba(20,18,18,0.04); overflow: hidden;">
+    <!-- Header -->
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid #EDE7E6;">
+      <div style="display: flex; align-items: baseline; gap: 10px;">
+        <h2 class="heading" style="font-size: 22px; font-weight: 800; margin: 0;">Contacts</h2>
+        <span style="font-size: 13px; color: #8A7E7D; font-weight: 500;">201 total</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="position: relative;">
+          <i data-lucide="search" style="width: 15px; height: 15px; color: #8A7E7D; position: absolute; left: 10px; top: 50%; transform: translateY(-50%);"></i>
+          <input type="text" placeholder="Search contacts..." style="width: 200px; padding: 7px 10px 7px 32px; border: 1px solid #EDE7E6; border-radius: 8px; font-size: 13px; background: #FFFFFF; color: #3D3534; outline: none; font-family: inherit;" />
+        </div>
+        <button class="btn-ghost" style="padding: 7px 10px;">
+          <i data-lucide="sliders-horizontal" style="width: 15px; height: 15px;"></i>
+          Filters
+        </button>
+        <button class="btn-primary" style="padding: 7px 14px; font-size: 13px;">
+          <i data-lucide="plus" style="width: 15px; height: 15px;"></i>
+          Add Contact
+        </button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="border-bottom: 1px solid #EDE7E6;">
+          <th style="padding: 12px 16px; text-align: left; width: 40px;">
+            <input type="checkbox" style="width: 16px; height: 16px; accent-color: #FA4616; cursor: pointer;" />
+          </th>
+          <th style="padding: 12px 8px; text-align: left; font-size: 12px; font-weight: 600; color: #8A7E7D; text-transform: uppercase; letter-spacing: 0.05em;">Name</th>
+          <th style="padding: 12px 8px; text-align: left; font-size: 12px; font-weight: 600; color: #8A7E7D; text-transform: uppercase; letter-spacing: 0.05em;">Type</th>
+          <th style="padding: 12px 8px; text-align: left; font-size: 12px; font-weight: 600; color: #8A7E7D; text-transform: uppercase; letter-spacing: 0.05em;">Status</th>
+          <th style="padding: 12px 8px; text-align: left; font-size: 12px; font-weight: 600; color: #8A7E7D; text-transform: uppercase; letter-spacing: 0.05em;">Health</th>
+          <th style="padding: 12px 8px; text-align: right; font-size: 12px; font-weight: 600; color: #8A7E7D; text-transform: uppercase; letter-spacing: 0.05em;">GMV</th>
+          <th style="padding: 12px 8px; text-align: left; font-size: 12px; font-weight: 600; color: #8A7E7D; text-transform: uppercase; letter-spacing: 0.05em;">Company</th>
+          <th style="padding: 12px 8px; text-align: center; font-size: 12px; font-weight: 600; color: #8A7E7D; text-transform: uppercase; letter-spacing: 0.05em;">Owner</th>
+          <th style="padding: 12px 16px; text-align: right; font-size: 12px; font-weight: 600; color: #8A7E7D; text-transform: uppercase; letter-spacing: 0.05em; width: 48px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Row 1: Jake Kingston -->
+        <tr style="border-bottom: 1px solid #EDE7E6; cursor: pointer;" class="transition-default">
+          <td style="padding: 14px 16px;">
+            <input type="checkbox" style="width: 16px; height: 16px; accent-color: #FA4616; cursor: pointer;" />
+          </td>
+          <td style="padding: 14px 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="avatar" style="width: 32px; height: 32px; background: #D7E1F7; color: #1754D8; font-size: 11px;">JK</div>
+              <div>
+                <div style="font-weight: 600; color: #141212; font-size: 14px;">Jake Kingston</div>
+                <div class="mono" style="font-size: 11px; color: #8A7E7D;">CON-0001</div>
+              </div>
+            </div>
+          </td>
+          <td style="padding: 14px 8px;">
+            <span class="pill" style="background: #D7E1F7; color: #1754D8;">Creator</span>
+          </td>
+          <td style="padding: 14px 8px;">
+            <span class="pill" style="background: #D9F9CB; color: #00876D;">Active</span>
+          </td>
+          <td style="padding: 14px 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 13px; font-weight: 600; color: #00876D; min-width: 24px;">92</span>
+              <div class="health-bar" style="width: 64px;">
+                <div class="health-bar-fill" style="width: 92%; background: #00876D;"></div>
+              </div>
+            </div>
+          </td>
+          <td style="padding: 14px 8px; text-align: right; font-weight: 600; font-size: 14px; color: #141212;">$148,200</td>
+          <td style="padding: 14px 8px; font-size: 13px; color: #3D3534;">Kingston Digital</td>
+          <td style="padding: 14px 8px; text-align: center;">
+            <div class="avatar" style="width: 28px; height: 28px; background: #FA4616; color: #FFFFFF; font-size: 10px; margin: 0 auto;">NM</div>
+          </td>
+          <td style="padding: 14px 16px; text-align: right;">
+            <i data-lucide="more-horizontal" style="width: 16px; height: 16px; color: #8A7E7D; cursor: pointer;"></i>
+          </td>
+        </tr>
+        <!-- Row 2: Sarah Rodriguez -->
+        <tr style="border-bottom: 1px solid #EDE7E6; cursor: pointer;" class="transition-default">
+          <td style="padding: 14px 16px;">
+            <input type="checkbox" style="width: 16px; height: 16px; accent-color: #FA4616; cursor: pointer;" />
+          </td>
+          <td style="padding: 14px 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="avatar" style="width: 32px; height: 32px; background: #F6DCD5; color: #E86644; font-size: 11px;">SR</div>
+              <div>
+                <div style="font-weight: 600; color: #141212; font-size: 14px;">Sarah Rodriguez</div>
+                <div class="mono" style="font-size: 11px; color: #8A7E7D;">CON-0002</div>
+              </div>
+            </div>
+          </td>
+          <td style="padding: 14px 8px;">
+            <span class="pill" style="background: rgba(129,96,206,0.12); color: #8160CE;">Enterprise</span>
+          </td>
+          <td style="padding: 14px 8px;">
+            <span class="pill" style="background: #D9F9CB; color: #00876D;">Active</span>
+          </td>
+          <td style="padding: 14px 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 13px; font-weight: 600; color: #00876D; min-width: 24px;">87</span>
+              <div class="health-bar" style="width: 64px;">
+                <div class="health-bar-fill" style="width: 87%; background: #00876D;"></div>
+              </div>
+            </div>
+          </td>
+          <td style="padding: 14px 8px; text-align: right; font-weight: 600; font-size: 14px; color: #141212;">$312,500</td>
+          <td style="padding: 14px 8px; font-size: 13px; color: #3D3534;">Lumina Corp</td>
+          <td style="padding: 14px 8px; text-align: center;">
+            <div class="avatar" style="width: 28px; height: 28px; background: #1754D8; color: #FFFFFF; font-size: 10px; margin: 0 auto;">AK</div>
+          </td>
+          <td style="padding: 14px 16px; text-align: right;">
+            <i data-lucide="more-horizontal" style="width: 16px; height: 16px; color: #8A7E7D; cursor: pointer;"></i>
+          </td>
+        </tr>
+        <!-- Row 3: Marcus Thompson -->
+        <tr style="border-bottom: 1px solid #EDE7E6; cursor: pointer;" class="transition-default">
+          <td style="padding: 14px 16px;">
+            <input type="checkbox" style="width: 16px; height: 16px; accent-color: #FA4616; cursor: pointer;" />
+          </td>
+          <td style="padding: 14px 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="avatar" style="width: 32px; height: 32px; background: #F9FACE; color: #E97F0A; font-size: 11px;">MT</div>
+              <div>
+                <div style="font-weight: 600; color: #141212; font-size: 14px;">Marcus Thompson</div>
+                <div class="mono" style="font-size: 11px; color: #8A7E7D;">CON-0003</div>
+              </div>
+            </div>
+          </td>
+          <td style="padding: 14px 8px;">
+            <span class="pill" style="background: #D7E1F7; color: #1754D8;">Creator</span>
+          </td>
+          <td style="padding: 14px 8px;">
+            <span class="pill" style="background: #F6DCD5; color: #E86644;">At Risk</span>
+          </td>
+          <td style="padding: 14px 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 13px; font-weight: 600; color: #E86644; min-width: 24px;">34</span>
+              <div class="health-bar" style="width: 64px;">
+                <div class="health-bar-fill" style="width: 34%; background: #E86644;"></div>
+              </div>
+            </div>
+          </td>
+          <td style="padding: 14px 8px; text-align: right; font-weight: 600; font-size: 14px; color: #141212;">$67,800</td>
+          <td style="padding: 14px 8px; font-size: 13px; color: #3D3534;">ThompsonFit</td>
+          <td style="padding: 14px 8px; text-align: center;">
+            <div class="avatar" style="width: 28px; height: 28px; background: #FA4616; color: #FFFFFF; font-size: 10px; margin: 0 auto;">NM</div>
+          </td>
+          <td style="padding: 14px 16px; text-align: right;">
+            <i data-lucide="more-horizontal" style="width: 16px; height: 16px; color: #8A7E7D; cursor: pointer;"></i>
+          </td>
+        </tr>
+        <!-- Row 4: Emily Liu -->
+        <tr style="border-bottom: 1px solid #EDE7E6; cursor: pointer;" class="transition-default">
+          <td style="padding: 14px 16px;">
+            <input type="checkbox" style="width: 16px; height: 16px; accent-color: #FA4616; cursor: pointer;" />
+          </td>
+          <td style="padding: 14px 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="avatar" style="width: 32px; height: 32px; background: #D9F9CB; color: #00876D; font-size: 11px;">EL</div>
+              <div>
+                <div style="font-weight: 600; color: #141212; font-size: 14px;">Emily Liu</div>
+                <div class="mono" style="font-size: 11px; color: #8A7E7D;">CON-0004</div>
+              </div>
+            </div>
+          </td>
+          <td style="padding: 14px 8px;">
+            <span class="pill" style="background: #D7E1F7; color: #1754D8;">Creator</span>
+          </td>
+          <td style="padding: 14px 8px;">
+            <span class="pill" style="background: #EDE7E6; color: #8A7E7D;">Prospect</span>
+          </td>
+          <td style="padding: 14px 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 13px; font-weight: 600; color: #E97F0A; min-width: 24px;">65</span>
+              <div class="health-bar" style="width: 64px;">
+                <div class="health-bar-fill" style="width: 65%; background: #E97F0A;"></div>
+              </div>
+            </div>
+          </td>
+          <td style="padding: 14px 8px; text-align: right; font-weight: 600; font-size: 14px; color: #141212;">$23,100</td>
+          <td style="padding: 14px 8px; font-size: 13px; color: #3D3534;">Liu Creative</td>
+          <td style="padding: 14px 8px; text-align: center;">
+            <div class="avatar" style="width: 28px; height: 28px; background: #00876D; color: #FFFFFF; font-size: 10px; margin: 0 auto;">TW</div>
+          </td>
+          <td style="padding: 14px 16px; text-align: right;">
+            <i data-lucide="more-horizontal" style="width: 16px; height: 16px; color: #8A7E7D; cursor: pointer;"></i>
+          </td>
+        </tr>
+        <!-- Row 5: Daniel Park -->
+        <tr style="cursor: pointer;" class="transition-default">
+          <td style="padding: 14px 16px;">
+            <input type="checkbox" style="width: 16px; height: 16px; accent-color: #FA4616; cursor: pointer;" />
+          </td>
+          <td style="padding: 14px 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="avatar" style="width: 32px; height: 32px; background: #D7E1F7; color: #1754D8; font-size: 11px;">DP</div>
+              <div>
+                <div style="font-weight: 600; color: #141212; font-size: 14px;">Daniel Park</div>
+                <div class="mono" style="font-size: 11px; color: #8A7E7D;">CON-0005</div>
+              </div>
+            </div>
+          </td>
+          <td style="padding: 14px 8px;">
+            <span class="pill" style="background: rgba(0,135,109,0.1); color: #00876D;">Lead</span>
+          </td>
+          <td style="padding: 14px 8px;">
+            <span class="pill" style="background: #D9F9CB; color: #00876D;">Active</span>
+          </td>
+          <td style="padding: 14px 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 13px; font-weight: 600; color: #00876D; min-width: 24px;">78</span>
+              <div class="health-bar" style="width: 64px;">
+                <div class="health-bar-fill" style="width: 78%; background: #00876D;"></div>
+              </div>
+            </div>
+          </td>
+          <td style="padding: 14px 8px; text-align: right; font-weight: 600; font-size: 14px; color: #141212;">$89,400</td>
+          <td style="padding: 14px 8px; font-size: 13px; color: #3D3534;">Park Ventures</td>
+          <td style="padding: 14px 8px; text-align: center;">
+            <div class="avatar" style="width: 28px; height: 28px; background: #1754D8; color: #FFFFFF; font-size: 10px; margin: 0 auto;">AK</div>
+          </td>
+          <td style="padding: 14px 16px; text-align: right;">
+            <i data-lucide="more-horizontal" style="width: 16px; height: 16px; color: #8A7E7D; cursor: pointer;"></i>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; border-top: 1px solid #EDE7E6;">
+      <span style="font-size: 13px; color: #8A7E7D;">Showing 1-5 of 201</span>
+      <div style="display: flex; gap: 6px;">
+        <button class="btn-ghost" style="padding: 6px 10px; font-size: 12px; opacity: 0.4; cursor: not-allowed;">
+          <i data-lucide="chevron-left" style="width: 14px; height: 14px;"></i>
+          Previous
+        </button>
+        <button class="btn-ghost" style="padding: 6px 10px; font-size: 12px;">
+          Next
+          <i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 3: PIPELINE KANBAN                                    -->
+<!-- ============================================================ -->
+<hr class="section-divider" />
+<div class="section-label">Section 3 — Pipeline Kanban</div>
+
+<div style="max-width: 1440px; margin: 0 auto; padding: 0 32px;">
+  <!-- Pipeline Header -->
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <h2 class="heading" style="font-size: 22px; font-weight: 800; margin: 0;">Pipeline</h2>
+      <select style="padding: 6px 32px 6px 12px; border: 1px solid #EDE7E6; border-radius: 8px; font-size: 13px; font-family: inherit; color: #3D3534; background: #FFFFFF; appearance: none; background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%238A7E7D%22 stroke-width=%222%22><polyline points=%226 9 12 15 18 9%22/></svg>'); background-repeat: no-repeat; background-position: right 10px center; cursor: pointer;">
+        <option>Sales Pipeline</option>
+        <option>Enterprise Pipeline</option>
+      </select>
+    </div>
+    <button class="btn-primary" style="padding: 7px 14px; font-size: 13px;">
+      <i data-lucide="plus" style="width: 15px; height: 15px;"></i>
+      New Deal
+    </button>
+  </div>
+
+  <!-- Kanban Columns -->
+  <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+
+    <!-- Column: Prospecting -->
+    <div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding: 0 4px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 8px; height: 8px; border-radius: 50%; background: #1754D8;"></div>
+          <span style="font-size: 13px; font-weight: 700; color: #141212;">Prospecting</span>
+          <span style="font-size: 12px; color: #8A7E7D; font-weight: 500;">3</span>
+        </div>
+        <span style="font-size: 12px; font-weight: 600; color: #8A7E7D;">$87K</span>
+      </div>
+      <!-- Deal 1 -->
+      <div class="kanban-card">
+        <div style="font-weight: 600; font-size: 14px; color: #141212; margin-bottom: 4px;">SaaS Content Bundle</div>
+        <div class="mono" style="font-size: 11px; color: #8A7E7D; margin-bottom: 10px;">DEAL-0001</div>
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+          <div class="avatar" style="width: 22px; height: 22px; background: #D7E1F7; color: #1754D8; font-size: 9px;">JK</div>
+          <span style="font-size: 12px; color: #3D3534;">Jake Kingston</span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-weight: 700; font-size: 14px; color: #141212;">$32,000</span>
+          <span class="pill" style="background: #D7E1F7; color: #1754D8; font-size: 11px;">Medium</span>
+        </div>
+        <div style="font-size: 11px; color: #8A7E7D; margin-top: 8px;">Close: Mar 28, 2026</div>
+      </div>
+      <!-- Deal 2 -->
+      <div class="kanban-card">
+        <div style="font-weight: 600; font-size: 14px; color: #141212; margin-bottom: 4px;">Fitness Course Pack</div>
+        <div class="mono" style="font-size: 11px; color: #8A7E7D; margin-bottom: 10px;">DEAL-0002</div>
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+          <div class="avatar" style="width: 22px; height: 22px; background: #F9FACE; color: #E97F0A; font-size: 9px;">MT</div>
+          <span style="font-size: 12px; color: #3D3534;">Marcus Thompson</span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-weight: 700; font-size: 14px; color: #141212;">$18,500</span>
+          <span class="pill" style="background: #EDE7E6; color: #8A7E7D; font-size: 11px;">Low</span>
+        </div>
+        <div style="font-size: 11px; color: #8A7E7D; margin-top: 8px;">Close: Apr 15, 2026</div>
+      </div>
+      <!-- Deal 3 -->
+      <div class="kanban-card">
+        <div style="font-weight: 600; font-size: 14px; color: #141212; margin-bottom: 4px;">Design Templates</div>
+        <div class="mono" style="font-size: 11px; color: #8A7E7D; margin-bottom: 10px;">DEAL-0008</div>
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+          <div class="avatar" style="width: 22px; height: 22px; background: #D9F9CB; color: #00876D; font-size: 9px;">EL</div>
+          <span style="font-size: 12px; color: #3D3534;">Emily Liu</span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-weight: 700; font-size: 14px; color: #141212;">$36,500</span>
+          <span class="pill" style="background: rgba(232,102,68,0.12); color: #E86644; font-size: 11px;">High</span>
+        </div>
+        <div style="font-size: 11px; color: #8A7E7D; margin-top: 8px;">Close: Mar 20, 2026</div>
+      </div>
+    </div>
+
+    <!-- Column: Qualified -->
+    <div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding: 0 4px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 8px; height: 8px; border-radius: 50%; background: #8160CE;"></div>
+          <span style="font-size: 13px; font-weight: 700; color: #141212;">Qualified</span>
+          <span style="font-size: 12px; color: #8A7E7D; font-weight: 500;">2</span>
+        </div>
+        <span style="font-size: 12px; font-weight: 600; color: #8A7E7D;">$215K</span>
+      </div>
+      <!-- Deal 4 -->
+      <div class="kanban-card">
+        <div style="font-weight: 600; font-size: 14px; color: #141212; margin-bottom: 4px;">Enterprise Onboarding</div>
+        <div class="mono" style="font-size: 11px; color: #8A7E7D; margin-bottom: 10px;">DEAL-0004</div>
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+          <div class="avatar" style="width: 22px; height: 22px; background: #F6DCD5; color: #E86644; font-size: 9px;">SR</div>
+          <span style="font-size: 12px; color: #3D3534;">Sarah Rodriguez</span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-weight: 700; font-size: 14px; color: #141212;">$125,000</span>
+          <span class="pill" style="background: rgba(250,70,22,0.1); color: #FA4616; font-size: 11px;">Urgent</span>
+        </div>
+        <div style="font-size: 11px; color: #8A7E7D; margin-top: 8px;">Close: Mar 15, 2026</div>
+      </div>
+      <!-- Deal 5 -->
+      <div class="kanban-card">
+        <div style="font-weight: 600; font-size: 14px; color: #141212; margin-bottom: 4px;">Community Platform</div>
+        <div class="mono" style="font-size: 11px; color: #8A7E7D; margin-bottom: 10px;">DEAL-0005</div>
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+          <div class="avatar" style="width: 22px; height: 22px; background: #D7E1F7; color: #1754D8; font-size: 9px;">DP</div>
+          <span style="font-size: 12px; color: #3D3534;">Daniel Park</span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-weight: 700; font-size: 14px; color: #141212;">$90,000</span>
+          <span class="pill" style="background: rgba(232,102,68,0.12); color: #E86644; font-size: 11px;">High</span>
+        </div>
+        <div style="font-size: 11px; color: #8A7E7D; margin-top: 8px;">Close: Apr 1, 2026</div>
+      </div>
+    </div>
+
+    <!-- Column: Proposal -->
+    <div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding: 0 4px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 8px; height: 8px; border-radius: 50%; background: #FA4616;"></div>
+          <span style="font-size: 13px; font-weight: 700; color: #141212;">Proposal</span>
+          <span style="font-size: 12px; color: #8A7E7D; font-weight: 500;">2</span>
+        </div>
+        <span style="font-size: 12px; font-weight: 600; color: #8A7E7D;">$298K</span>
+      </div>
+      <!-- Deal 6 -->
+      <div class="kanban-card">
+        <div style="font-weight: 600; font-size: 14px; color: #141212; margin-bottom: 4px;">API Integration Suite</div>
+        <div class="mono" style="font-size: 11px; color: #8A7E7D; margin-bottom: 10px;">DEAL-0006</div>
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+          <div class="avatar" style="width: 22px; height: 22px; background: #F6DCD5; color: #E86644; font-size: 9px;">SR</div>
+          <span style="font-size: 12px; color: #3D3534;">Sarah Rodriguez</span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-weight: 700; font-size: 14px; color: #141212;">$198,000</span>
+          <span class="pill" style="background: rgba(250,70,22,0.1); color: #FA4616; font-size: 11px;">Urgent</span>
+        </div>
+        <div style="font-size: 11px; color: #8A7E7D; margin-top: 8px;">Close: Mar 10, 2026</div>
+      </div>
+      <!-- Deal 7 -->
+      <div class="kanban-card">
+        <div style="font-weight: 600; font-size: 14px; color: #141212; margin-bottom: 4px;">Creator Monetization</div>
+        <div class="mono" style="font-size: 11px; color: #8A7E7D; margin-bottom: 10px;">DEAL-0007</div>
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+          <div class="avatar" style="width: 22px; height: 22px; background: #D7E1F7; color: #1754D8; font-size: 9px;">JK</div>
+          <span style="font-size: 12px; color: #3D3534;">Jake Kingston</span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-weight: 700; font-size: 14px; color: #141212;">$100,000</span>
+          <span class="pill" style="background: #D7E1F7; color: #1754D8; font-size: 11px;">Medium</span>
+        </div>
+        <div style="font-size: 11px; color: #8A7E7D; margin-top: 8px;">Close: Apr 5, 2026</div>
+      </div>
+    </div>
+
+    <!-- Column: Closed Won -->
+    <div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding: 0 4px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 8px; height: 8px; border-radius: 50%; background: #00876D;"></div>
+          <span style="font-size: 13px; font-weight: 700; color: #141212;">Closed Won</span>
+          <span style="font-size: 12px; color: #8A7E7D; font-weight: 500;">2</span>
+        </div>
+        <span style="font-size: 12px; font-weight: 600; color: #8A7E7D;">$290K</span>
+      </div>
+      <!-- Deal 8 -->
+      <div class="kanban-card" style="border-left: 3px solid #00876D;">
+        <div style="font-weight: 600; font-size: 14px; color: #141212; margin-bottom: 4px;">Whop Pro Upgrade</div>
+        <div class="mono" style="font-size: 11px; color: #8A7E7D; margin-bottom: 10px;">DEAL-0003</div>
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+          <div class="avatar" style="width: 22px; height: 22px; background: #D7E1F7; color: #1754D8; font-size: 9px;">DP</div>
+          <span style="font-size: 12px; color: #3D3534;">Daniel Park</span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-weight: 700; font-size: 14px; color: #00876D;">$140,000</span>
+          <span class="pill" style="background: #D9F9CB; color: #00876D; font-size: 11px;">Won</span>
+        </div>
+        <div style="font-size: 11px; color: #8A7E7D; margin-top: 8px;">Closed: Feb 28, 2026</div>
+      </div>
+      <!-- Deal 9 -->
+      <div class="kanban-card" style="border-left: 3px solid #00876D;">
+        <div style="font-weight: 600; font-size: 14px; color: #141212; margin-bottom: 4px;">Annual Partnership</div>
+        <div class="mono" style="font-size: 11px; color: #8A7E7D; margin-bottom: 10px;">DEAL-0009</div>
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+          <div class="avatar" style="width: 22px; height: 22px; background: #F6DCD5; color: #E86644; font-size: 9px;">SR</div>
+          <span style="font-size: 12px; color: #3D3534;">Sarah Rodriguez</span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-weight: 700; font-size: 14px; color: #00876D;">$150,000</span>
+          <span class="pill" style="background: #D9F9CB; color: #00876D; font-size: 11px;">Won</span>
+        </div>
+        <div style="font-size: 11px; color: #8A7E7D; margin-top: 8px;">Closed: Mar 1, 2026</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 4: CONTACT DETAIL                                     -->
+<!-- ============================================================ -->
+<hr class="section-divider" />
+<div class="section-label">Section 4 — Contact Detail</div>
+
+<div style="max-width: 1440px; margin: 0 auto; padding: 0 32px 64px; display: grid; grid-template-columns: 380px 1fr; gap: 20px;">
+
+  <!-- Left: Profile Card -->
+  <div style="background: #FFFFFF; border-radius: 12px; box-shadow: 0 1px 3px rgba(20,18,18,0.06), 0 1px 2px rgba(20,18,18,0.04); padding: 28px; align-self: start;">
+    <!-- Profile Header -->
+    <div style="text-align: center; margin-bottom: 20px;">
+      <div class="avatar" style="width: 64px; height: 64px; background: #F6DCD5; color: #E86644; font-size: 22px; font-weight: 700; margin: 0 auto 12px;">SR</div>
+      <h2 class="heading" style="font-size: 24px; font-weight: 800; margin: 0 0 4px;">Sarah Rodriguez</h2>
+      <div class="mono" style="font-size: 11px; color: #8A7E7D;">CON-0002</div>
+    </div>
+
+    <!-- Pills -->
+    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px;">
+      <span class="pill" style="background: rgba(129,96,206,0.12); color: #8160CE;">Enterprise</span>
+      <span class="pill" style="background: #D9F9CB; color: #00876D;">Active</span>
+    </div>
+
+    <!-- Health Score -->
+    <div style="margin-bottom: 20px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+        <span style="font-size: 12px; font-weight: 600; color: #8A7E7D; text-transform: uppercase; letter-spacing: 0.05em;">Health Score</span>
+        <span style="font-size: 16px; font-weight: 700; color: #00876D;">87</span>
+      </div>
+      <div class="health-bar" style="height: 8px;">
+        <div class="health-bar-fill" style="width: 87%; background: #00876D;"></div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div style="border-top: 1px solid #EDE7E6; margin: 20px 0;"></div>
+
+    <!-- Info Rows -->
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <i data-lucide="mail" style="width: 16px; height: 16px; color: #8A7E7D; flex-shrink: 0;"></i>
+        <span style="font-size: 13px; color: #3D3534;">sarah.rodriguez@luminacorp.com</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <i data-lucide="phone" style="width: 16px; height: 16px; color: #8A7E7D; flex-shrink: 0;"></i>
+        <span style="font-size: 13px; color: #3D3534;">+1 (415) 555-0142</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <i data-lucide="linkedin" style="width: 16px; height: 16px; color: #8A7E7D; flex-shrink: 0;"></i>
+        <a href="#" style="font-size: 13px; color: #1754D8; text-decoration: none;">linkedin.com/in/srodriguez</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <i data-lucide="building-2" style="width: 16px; height: 16px; color: #8A7E7D; flex-shrink: 0;"></i>
+        <span style="font-size: 13px; color: #3D3534; font-weight: 500;">Lumina Corp</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <i data-lucide="dollar-sign" style="width: 16px; height: 16px; color: #8A7E7D; flex-shrink: 0;"></i>
+        <span style="font-size: 13px; color: #141212; font-weight: 600;">$312,500 <span style="font-weight: 400; color: #8A7E7D;">GMV</span></span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <i data-lucide="user" style="width: 16px; height: 16px; color: #8A7E7D; flex-shrink: 0;"></i>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <div class="avatar" style="width: 20px; height: 20px; background: #1754D8; color: #FFFFFF; font-size: 8px;">AK</div>
+          <span style="font-size: 13px; color: #3D3534;">Alex Kim</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div style="border-top: 1px solid #EDE7E6; margin: 20px 0;"></div>
+
+    <!-- Tags -->
+    <div style="margin-bottom: 20px;">
+      <p style="font-size: 12px; font-weight: 600; color: #8A7E7D; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 10px;">Tags</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+        <span class="pill" style="background: rgba(129,96,206,0.12); color: #8160CE;">Enterprise</span>
+        <span class="pill" style="background: rgba(250,70,22,0.1); color: #FA4616;">High-Value</span>
+        <span class="pill" style="background: rgba(23,84,216,0.1); color: #1754D8;">Decision Maker</span>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: 8px;">
+      <button class="btn-primary" style="flex: 1; justify-content: center; padding: 9px 12px;">
+        <i data-lucide="mail" style="width: 15px; height: 15px;"></i>
+        Email
+      </button>
+      <button class="btn-secondary" style="flex: 1; justify-content: center; padding: 9px 12px;">
+        <i data-lucide="phone" style="width: 15px; height: 15px;"></i>
+        Call
+      </button>
+      <button class="btn-ghost" style="padding: 9px 12px;">
+        <i data-lucide="more-horizontal" style="width: 15px; height: 15px;"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Right: Activity Panel -->
+  <div style="background: #FFFFFF; border-radius: 12px; box-shadow: 0 1px 3px rgba(20,18,18,0.06), 0 1px 2px rgba(20,18,18,0.04); align-self: start;">
+    <!-- Tabs -->
+    <div style="display: flex; gap: 0; border-bottom: 1px solid #EDE7E6; padding: 0 24px;">
+      <button class="tab-active" style="padding: 16px 16px 14px; font-size: 14px; background: none; border: none; cursor: pointer; font-family: inherit;">Activity</button>
+      <button class="tab-inactive transition-default" style="padding: 16px 16px 14px; font-size: 14px; background: none; border: none; cursor: pointer; font-family: inherit;">Deals</button>
+      <button class="tab-inactive transition-default" style="padding: 16px 16px 14px; font-size: 14px; background: none; border: none; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 6px;">
+        Tasks
+        <span style="background: #FA4616; color: #FFFFFF; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 9999px;">2</span>
+      </button>
+      <button class="tab-inactive transition-default" style="padding: 16px 16px 14px; font-size: 14px; background: none; border: none; cursor: pointer; font-family: inherit;">History</button>
+    </div>
+
+    <!-- Activity Timeline -->
+    <div style="padding: 24px;">
+      <!-- Activity 1: Call -->
+      <div style="display: flex; gap: 14px; margin-bottom: 28px; position: relative;">
+        <!-- Timeline line -->
+        <div style="position: absolute; left: 17px; top: 38px; bottom: -28px; width: 2px; background: #EDE7E6;"></div>
+        <!-- Icon -->
+        <div style="width: 36px; height: 36px; border-radius: 50%; background: #D9F9CB; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 1;">
+          <i data-lucide="phone" style="width: 16px; height: 16px; color: #00876D;"></i>
+        </div>
+        <!-- Content -->
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+            <div>
+              <p style="font-size: 14px; font-weight: 600; color: #141212; margin: 0 0 4px;">Call with Sarah — discussed Q2 renewal</p>
+              <p style="font-size: 13px; color: #3D3534; margin: 0 0 6px;">Covered pricing changes, new feature rollout timeline, and renewal terms. Sarah wants to loop in their CTO for the next call.</p>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="avatar" style="width: 20px; height: 20px; background: #FA4616; color: #FFFFFF; font-size: 8px;">NM</div>
+            <span style="font-size: 12px; color: #8A7E7D;">Nico Marino</span>
+            <span style="font-size: 12px; color: #EDE7E6;">|</span>
+            <span style="font-size: 12px; color: #8A7E7D;">2 hours ago</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity 2: Email -->
+      <div style="display: flex; gap: 14px; margin-bottom: 28px; position: relative;">
+        <div style="position: absolute; left: 17px; top: 38px; bottom: -28px; width: 2px; background: #EDE7E6;"></div>
+        <div style="width: 36px; height: 36px; border-radius: 50%; background: #D7E1F7; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 1;">
+          <i data-lucide="mail" style="width: 16px; height: 16px; color: #1754D8;"></i>
+        </div>
+        <div style="flex: 1;">
+          <div>
+            <p style="font-size: 14px; font-weight: 600; color: #141212; margin: 0 0 4px;">Sent partnership proposal</p>
+            <p style="font-size: 13px; color: #3D3534; margin: 0 0 6px;">Attached the revised partnership proposal with updated pricing tiers and SLA terms for the enterprise plan.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="avatar" style="width: 20px; height: 20px; background: #1754D8; color: #FFFFFF; font-size: 8px;">AK</div>
+            <span style="font-size: 12px; color: #8A7E7D;">Alex Kim</span>
+            <span style="font-size: 12px; color: #EDE7E6;">|</span>
+            <span style="font-size: 12px; color: #8A7E7D;">Yesterday</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity 3: Deal stage change -->
+      <div style="display: flex; gap: 14px; margin-bottom: 28px; position: relative;">
+        <div style="position: absolute; left: 17px; top: 38px; bottom: -28px; width: 2px; background: #EDE7E6;"></div>
+        <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(129,96,206,0.12); display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 1;">
+          <i data-lucide="arrow-right-circle" style="width: 16px; height: 16px; color: #8160CE;"></i>
+        </div>
+        <div style="flex: 1;">
+          <div>
+            <p style="font-size: 14px; font-weight: 600; color: #141212; margin: 0 0 4px;">Deal DEAL-0004 moved to Qualified</p>
+            <p style="font-size: 13px; color: #3D3534; margin: 0 0 6px;">Enterprise Onboarding deal progressed from Prospecting to Qualified stage.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="width: 20px; height: 20px; border-radius: 50%; background: #EDE7E6; display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="bot" style="width: 10px; height: 10px; color: #8A7E7D;"></i>
+            </div>
+            <span style="font-size: 12px; color: #8A7E7D;">System</span>
+            <span style="font-size: 12px; color: #EDE7E6;">|</span>
+            <span style="font-size: 12px; color: #8A7E7D;">3 days ago</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity 4: Note -->
+      <div style="display: flex; gap: 14px; position: relative;">
+        <div style="width: 36px; height: 36px; border-radius: 50%; background: #F9F3F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 1;">
+          <i data-lucide="sticky-note" style="width: 16px; height: 16px; color: #8A7E7D;"></i>
+        </div>
+        <div style="flex: 1;">
+          <div>
+            <p style="font-size: 14px; font-weight: 600; color: #141212; margin: 0 0 4px;">Added note: Key stakeholder for enterprise expansion</p>
+            <p style="font-size: 13px; color: #3D3534; margin: 0 0 6px;">Sarah is the primary decision-maker for Lumina Corp's digital product strategy. Reports directly to the CEO.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="avatar" style="width: 20px; height: 20px; background: #FA4616; color: #FFFFFF; font-size: 8px;">NM</div>
+            <span style="font-size: 12px; color: #8A7E7D;">Nico Marino</span>
+            <span style="font-size: 12px; color: #EDE7E6;">|</span>
+            <span style="font-size: 12px; color: #8A7E7D;">1 week ago</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Initialize Lucide icons
+  lucide.createIcons();
+</script>
+</body>
+</html>

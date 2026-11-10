@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Whop CRM — Variation A: Clean &amp; Professional</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            crm: {
+              bg: 'oklch(0.985 0.003 265)',
+              fg: 'oklch(0.13 0.02 265)',
+              primary: 'oklch(0.35 0.03 265)',
+              'primary-hover': 'oklch(0.25 0.03 265)',
+              accent: 'oklch(0.60 0.16 250)',
+              'accent-light': 'oklch(0.94 0.04 250)',
+              surface: 'oklch(1 0.002 265)',
+              muted: 'oklch(0.96 0.004 265)',
+              'muted-fg': 'oklch(0.50 0.02 265)',
+              border: 'oklch(0.91 0.006 265)',
+              'sidebar-bg': 'oklch(0.13 0.015 265)',
+              'sidebar-fg': 'oklch(0.80 0.01 265)',
+              'sidebar-active': 'oklch(0.98 0.003 265)',
+              destructive: 'oklch(0.55 0.22 25)',
+              'destructive-light': 'oklch(0.94 0.04 25)',
+              success: 'oklch(0.62 0.19 150)',
+              'success-light': 'oklch(0.94 0.05 150)',
+              warning: 'oklch(0.75 0.16 80)',
+              'warning-light': 'oklch(0.95 0.04 80)',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: oklch(0.985 0.003 265);
+      color: oklch(0.13 0.02 265);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: oklch(0.85 0.006 265); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: oklch(0.75 0.006 265); }
+
+    /* Sidebar hover */
+    .sidebar-item { transition: all 0.15s ease; }
+    .sidebar-item:hover { background: oklch(0.20 0.015 265); }
+    .sidebar-item.active { background: oklch(0.18 0.018 265); }
+
+    /* Table row hover */
+    .table-row { transition: background 0.1s ease; }
+    .table-row:hover { background: oklch(0.975 0.004 265); }
+
+    /* Card hover */
+    .stat-card { transition: all 0.2s ease; }
+    .stat-card:hover { box-shadow: 0 2px 8px oklch(0.5 0.01 265 / 0.08); transform: translateY(-1px); }
+
+    /* Deal card hover */
+    .deal-card { transition: all 0.15s ease; }
+    .deal-card:hover { box-shadow: 0 2px 8px oklch(0.5 0.01 265 / 0.1); border-color: oklch(0.85 0.01 265); }
+
+    /* Section labels */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: oklch(0.50 0.02 265);
+    }
+
+    /* Avatar colors */
+    .avatar-blue { background: oklch(0.92 0.04 250); color: oklch(0.45 0.12 250); }
+    .avatar-purple { background: oklch(0.92 0.04 300); color: oklch(0.45 0.12 300); }
+    .avatar-green { background: oklch(0.92 0.05 150); color: oklch(0.45 0.14 150); }
+    .avatar-amber { background: oklch(0.93 0.04 80); color: oklch(0.50 0.14 80); }
+    .avatar-rose { background: oklch(0.92 0.04 15); color: oklch(0.50 0.14 15); }
+
+    /* Kanban column */
+    .kanban-col { min-width: 280px; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- ========================================= -->
+  <!-- SHOWCASE WRAPPER                          -->
+  <!-- ========================================= -->
+  <div class="max-w-[1440px] mx-auto px-8 py-12 space-y-16">
+
+    <!-- Header -->
+    <div class="text-center space-y-2">
+      <p class="section-label">Variation A</p>
+      <h1 class="text-3xl font-semibold tracking-tight" style="color: oklch(0.13 0.02 265)">Clean &amp; Professional</h1>
+      <p class="text-sm" style="color: oklch(0.50 0.02 265)">Linear / Vercel inspired &mdash; subtle cool grays, refined spacing, monochrome + accent</p>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- 1. SIDEBAR                                -->
+    <!-- ========================================= -->
+    <section class="space-y-4">
+      <p class="section-label">1 &mdash; Sidebar Navigation</p>
+      <div class="flex rounded-xl overflow-hidden border" style="border-color: oklch(0.91 0.006 265); height: 560px;">
+
+        <!-- Sidebar -->
+        <aside class="w-[240px] flex-shrink-0 flex flex-col" style="background: oklch(0.13 0.015 265);">
+          <!-- Logo -->
+          <div class="flex items-center gap-2.5 px-5 py-5 border-b" style="border-color: oklch(0.22 0.015 265);">
+            <div class="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-sm" style="background: oklch(0.98 0.003 265); color: oklch(0.13 0.02 265);">W</div>
+            <span class="text-sm font-semibold" style="color: oklch(0.95 0.005 265);">Whop CRM</span>
+            <button class="ml-auto opacity-40 hover:opacity-70 transition-opacity">
+              <i data-lucide="panel-left-close" class="w-4 h-4" style="color: oklch(0.70 0.01 265);"></i>
+            </button>
+          </div>
+
+          <!-- Nav items -->
+          <nav class="flex-1 py-3 px-3 space-y-0.5">
+            <a href="#" class="sidebar-item active flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium" style="color: oklch(0.98 0.003 265);">
+              <i data-lucide="layout-dashboard" class="w-4 h-4 opacity-70"></i>
+              Dashboard
+            </a>
+            <a href="#" class="sidebar-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium" style="color: oklch(0.65 0.01 265);">
+              <i data-lucide="users" class="w-4 h-4 opacity-50"></i>
+              Contacts
+            </a>
+            <a href="#" class="sidebar-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium" style="color: oklch(0.65 0.01 265);">
+              <i data-lucide="building-2" class="w-4 h-4 opacity-50"></i>
+              Companies
+            </a>
+            <a href="#" class="sidebar-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium" style="color: oklch(0.65 0.01 265);">
+              <i data-lucide="handshake" class="w-4 h-4 opacity-50"></i>
+              Deals
+            </a>
+            <a href="#" class="sidebar-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium" style="color: oklch(0.65 0.01 265);">
+              <i data-lucide="kanban" class="w-4 h-4 opacity-50"></i>
+              Pipeline
+            </a>
+            <a href="#" class="sidebar-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium" style="color: oklch(0.65 0.01 265);">
+              <i data-lucide="check-square" class="w-4 h-4 opacity-50"></i>
+              Tasks
+            </a>
+
+            <div class="pt-4 pb-2 px-3">
+              <p class="text-[10px] font-semibold uppercase tracking-wider" style="color: oklch(0.40 0.01 265);">Insights</p>
+            </div>
+
+            <a href="#" class="sidebar-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium" style="color: oklch(0.65 0.01 265);">
+              <i data-lucide="bar-chart-3" class="w-4 h-4 opacity-50"></i>
+              Analytics
+            </a>
+            <a href="#" class="sidebar-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium" style="color: oklch(0.65 0.01 265);">
+              <i data-lucide="file-text" class="w-4 h-4 opacity-50"></i>
+              Reports
+            </a>
+            <a href="#" class="sidebar-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium" style="color: oklch(0.65 0.01 265);">
+              <i data-lucide="briefcase" class="w-4 h-4 opacity-50"></i>
+              Portfolio
+            </a>
+            <a href="#" class="sidebar-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium relative" style="color: oklch(0.65 0.01 265);">
+              <i data-lucide="bell" class="w-4 h-4 opacity-50"></i>
+              Alerts
+              <span class="ml-auto text-[10px] font-medium px-1.5 py-0.5 rounded-full" style="background: oklch(0.55 0.22 25); color: white;">3</span>
+            </a>
+          </nav>
+
+          <!-- User -->
+          <div class="px-3 pb-4">
+            <div class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg" style="background: oklch(0.18 0.015 265);">
+              <div class="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-semibold" style="background: oklch(0.60 0.16 250); color: white;">NM</div>
+              <div class="flex-1 min-w-0">
+                <p class="text-[12px] font-medium truncate" style="color: oklch(0.90 0.005 265);">Nico Marino</p>
+                <p class="text-[10px] truncate" style="color: oklch(0.50 0.01 265);">Admin</p>
+              </div>
+              <i data-lucide="settings" class="w-3.5 h-3.5 opacity-30" style="color: oklch(0.70 0.01 265);"></i>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main content preview (dashboard skeleton) -->
+        <div class="flex-1 p-6" style="background: oklch(0.985 0.003 265);">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h2 class="text-lg font-semibold" style="color: oklch(0.13 0.02 265);">Dashboard</h2>
+              <p class="text-xs mt-0.5" style="color: oklch(0.50 0.02 265);">Thursday, March 5, 2026</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[13px]" style="border-color: oklch(0.91 0.006 265); color: oklch(0.50 0.02 265);">
+                <i data-lucide="search" class="w-3.5 h-3.5"></i>
+                <span>Search...</span>
+                <span class="ml-4 text-[11px] font-mono px-1.5 py-0.5 rounded" style="background: oklch(0.96 0.004 265); color: oklch(0.50 0.02 265);">&#8984;K</span>
+              </div>
+              <button class="px-3 py-1.5 rounded-lg text-[13px] font-medium" style="background: oklch(0.35 0.03 265); color: white;">
+                + New Contact
+              </button>
+            </div>
+          </div>
+          <!-- Skeleton lines -->
+          <div class="grid grid-cols-3 gap-4">
+            <div class="h-24 rounded-lg border" style="border-color: oklch(0.91 0.006 265); background: oklch(1 0.002 265);"></div>
+            <div class="h-24 rounded-lg border" style="border-color: oklch(0.91 0.006 265); background: oklch(1 0.002 265);"></div>
+            <div class="h-24 rounded-lg border" style="border-color: oklch(0.91 0.006 265); background: oklch(1 0.002 265);"></div>
+            <div class="h-24 rounded-lg border" style="border-color: oklch(0.91 0.006 265); background: oklch(1 0.002 265);"></div>
+            <div class="h-24 rounded-lg border" style="border-color: oklch(0.91 0.006 265); background: oklch(1 0.002 265);"></div>
+            <div class="h-24 rounded-lg border" style="border-color: oklch(0.91 0.006 265); background: oklch(1 0.002 265);"></div>
+          </div>
+          <div class="mt-4 h-48 rounded-lg border" style="border-color: oklch(0.91 0.006 265); background: oklch(1 0.002 265);"></div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- 2. DASHBOARD                              -->
+    <!-- ========================================= -->
+    <section class="space-y-4">
+      <p class="section-label">2 &mdash; Dashboard</p>
+      <div class="rounded-xl border p-6" style="border-color: oklch(0.91 0.006 265); background: oklch(1 0.002 265);">
+
+        <!-- Page header -->
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-lg font-semibold">Dashboard</h2>
+            <p class="text-xs mt-0.5" style="color: oklch(0.50 0.02 265);">Overview of your CRM performance</p>
+          </div>
+          <div class="flex items-center gap-2 text-[13px]" style="color: oklch(0.50 0.02 265);">
+            <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border hover:bg-crm-muted transition-colors" style="border-color: oklch(0.91 0.006 265);">
+              <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+              Last 30 days
+              <i data-lucide="chevron-down" class="w-3 h-3 ml-1"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Stat cards grid -->
+        <div class="grid grid-cols-3 gap-4">
+          <!-- Total Contacts -->
+          <div class="stat-card rounded-xl border px-5 py-4 cursor-default" style="border-color: oklch(0.91 0.006 265); background: oklch(0.985 0.003 265);">
+            <div class="flex items-center justify-between mb-3">
+              <p class="text-[12px] font-medium" style="color: oklch(0.50 0.02 265);">Total Contacts</p>
+              <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: oklch(0.94 0.04 250);">
+                <i data-lucide="users" class="w-3.5 h-3.5" style="color: oklch(0.50 0.14 250);"></i>
+              </div>
+            </div>
+            <p class="text-2xl font-semibold tracking-tight">201</p>
+            <p class="text-[11px] mt-1 flex items-center gap-1" style="color: oklch(0.62 0.19 150);">
+              <i data-lucide="trending-up" class="w-3 h-3"></i>
+              +12 this month
+            </p>
+          </div>
+
+          <!-- GMV -->
+          <div class="stat-card rounded-xl border px-5 py-4 cursor-default" style="border-color: oklch(0.91 0.006 265); background: oklch(0.985 0.003 265);">
+            <div class="flex items-center justify-between mb-3">
+              <p class="text-[12px] font-medium" style="color: oklch(0.50 0.02 265);">Total GMV</p>
+              <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: oklch(0.94 0.05 150);">
+                <i data-lucide="dollar-sign" class="w-3.5 h-3.5" style="color: oklch(0.45 0.16 150);"></i>
+              </div>
+            </div>
+            <p class="text-2xl font-semibold tracking-tight">$2.4M</p>
+            <p class="text-[11px] mt-1 flex items-center gap-1" style="color: oklch(0.62 0.19 150);">
+              <i data-lucide="trending-up" class="w-3 h-3"></i>
+              +8.3% vs last month
+            </p>
+          </div>
+
+          <!-- At Risk -->
+          <div class="stat-card rounded-xl border px-5 py-4 cursor-default" style="border-color: oklch(0.91 0.006 265); background: oklch(0.985 0.003 265);">
+            <div class="flex items-center justify-between mb-3">
+              <p class="text-[12px] font-medium" style="color: oklch(0.50 0.02 265);">At Risk</p>
+              <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: oklch(0.94 0.04 25);">
+                <i data-lucide="alert-triangle" class="w-3.5 h-3.5" style="color: oklch(0.55 0.20 25);"></i>
+              </div>
+            </div>
+            <p class="text-2xl font-semibold tracking-tight">12</p>
+            <p class="text-[11px] mt-1 flex items-center gap-1" style="color: oklch(0.55 0.22 25);">
+              <i data-lucide="trending-up" class="w-3 h-3"></i>
+              +3 since last week
+            </p>
+          </div>
+
+          <!-- Tasks Due -->
+          <div class="stat-card rounded-xl border px-5 py-4 cursor-default" style="border-color: oklch(0.91 0.006 265); background: oklch(0.985 0.003 265);">
+            <div class="flex items-center justify-between mb-3">
+              <p class="text-[12px] font-medium" style="color: oklch(0.50 0.02 265);">Tasks Due Today</p>
+              <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: oklch(0.95 0.04 80);">
+                <i data-lucide="check-square" class="w-3.5 h-3.5" style="color: oklch(0.55 0.14 80);"></i>
+              </div>
+            </div>
+            <p class="text-2xl font-semibold tracking-tight">8</p>
+            <p class="text-[11px] mt-1" style="color: oklch(0.50 0.02 265);">5 completed, 3 remaining</p>
+          </div>
+
+          <!-- Pipeline Value -->
+          <div class="stat-card rounded-xl border px-5 py-4 cursor-default" style="border-color: oklch(0.91 0.006 265); background: oklch(0.985 0.003 265);">
+            <div class="flex items-center justify-between mb-3">
+              <p class="text-[12px] font-medium" style="color: oklch(0.50 0.02 265);">Pipeline Value</p>
+              <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: oklch(0.94 0.04 250);">
+                <i data-lucide="git-branch" class="w-3.5 h-3.5" style="color: oklch(0.50 0.14 250);"></i>
+              </div>
+            </div>
+            <p class="text-2xl font-semibold tracking-tight">$890K</p>
+            <p class="text-[11px] mt-1 flex items-center gap-1" style="color: oklch(0.62 0.19 150);">
+              <i data-lucide="trending-up" class="w-3 h-3"></i>
+              +$120K this week
+            </p>
+          </div>
+
+          <!-- Alerts -->
+          <div class="stat-card rounded-xl border px-5 py-4 cursor-default" style="border-color: oklch(0.91 0.006 265); background: oklch(0.985 0.003 265);">
+            <div class="flex items-center justify-between mb-3">
+              <p class="text-[12px] font-medium" style="color: oklch(0.50 0.02 265);">Active Alerts</p>
+              <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: oklch(0.94 0.04 25);">
+                <i data-lucide="bell" class="w-3.5 h-3.5" style="color: oklch(0.55 0.20 25);"></i>
+              </div>
+            </div>
+            <p class="text-2xl font-semibold tracking-tight">3</p>
+            <p class="text-[11px] mt-1" style="color: oklch(0.55 0.22 25);">1 critical, 2 warnings</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- 3. CONTACTS LIST TABLE                    -->
+    <!-- ========================================= -->
+    <section class="space-y-4">
+      <p class="section-label">3 &mdash; Contacts List</p>
+      <div class="rounded-xl border overflow-hidden" style="border-color: oklch(0.91 0.006 265); background: oklch(1 0.002 265);">
+
+        <!-- Table header bar -->
+        <div class="flex items-center justify-between px-5 py-4 border-b" style="border-color: oklch(0.91 0.006 265);">
+          <div class="flex items-center gap-3">
+            <h3 class="text-[15px] font-semibold">Contacts</h3>
+            <span class="text-[12px] font-medium px-2 py-0.5 rounded-md" style="background: oklch(0.96 0.004 265); color: oklch(0.50 0.02 265);">201</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[12px]" style="border-color: oklch(0.91 0.006 265); color: oklch(0.50 0.02 265);">
+              <i data-lucide="search" class="w-3.5 h-3.5"></i>
+              <span>Filter contacts...</span>
+            </div>
+            <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[12px] font-medium" style="border-color: oklch(0.91 0.006 265); color: oklch(0.50 0.02 265);">
+              <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
+              Filters
+            </button>
+            <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-medium text-white" style="background: oklch(0.35 0.03 265);">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              Add Contact
+            </button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <table class="w-full text-[13px]">
+          <thead>
+            <tr class="border-b text-left" style="border-color: oklch(0.91 0.006 265); background: oklch(0.975 0.004 265);">
+              <th class="py-2.5 px-5 font-medium" style="color: oklch(0.50 0.02 265); width: 28px;">
+                <input type="checkbox" class="rounded" style="accent-color: oklch(0.60 0.16 250);" />
+              </th>
+              <th class="py-2.5 px-3 font-medium" style="color: oklch(0.50 0.02 265);">Name</th>
+              <th class="py-2.5 px-3 font-medium" style="color: oklch(0.50 0.02 265);">Type</th>
+              <th class="py-2.5 px-3 font-medium" style="color: oklch(0.50 0.02 265);">Status</th>
+              <th class="py-2.5 px-3 font-medium text-center" style="color: oklch(0.50 0.02 265);">Health</th>
+              <th class="py-2.5 px-3 font-medium text-right" style="color: oklch(0.50 0.02 265);">GMV</th>
+              <th class="py-2.5 px-3 font-medium" style="color: oklch(0.50 0.02 265);">Company</th>
+              <th class="py-2.5 px-3 font-medium" style="color: oklch(0.50 0.02 265);">Owner</th>
+              <th class="py-2.5 px-3 font-medium" style="color: oklch(0.50 0.02 265); width: 40px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Row 1 -->
+            <tr class="table-row border-b cursor-pointer" style="border-color: oklch(0.94 0.004 265);">
+              <td class="py-3 px-5"><input type="checkbox" class="rounded" style="accent-color: oklch(0.60 0.16 250);" /></td>
+              <td class="py-3 px-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold avatar-blue">JK</div>
+                  <div>
+                    <p class="font-medium">Jake Kingston</p>
+                    <p class="font-mono text-[11px]" style="color: oklch(0.50 0.02 265);">CON-0001</p>
+                  </div>
+                </div>
+              </td>
+              <td class="py-3 px-3">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium" style="background: oklch(0.94 0.04 250); color: oklch(0.40 0.12 250);">Creator</span>
+              </td>
+              <td class="py-3 px-3">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium" style="background: oklch(0.94 0.05 150); color: oklch(0.40 0.16 150);">
+                  <span class="w-1.5 h-1.5 rounded-full" style="background: oklch(0.62 0.19 150);"></span>
+                  Active
+                </span>
+              </td>
+              <td class="py-3 px-3 text-center">
+                <div class="inline-flex items-center justify-center w-8 h-8 rounded-full text-[11px] font-semibold" style="background: oklch(0.94 0.05 150); color: oklch(0.40 0.16 150);">92</div>
+              </td>
+              <td class="py-3 px-3 text-right font-medium">$148,200</td>
+              <td class="py-3 px-3" style="color: oklch(0.50 0.02 265);">Kingston Digital</td>
+              <td class="py-3 px-3">
+                <div class="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-semibold" style="background: oklch(0.60 0.16 250); color: white;">NM</div>
+              </td>
+              <td class="py-3 px-3">
+                <i data-lucide="more-horizontal" class="w-4 h-4" style="color: oklch(0.50 0.02 265);"></i>
+              </td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr class="table-row border-b cursor-pointer" style="border-color: oklch(0.94 0.004 265);">
+              <td class="py-3 px-5"><input type="checkbox" class="rounded" style="accent-color: oklch(0.60 0.16 250);" /></td>
+              <td class="py-3 px-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold avatar-purple">SR</div>
+                  <div>
+                    <p class="font-medium">Sarah Rodriguez</p>
+                    <p class="font-mono text-[11px]" style="color: oklch(0.50 0.02 265);">CON-0002</p>
+                  </div>
+                </div>
+              </td>
+              <td class="py-3 px-3">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium" style="background: oklch(0.95 0.04 80); color: oklch(0.45 0.12 80);">Enterprise</span>
+              </td>
+              <td class="py-3 px-3">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium" style="background: oklch(0.94 0.05 150); color: oklch(0.40 0.16 150);">
+                  <span class="w-1.5 h-1.5 rounded-full" style="background: oklch(0.62 0.19 150);"></span>
+                  Active
+                </span>
+              </td>
+              <td class="py-3 px-3 text-center">
+                <div class="inline-flex items-center justify-center w-8 h-8 rounded-full text-[11px] font-semibold" style="background: oklch(0.94 0.05 150); color: oklch(0.40 0.16 150);">87</div>
+              </td>
+              <td class="py-3 px-3 text-right font-medium">$312,500</td>
+              <td class="py-3 px-3" style="color: oklch(0.50 0.02 265);">Lumina Corp</td>
+              <td class="py-3 px-3">
+                <div class="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-semibold" style="background: oklch(0.65 0.14 300); color: white;">AK</div>
+              </td>
+              <td class="py-3 px-3">
+                <i data-lucide="more-horizontal" class="w-4 h-4" style="color: oklch(0.50 0.02 265);"></i>
+              </td>
+            </tr>
+
+            <!-- Row 3 -->
+            <tr class="table-row border-b cursor-pointer" style="border-color: oklch(0.94 0.004 265);">
+              <td class="py-3 px-5"><input type="checkbox" class="rounded" style="accent-color: oklch(0.60 0.16 250);" /></td>
+              <td class="py-3 px-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold avatar-green">MT</div>
+                  <div>
+                    <p class="font-medium">Marcus Thompson</p>
+                    <p class="font-mono text-[11px]" style="color: oklch(0.50 0.02 265);">CON-0003</p>
+                  </div>
+                </div>
+              </td>
+              <td class="py-3 px-3">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium" style="background: oklch(0.94 0.04 250); color: oklch(0.40 0.12 250);">Creator</span>
+              </td>
+              <td class="py-3 px-3">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium" style="background: oklch(0.94 0.04 25); color: oklch(0.48 0.16 25);">
+                  <span class="w-1.5 h-1.5 rounded-full" style="background: oklch(0.55 0.22 25);"></span>
+                  At Risk
+                </span>
+              </td>
+              <td class="py-3 px-3 text-center">
+                <div class="inline-flex items-center justify-center w-8 h-8 rounded-full text-[11px] font-semibold" style="background: oklch(0.94 0.04 25); color: oklch(0.48 0.16 25);">34</div>
+              </td>
+              <td class="py-3 px-3 text-right font-medium">$67,800</td>
+              <td class="py-3 px-3" style="color: oklch(0.50 0.02 265);">ThompsonFit</td>
+              <td class="py-3 px-3">
+                <div class="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-semibold" style="background: oklch(0.60 0.16 250); color: white;">NM</div>
+              </td>
+              <td class="py-3 px-3">
+                <i data-lucide="more-horizontal" class="w-4 h-4" style="color: oklch(0.50 0.02 265);"></i>
+              </td>
+            </tr>
+
+            <!-- Row 4 -->
+            <tr class="table-row border-b cursor-pointer" style="border-color: oklch(0.94 0.004 265);">
+              <td class="py-3 px-5"><input type="checkbox" class="rounded" style="accent-color: oklch(0.60 0.16 250);" /></td>
+              <td class="py-3 px-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold avatar-amber">EL</div>
+                  <div>
+                    <p class="font-medium">Emily Liu</p>
+                    <p class="font-mono text-[11px]" style="color: oklch(0.50 0.02 265);">CON-0004</p>
+                  </div>
+                </div>
+              </td>
+              <td class="py-3 px-3">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium" style="background: oklch(0.94 0.04 250); color: oklch(0.40 0.12 250);">Creator</span>
+              </td>
+              <td class="py-3 px-3">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium" style="background: oklch(0.95 0.04 80); color: oklch(0.45 0.12 80);">
+                  <span class="w-1.5 h-1.5 rounded-full" style="background: oklch(0.75 0.16 80);"></span>
+                  Onboarding
+                </span>
+              </td>
+              <td class="py-3 px-3 text-center">
+                <div class="inline-flex items-center justify-center w-8 h-8 rounded-full text-[11px] font-semibold" style="background: oklch(0.95 0.04 80); color: oklch(0.45 0.12 80);">65</div>
+              </td>
+              <td class="py-3 px-3 text-right font-medium">$23,100</td>
+              <td class="py-3 px-3" style="color: oklch(0.50 0.02 265);">Liu Creative</td>
+              <td class="py-3 px-3">
+                <div class="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-semibold" style="background: oklch(0.62 0.19 150); color: white;">TW</div>
+              </td>
+              <td class="py-3 px-3">
+                <i data-lucide="more-horizontal" class="w-4 h-4" style="color: oklch(0.50 0.02 265);"></i>
+              </td>
+            </tr>
+
+            <!-- Row 5 -->
+            <tr class="table-row cursor-pointer">
+              <td class="py-3 px-5"><input type="checkbox" class="rounded" style="accent-color: oklch(0.60 0.16 250);" /></td>
+              <td class="py-3 px-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold avatar-rose">DP</div>
+                  <div>
+                    <p class="font-medium">Daniel Park</p>
+                    <p class="font-mono text-[11px]" style="color: oklch(0.50 0.02 265);">CON-0005</p>
+                  </div>
+                </div>
+              </td>
+              <td class="py-3 px-3">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium" style="background: oklch(0.92 0.04 300); color: oklch(0.42 0.12 300);">Seller</span>
+              </td>
+              <td class="py-3 px-3">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium" style="background: oklch(0.94 0.05 150); color: oklch(0.40 0.16 150);">
+                  <span class="w-1.5 h-1.5 rounded-full" style="background: oklch(0.62 0.19 150);"></span>
+                  Active
+                </span>
+              </td>
+              <td class="py-3 px-3 text-center">
+                <div class="inline-flex items-center justify-center w-8 h-8 rounded-full text-[11px] font-semibold" style="background: oklch(0.94 0.05 150); color: oklch(0.40 0.16 150);">78</div>
+              </td>
+              <td class="py-3 px-3 text-right font-medium">$89,400</td>
+              <td class="py-3 px-3" style="color: oklch(0.50 0.02 265);">Park Ventures</td>
+              <td class="py-3 px-3">
+                <div class="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-semibold" style="background: oklch(0.65 0.14 300); color: white;">AK</div>
+              </td>
+              <td class="py-3 px-3">
+                <i data-lucide="more-horizontal" class="w-4 h-4" style="color: oklch(0.50 0.02 265);"></i>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="flex items-center justify-between px-5 py-3 border-t" style="border-color: oklch(0.91 0.006 265);">
+          <p class="text-[12px]" style="color: oklch(0.50 0.02 265);">Showing 1-5 of 201 contacts</p>
+          <div class="flex items-center gap-1">
+            <button class="px-2.5 py-1 rounded-md text-[12px] font-medium" style="background: oklch(0.96 0.004 265); color: oklch(0.50 0.02 265);">Prev</button>
+            <button class="px-2.5 py-1 rounded-md text-[12px] font-medium text-white" style="background: oklch(0.35 0.03 265);">1</button>
+            <button class="px-2.5 py-1 rounded-md text-[12px] font-medium" style="color: oklch(0.50 0.02 265);">2</button>
+            <button class="px-2.5 py-1 rounded-md text-[12px] font-medium" style="color: oklch(0.50 0.02 265);">3</button>
+            <span class="text-[12px] px-1" style="color: oklch(0.50 0.02 265);">...</span>
+            <button class="px-2.5 py-1 rounded-md text-[12px] font-medium" style="color: oklch(0.50 0.02 265);">41</button>
+            <button class="px-2.5 py-1 rounded-md text-[12px] font-medium" style="background: oklch(0.96 0.004 265); color: oklch(0.50 0.02 265);">Next</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- 4. PIPELINE KANBAN                        -->
+    <!-- ========================================= -->
+    <section class="space-y-4">
+      <p class="section-label">4 &mdash; Pipeline Kanban</p>
+      <div class="rounded-xl border p-5" style="border-color: oklch(0.91 0.006 265); background: oklch(1 0.002 265);">
+
+        <!-- Pipeline header -->
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-3">
+            <h3 class="text-[15px] font-semibold">Sales Pipeline</h3>
+            <span class="text-[12px] font-medium px-2 py-0.5 rounded-md" style="background: oklch(0.96 0.004 265); color: oklch(0.50 0.02 265);">11 deals</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[12px] font-medium" style="border-color: oklch(0.91 0.006 265); color: oklch(0.50 0.02 265);">
+              <i data-lucide="list" class="w-3.5 h-3.5"></i>
+              List View
+            </button>
+            <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-medium text-white" style="background: oklch(0.35 0.03 265);">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              Add Deal
+            </button>
+          </div>
+        </div>
+
+        <!-- Kanban columns -->
+        <div class="flex gap-4 overflow-x-auto pb-2">
+
+          <!-- Column: Prospecting -->
+          <div class="kanban-col flex-shrink-0 w-[300px]">
+            <div class="flex items-center justify-between mb-3 px-1">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full" style="background: oklch(0.60 0.16 250);"></span>
+                <span class="text-[13px] font-semibold">Prospecting</span>
+                <span class="text-[11px] font-medium px-1.5 py-0.5 rounded" style="background: oklch(0.96 0.004 265); color: oklch(0.50 0.02 265);">3</span>
+              </div>
+              <span class="text-[12px] font-medium" style="color: oklch(0.50 0.02 265);">$87K</span>
+            </div>
+            <div class="space-y-2.5">
+              <!-- Deal card 1 -->
+              <div class="deal-card rounded-lg border p-3.5 cursor-grab" style="border-color: oklch(0.91 0.006 265); background: oklch(0.995 0.002 265);">
+                <div class="flex items-center justify-between mb-2">
+                  <p class="text-[13px] font-medium">Whop Pro Subscription</p>
+                  <i data-lucide="more-horizontal" class="w-3.5 h-3.5" style="color: oklch(0.50 0.02 265);"></i>
+                </div>
+                <p class="font-mono text-[11px] mb-2.5" style="color: oklch(0.50 0.02 265);">DEAL-0001</p>
+                <div class="flex items-center gap-2 mb-2.5">
+                  <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-semibold avatar-blue">JK</div>
+                  <span class="text-[12px]" style="color: oklch(0.40 0.02 265);">Jake Kingston</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[13px] font-semibold">$32,000</span>
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium" style="background: oklch(0.94 0.04 250); color: oklch(0.40 0.12 250);">Medium</span>
+                </div>
+              </div>
+
+              <!-- Deal card 2 -->
+              <div class="deal-card rounded-lg border p-3.5 cursor-grab" style="border-color: oklch(0.91 0.006 265); background: oklch(0.995 0.002 265);">
+                <div class="flex items-center justify-between mb-2">
+                  <p class="text-[13px] font-medium">API Integration Setup</p>
+                  <i data-lucide="more-horizontal" class="w-3.5 h-3.5" style="color: oklch(0.50 0.02 265);"></i>
+                </div>
+                <p class="font-mono text-[11px] mb-2.5" style="color: oklch(0.50 0.02 265);">DEAL-0002</p>
+                <div class="flex items-center gap-2 mb-2.5">
+                  <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-semibold avatar-amber">EL</div>
+                  <span class="text-[12px]" style="color: oklch(0.40 0.02 265);">Emily Liu</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[13px] font-semibold">$15,000</span>
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium" style="background: oklch(0.96 0.004 265); color: oklch(0.50 0.02 265);">Low</span>
+                </div>
+              </div>
+
+              <!-- Deal card 3 -->
+              <div class="deal-card rounded-lg border p-3.5 cursor-grab" style="border-color: oklch(0.91 0.006 265); background: oklch(0.995 0.002 265);">
+                <div class="flex items-center justify-between mb-2">
+                  <p class="text-[13px] font-medium">Marketplace Expansion</p>
+                  <i data-lucide="more-horizontal" class="w-3.5 h-3.5" style="color: oklch(0.50 0.02 265);"></i>
+                </div>
+                <p class="font-mono text-[11px] mb-2.5" style="color: oklch(0.50 0.02 265);">DEAL-0003</p>
+                <div class="flex items-center gap-2 mb-2.5">
+                  <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-semibold avatar-rose">DP</div>
+                  <span class="text-[12px]" style="color: oklch(0.40 0.02 265);">Daniel Park</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[13px] font-semibold">$40,000</span>
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium" style="background: oklch(0.94 0.04 25); color: oklch(0.48 0.16 25);">High</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column: Qualified -->
+          <div class="kanban-col flex-shrink-0 w-[300px]">
+            <div class="flex items-center justify-between mb-3 px-1">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full" style="background: oklch(0.75 0.16 80);"></span>
+                <span class="text-[13px] font-semibold">Qualified</span>
+                <span class="text-[11px] font-medium px-1.5 py-0.5 rounded" style="background: oklch(0.96 0.004 265); color: oklch(0.50 0.02 265);">3</span>
+              </div>
+              <span class="text-[12px] font-medium" style="color: oklch(0.50 0.02 265);">$215K</span>
+            </div>
+            <div class="space-y-2.5">
+              <div class="deal-card rounded-lg border p-3.5 cursor-grab" style="border-color: oklch(0.91 0.006 265); background: oklch(0.995 0.002 265);">
+                <div class="flex items-center justify-between mb-2">
+                  <p class="text-[13px] font-medium">Enterprise Onboarding</p>
+                  <i data-lucide="more-horizontal" class="w-3.5 h-3.5" style="color: oklch(0.50 0.02 265);"></i>
+                </div>
+                <p class="font-mono text-[11px] mb-2.5" style="color: oklch(0.50 0.02 265);">DEAL-0004</p>
+                <div class="flex items-center gap-2 mb-2.5">
+                  <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-semibold avatar-purple">SR</div>
+                  <span class="text-[12px]" style="color: oklch(0.40 0.02 265);">Sarah Rodriguez</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[13px] font-semibold">$125,000</span>
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium" style="background: oklch(0.94 0.04 25); color: oklch(0.48 0.16 25);">High</span>
+                </div>
+              </div>
+
+              <div class="deal-card rounded-lg border p-3.5 cursor-grab" style="border-color: oklch(0.91 0.006 265); background: oklch(0.995 0.002 265);">
+                <div class="flex items-center justify-between mb-2">
+                  <p class="text-[13px] font-medium">Analytics Dashboard</p>
+                  <i data-lucide="more-horizontal" class="w-3.5 h-3.5" style="color: oklch(0.50 0.02 265);"></i>
+                </div>
+                <p class="font-mono text-[11px] mb-2.5" style="color: oklch(0.50 0.02 265);">DEAL-0005</p>
+                <div class="flex items-center gap-2 mb-2.5">
+                  <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-semibold avatar-green">MT</div>
+                  <span class="text-[12px]" style="color: oklch(0.40 0.02 265);">Marcus Thompson</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[13px] font-semibold">$48,000</span>
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium" style="background: oklch(0.94 0.04 250); color: oklch(0.40 0.12 250);">Medium</span>
+                </div>
+              </div>
+
+              <div class="deal-card rounded-lg border p-3.5 cursor-grab" style="border-color: oklch(0.91 0.006 265); background: oklch(0.995 0.002 265);">
+                <div class="flex items-center justify-between mb-2">
+                  <p class="text-[13px] font-medium">White-Label Solution</p>
+                  <i data-lucide="more-horizontal" class="w-3.5 h-3.5" style="color: oklch(0.50 0.02 265);"></i>
+                </div>
+                <p class="font-mono text-[11px] mb-2.5" style="color: oklch(0.50 0.02 265);">DEAL-0006</p>
+                <div class="flex items-center gap-2 mb-2.5">
+                  <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-semibold avatar-blue">JK</div>
+                  <span class="text-[12px]" style="color: oklch(0.40 0.02 265);">Jake Kingston</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[13px] font-semibold">$42,000</span>
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium" style="background: oklch(0.94 0.04 250); color: oklch(0.40 0.12 250);">Medium</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column: Proposal -->
+          <div class="kanban-col flex-shrink-0 w-[300px]">
+            <div class="flex items-center justify-between mb-3 px-1">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full" style="background: oklch(0.65 0.18 300);"></span>
+                <span class="text-[13px] font-semibold">Proposal</span>
+                <span class="text-[11px] font-medium px-1.5 py-0.5 rounded" style="background: oklch(0.96 0.004 265); color: oklch(0.50 0.02 265);">3</span>
+              </div>
+              <span class="text-[12px] font-medium" style="color: oklch(0.50 0.02 265);">$298K</span>
+            </div>
+            <div class="space-y-2.5">
+              <div class="deal-card rounded-lg border p-3.5 cursor-grab" style="border-color: oklch(0.91 0.006 265); background: oklch(0.995 0.002 265);">
+                <div class="flex items-center justify-between mb-2">
+                  <p class="text-[13px] font-medium">Custom Integration</p>
+                  <i data-lucide="more-horizontal" class="w-3.5 h-3.5" style="color: oklch(0.50 0.02 265);"></i>
+                </div>
+                <p class="font-mono text-[11px] mb-2.5" style="color: oklch(0.50 0.02 265);">DEAL-0007</p>
+                <div class="flex items-center gap-2 mb-2.5">
+                  <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-semibold avatar-purple">SR</div>
+                  <span class="text-[12px]" style="color: oklch(0.40 0.02 265);">Sarah Rodriguez</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[13px] font-semibold">$180,000</span>
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium" style="background: oklch(0.94 0.04 25); color: oklch(0.48 0.16 25);">High</span>
+                </div>
+              </div>
+
+              <div class="deal-card rounded-lg border p-3.5 cursor-grab" style="border-color: oklch(0.91 0.006 265); background: oklch(0.995 0.002 265);">
+                <div class="flex items-center justify-between mb-2">
+                  <p class="text-[13px] font-medium">Platform Migration</p>
+                  <i data-lucide="more-horizontal" class="w-3.5 h-3.5" style="color: oklch(0.50 0.02 265);"></i>
+                </div>
+                <p class="font-mono text-[11px] mb-2.5" style="color: oklch(0.50 0.02 265);">DEAL-0008</p>
+                <div class="flex items-center gap-2 mb-2.5">
+                  <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-semibold avatar-amber">EL</div>
+                  <span class="text-[12px]" style="color: oklch(0.40 0.02 265);">Emily Liu</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[13px] font-semibold">$68,000</span>
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium" style="background: oklch(0.94 0.04 250); color: oklch(0.40 0.12 250);">Medium</span>
+                </div>
+              </div>
+
+              <div class="deal-card rounded-lg border p-3.5 cursor-grab" style="border-color: oklch(0.91 0.006 265); background: oklch(0.995 0.002 265);">
+                <div class="flex items-center justify-between mb-2">
+                  <p class="text-[13px] font-medium">Bulk License Package</p>
+                  <i data-lucide="more-horizontal" class="w-3.5 h-3.5" style="color: oklch(0.50 0.02 265);"></i>
+                </div>
+                <p class="font-mono text-[11px] mb-2.5" style="color: oklch(0.50 0.02 265);">DEAL-0009</p>
+                <div class="flex items-center gap-2 mb-2.5">
+                  <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-semibold avatar-rose">DP</div>
+                  <span class="text-[12px]" style="color: oklch(0.40 0.02 265);">Daniel Park</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[13px] font-semibold">$50,000</span>
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium" style="background: oklch(0.94 0.04 250); color: oklch(0.40 0.12 250);">Medium</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column: Closed Won -->
+          <div class="kanban-col flex-shrink-0 w-[300px]">
+            <div class="flex items-center justify-between mb-3 px-1">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full" style="background: oklch(0.62 0.19 150);"></span>
+                <span class="text-[13px] font-semibold">Closed Won</span>
+                <span class="text-[11px] font-medium px-1.5 py-0.5 rounded" style="background: oklch(0.96 0.004 265); color: oklch(0.50 0.02 265);">2</span>
+              </div>
+              <span class="text-[12px] font-medium" style="color: oklch(0.50 0.02 265);">$290K</span>
+            </div>
+            <div class="space-y-2.5">
+              <div class="deal-card rounded-lg border p-3.5 cursor-grab" style="border-color: oklch(0.89 0.01 150); background: oklch(0.98 0.01 150);">
+                <div class="flex items-center justify-between mb-2">
+                  <p class="text-[13px] font-medium">Annual Enterprise Plan</p>
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5" style="color: oklch(0.62 0.19 150);"></i>
+                </div>
+                <p class="font-mono text-[11px] mb-2.5" style="color: oklch(0.50 0.02 265);">DEAL-0010</p>
+                <div class="flex items-center gap-2 mb-2.5">
+                  <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-semibold avatar-purple">SR</div>
+                  <span class="text-[12px]" style="color: oklch(0.40 0.02 265);">Sarah Rodriguez</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[13px] font-semibold">$200,000</span>
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium" style="background: oklch(0.94 0.05 150); color: oklch(0.40 0.16 150);">Won</span>
+                </div>
+              </div>
+
+              <div class="deal-card rounded-lg border p-3.5 cursor-grab" style="border-color: oklch(0.89 0.01 150); background: oklch(0.98 0.01 150);">
+                <div class="flex items-center justify-between mb-2">
+                  <p class="text-[13px] font-medium">Premium Support</p>
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5" style="color: oklch(0.62 0.19 150);"></i>
+                </div>
+                <p class="font-mono text-[11px] mb-2.5" style="color: oklch(0.50 0.02 265);">DEAL-0011</p>
+                <div class="flex items-center gap-2 mb-2.5">
+                  <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-semibold avatar-blue">JK</div>
+                  <span class="text-[12px]" style="color: oklch(0.40 0.02 265);">Jake Kingston</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[13px] font-semibold">$90,000</span>
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium" style="background: oklch(0.94 0.05 150); color: oklch(0.40 0.16 150);">Won</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- 5. CONTACT DETAIL                         -->
+    <!-- ========================================= -->
+    <section class="space-y-4">
+      <p class="section-label">5 &mdash; Contact Detail</p>
+      <div class="rounded-xl border overflow-hidden" style="border-color: oklch(0.91 0.006 265); background: oklch(1 0.002 265);">
+
+        <!-- Top bar -->
+        <div class="flex items-center justify-between px-6 py-3.5 border-b" style="border-color: oklch(0.91 0.006 265);">
+          <div class="flex items-center gap-2 text-[13px]" style="color: oklch(0.50 0.02 265);">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Back to Contacts</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[12px] font-medium" style="border-color: oklch(0.91 0.006 265); color: oklch(0.50 0.02 265);">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+              Edit
+            </button>
+            <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[12px] font-medium" style="border-color: oklch(0.91 0.006 265); color: oklch(0.50 0.02 265);">
+              <i data-lucide="more-horizontal" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex">
+          <!-- Left: Profile Card -->
+          <div class="w-[340px] flex-shrink-0 border-r p-6" style="border-color: oklch(0.91 0.006 265);">
+            <!-- Avatar + Name -->
+            <div class="text-center mb-6">
+              <div class="w-16 h-16 rounded-full flex items-center justify-center text-xl font-semibold mx-auto mb-3 avatar-purple">SR</div>
+              <h3 class="text-[17px] font-semibold">Sarah Rodriguez</h3>
+              <p class="font-mono text-[12px] mt-0.5" style="color: oklch(0.50 0.02 265);">CON-0002</p>
+              <div class="flex items-center justify-center gap-2 mt-3">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium" style="background: oklch(0.95 0.04 80); color: oklch(0.45 0.12 80);">Enterprise</span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium" style="background: oklch(0.94 0.05 150); color: oklch(0.40 0.16 150);">
+                  <span class="w-1.5 h-1.5 rounded-full" style="background: oklch(0.62 0.19 150);"></span>
+                  Active
+                </span>
+              </div>
+            </div>
+
+            <!-- Health Score -->
+            <div class="rounded-lg border p-4 mb-4" style="border-color: oklch(0.91 0.006 265); background: oklch(0.985 0.003 265);">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[12px] font-medium" style="color: oklch(0.50 0.02 265);">Health Score</span>
+                <span class="text-[20px] font-bold" style="color: oklch(0.40 0.16 150);">87</span>
+              </div>
+              <div class="w-full h-1.5 rounded-full" style="background: oklch(0.93 0.004 265);">
+                <div class="h-1.5 rounded-full" style="width: 87%; background: oklch(0.62 0.19 150);"></div>
+              </div>
+              <p class="text-[11px] mt-1.5" style="color: oklch(0.50 0.02 265);">Up 4 points this month</p>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="space-y-3.5">
+              <p class="text-[11px] font-semibold uppercase tracking-wider" style="color: oklch(0.50 0.02 265);">Contact Information</p>
+
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: oklch(0.96 0.004 265);">
+                  <i data-lucide="mail" class="w-3.5 h-3.5" style="color: oklch(0.50 0.02 265);"></i>
+                </div>
+                <div>
+                  <p class="text-[11px]" style="color: oklch(0.50 0.02 265);">Email</p>
+                  <p class="text-[13px] font-medium" style="color: oklch(0.60 0.16 250);">sarah@luminacorp.com</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: oklch(0.96 0.004 265);">
+                  <i data-lucide="phone" class="w-3.5 h-3.5" style="color: oklch(0.50 0.02 265);"></i>
+                </div>
+                <div>
+                  <p class="text-[11px]" style="color: oklch(0.50 0.02 265);">Phone</p>
+                  <p class="text-[13px] font-medium">+1 (415) 555-0142</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: oklch(0.96 0.004 265);">
+                  <i data-lucide="linkedin" class="w-3.5 h-3.5" style="color: oklch(0.50 0.02 265);"></i>
+                </div>
+                <div>
+                  <p class="text-[11px]" style="color: oklch(0.50 0.02 265);">LinkedIn</p>
+                  <p class="text-[13px] font-medium" style="color: oklch(0.60 0.16 250);">linkedin.com/in/srodriguez</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: oklch(0.96 0.004 265);">
+                  <i data-lucide="building-2" class="w-3.5 h-3.5" style="color: oklch(0.50 0.02 265);"></i>
+                </div>
+                <div>
+                  <p class="text-[11px]" style="color: oklch(0.50 0.02 265);">Company</p>
+                  <p class="text-[13px] font-medium">Lumina Corp</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: oklch(0.96 0.004 265);">
+                  <i data-lucide="dollar-sign" class="w-3.5 h-3.5" style="color: oklch(0.50 0.02 265);"></i>
+                </div>
+                <div>
+                  <p class="text-[11px]" style="color: oklch(0.50 0.02 265);">Total GMV</p>
+                  <p class="text-[13px] font-semibold">$312,500</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: oklch(0.96 0.004 265);">
+                  <i data-lucide="user" class="w-3.5 h-3.5" style="color: oklch(0.50 0.02 265);"></i>
+                </div>
+                <div>
+                  <p class="text-[11px]" style="color: oklch(0.50 0.02 265);">Account Owner</p>
+                  <div class="flex items-center gap-1.5 mt-0.5">
+                    <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-semibold" style="background: oklch(0.65 0.14 300); color: white;">AK</div>
+                    <span class="text-[13px] font-medium">Alex Kim</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tags -->
+            <div class="mt-5 pt-4 border-t" style="border-color: oklch(0.91 0.006 265);">
+              <p class="text-[11px] font-semibold uppercase tracking-wider mb-2.5" style="color: oklch(0.50 0.02 265);">Tags</p>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="px-2 py-0.5 rounded-md text-[11px] font-medium" style="background: oklch(0.94 0.04 250); color: oklch(0.40 0.12 250);">Enterprise</span>
+                <span class="px-2 py-0.5 rounded-md text-[11px] font-medium" style="background: oklch(0.94 0.05 150); color: oklch(0.40 0.16 150);">High-Value</span>
+                <span class="px-2 py-0.5 rounded-md text-[11px] font-medium" style="background: oklch(0.92 0.04 300); color: oklch(0.42 0.12 300);">Decision Maker</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Activity Timeline -->
+          <div class="flex-1 p-6">
+            <!-- Tabs -->
+            <div class="flex items-center gap-0 border-b mb-5" style="border-color: oklch(0.91 0.006 265);">
+              <button class="px-4 py-2.5 text-[13px] font-medium border-b-2" style="border-color: oklch(0.35 0.03 265); color: oklch(0.13 0.02 265);">Activity</button>
+              <button class="px-4 py-2.5 text-[13px] font-medium border-b-2 border-transparent" style="color: oklch(0.50 0.02 265);">Deals</button>
+              <button class="px-4 py-2.5 text-[13px] font-medium border-b-2 border-transparent" style="color: oklch(0.50 0.02 265);">Tasks</button>
+              <button class="px-4 py-2.5 text-[13px] font-medium border-b-2 border-transparent" style="color: oklch(0.50 0.02 265);">History</button>
+              <button class="px-4 py-2.5 text-[13px] font-medium border-b-2 border-transparent" style="color: oklch(0.50 0.02 265);">Files</button>
+            </div>
+
+            <!-- Quick Action -->
+            <div class="flex items-center gap-2 mb-6">
+              <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-medium text-white" style="background: oklch(0.35 0.03 265);">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                Log Activity
+              </button>
+              <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[12px] font-medium" style="border-color: oklch(0.91 0.006 265); color: oklch(0.50 0.02 265);">
+                <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+                Send Email
+              </button>
+              <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[12px] font-medium" style="border-color: oklch(0.91 0.006 265); color: oklch(0.50 0.02 265);">
+                <i data-lucide="check-square" class="w-3.5 h-3.5"></i>
+                Create Task
+              </button>
+            </div>
+
+            <!-- Timeline -->
+            <div class="space-y-0">
+              <!-- Activity 1 -->
+              <div class="flex gap-4 pb-6 relative">
+                <div class="absolute left-[15px] top-8 bottom-0 w-px" style="background: oklch(0.91 0.006 265);"></div>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 z-10" style="background: oklch(0.94 0.04 250);">
+                  <i data-lucide="phone" class="w-3.5 h-3.5" style="color: oklch(0.50 0.14 250);"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between">
+                    <p class="text-[13px] font-medium">Call with Sarah re: Enterprise Onboarding</p>
+                    <span class="text-[11px] font-mono" style="color: oklch(0.50 0.02 265);">2 hours ago</span>
+                  </div>
+                  <p class="text-[12px] mt-1 leading-relaxed" style="color: oklch(0.50 0.02 265);">Discussed timeline for Q2 onboarding. Sarah confirmed budget approval from CFO. Need to send updated proposal by Friday with revised pricing tiers.</p>
+                  <div class="flex items-center gap-2 mt-2">
+                    <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-semibold" style="background: oklch(0.65 0.14 300); color: white;">AK</div>
+                    <span class="text-[11px]" style="color: oklch(0.50 0.02 265);">Alex Kim</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Activity 2 -->
+              <div class="flex gap-4 pb-6 relative">
+                <div class="absolute left-[15px] top-8 bottom-0 w-px" style="background: oklch(0.91 0.006 265);"></div>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 z-10" style="background: oklch(0.94 0.05 150);">
+                  <i data-lucide="mail" class="w-3.5 h-3.5" style="color: oklch(0.45 0.16 150);"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between">
+                    <p class="text-[13px] font-medium">Email: Updated Integration Docs</p>
+                    <span class="text-[11px] font-mono" style="color: oklch(0.50 0.02 265);">Yesterday</span>
+                  </div>
+                  <p class="text-[12px] mt-1 leading-relaxed" style="color: oklch(0.50 0.02 265);">Sent revised API documentation and migration guide. Included sample code for webhook setup and authentication flow.</p>
+                  <div class="flex items-center gap-2 mt-2">
+                    <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-semibold" style="background: oklch(0.65 0.14 300); color: white;">AK</div>
+                    <span class="text-[11px]" style="color: oklch(0.50 0.02 265);">Alex Kim</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Activity 3 -->
+              <div class="flex gap-4 pb-6 relative">
+                <div class="absolute left-[15px] top-8 bottom-0 w-px" style="background: oklch(0.91 0.006 265);"></div>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 z-10" style="background: oklch(0.95 0.04 80);">
+                  <i data-lucide="calendar" class="w-3.5 h-3.5" style="color: oklch(0.55 0.14 80);"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between">
+                    <p class="text-[13px] font-medium">Meeting: Quarterly Business Review</p>
+                    <span class="text-[11px] font-mono" style="color: oklch(0.50 0.02 265);">Mar 1, 2026</span>
+                  </div>
+                  <p class="text-[12px] mt-1 leading-relaxed" style="color: oklch(0.50 0.02 265);">Reviewed Q1 performance metrics. GMV up 23% QoQ. Discussed expanding to 3 additional product categories. Sarah flagged concern about support response times.</p>
+                  <div class="flex items-center gap-2 mt-2">
+                    <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-semibold" style="background: oklch(0.60 0.16 250); color: white;">NM</div>
+                    <span class="text-[11px]" style="color: oklch(0.50 0.02 265);">Nico Marino</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Activity 4 -->
+              <div class="flex gap-4 relative">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 z-10" style="background: oklch(0.92 0.04 300);">
+                  <i data-lucide="handshake" class="w-3.5 h-3.5" style="color: oklch(0.50 0.12 300);"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between">
+                    <p class="text-[13px] font-medium">Deal created: Custom Integration</p>
+                    <span class="text-[11px] font-mono" style="color: oklch(0.50 0.02 265);">Feb 24, 2026</span>
+                  </div>
+                  <p class="text-[12px] mt-1 leading-relaxed" style="color: oklch(0.50 0.02 265);">New deal opened for custom Whop API integration. Value: $180,000. Moved to Proposal stage.</p>
+                  <div class="flex items-center gap-2 mt-2">
+                    <div class="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-semibold" style="background: oklch(0.65 0.14 300); color: white;">AK</div>
+                    <span class="text-[11px]" style="color: oklch(0.50 0.02 265);">Alex Kim</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Footer -->
+    <div class="text-center py-8">
+      <p class="text-[12px]" style="color: oklch(0.50 0.02 265);">Whop CRM &mdash; Variation A: Clean &amp; Professional &mdash; v1.0</p>
+    </div>
+
+  </div>
+
+  <!-- Initialize Lucide icons -->
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
